@@ -40,23 +40,23 @@ export async function dashboardMetrics(orgId: string, appWhere: Prisma.Applicati
   return { openPositions, newApplications, aiInterviews, ready, scheduled, timeSaved: saved.hours };
 }
 
-export async function applicationsOverTime(appWhere: Prisma.ApplicationWhereInput, days = 30) {
-  const since = startOfDay(subDays(new Date(), days - 1));
-  const apps = await db.application.findMany({ where: { ...appWhere, appliedAt: { gte: since } }, select: { appliedAt: true, interviews: { select: { status: true, endedAt: true } } } });
-  const buckets = new Map<string, { date: string; applications: number; interviews: number }>();
-  for (let i = 0; i < days; i++) {
-    const d = format(subDays(new Date(), days - 1 - i), "dd.MM");
-    buckets.set(d, { date: d, applications: 0, interviews: 0 });
-  }
+export async function applicationsOverTime(appWhere: Prisma.ApplicationWhereInput, weeks = 10) {
+  const start = startOfDay(subDays(new Date(), weeks * 7 - 1));
+  const apps = await db.application.findMany({ where: { ...appWhere, appliedAt: { gte: start } }, select: { appliedAt: true, interviews: { select: { status: true, endedAt: true } } } });
+  const buckets = Array.from({ length: weeks }, (_, i) => {
+    const from = new Date(start.getTime() + i * 7 * 86400_000);
+    return { from, date: format(from, "dd.MM"), applications: 0, interviews: 0 };
+  });
+  const idx = (d: Date) => Math.floor((d.getTime() - start.getTime()) / (7 * 86400_000));
   for (const a of apps) {
-    const b = buckets.get(format(a.appliedAt, "dd.MM"));
+    const b = buckets[idx(a.appliedAt)];
     if (b) b.applications++;
     for (const iv of a.interviews) if (iv.status === "COMPLETED" && iv.endedAt) {
-      const bi = buckets.get(format(iv.endedAt, "dd.MM"));
+      const bi = buckets[idx(iv.endedAt)];
       if (bi) bi.interviews++;
     }
   }
-  return [...buckets.values()];
+  return buckets.map(({ from: _f, ...r }) => r);
 }
 
 const FUNNEL = [
@@ -98,7 +98,8 @@ export async function sourcePerformance(appWhere: Prisma.ApplicationWhereInput) 
   const map = new Map<string, { source: string; applications: number; interviewed: number; shortlisted: number; hired: number }>();
   const advanced = new Set(["SHORTLISTED", "PERSONAL_INTERVIEW", "OFFER", "HIRED"]);
   for (const a of apps) {
-    const key = a.sourceDetail?.split(" · ").pop() || a.source.replace("_", " ").toLowerCase();
+    const parts = (a.sourceDetail ?? "").split(" · ").filter((p) => p && !p.includes("@"));
+    const key = parts.pop() || a.source.replace("_", " ").toLowerCase();
     const label = key.charAt(0).toUpperCase() + key.slice(1);
     const r = map.get(label) ?? { source: label, applications: 0, interviewed: 0, shortlisted: 0, hired: 0 };
     r.applications++;

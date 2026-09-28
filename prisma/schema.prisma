@@ -876,3 +876,16 @@ model Invoice {
   paidAt        DateTime?
   org           Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
+
+// ─────────────────────────────── Marketing ───────────────────────────────
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String
+  employees String?
+  phone     String?
+  message   String?
+  createdAt DateTime @default(now())
+}

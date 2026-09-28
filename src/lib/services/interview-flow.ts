@@ -102,8 +102,12 @@ export function extractNotice(answer: string): string | null {
 }
 
 export function extractAvailability(answer: string): string | null {
-  const date = answer.match(/(?:ab|from|dès|dal|per)\s+(?:dem\s+)?([^.,;]{3,30})/i);
-  if (date) return date[0].trim();
+  const m = answer.match(/\b(ab|from|dès|dal|per)\b\s+/i);
+  if (m && m.index != null) {
+    const rest = answer.slice(m.index);
+    const cut = rest.search(/(?<!\d)\.(\s|$)|[,;!?]/);
+    return (cut > 0 ? rest.slice(0, cut) : rest).trim().slice(0, 60);
+  }
   if (/sofort|immediately|right away|tout de suite|subito/i.test(answer)) return "Immediately";
   return answer.trim().length > 0 ? answer.trim().slice(0, 80) : null;
 }

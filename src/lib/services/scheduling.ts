@@ -70,7 +70,7 @@ export async function availableSlots(token: string, days = 10) {
   });
   const integ = await db.integration.findFirst({ where: { orgId: link.orgId, kind: "CALENDAR", status: "CONNECTED" } });
   let external: { start: Date; end: Date }[] = [];
-  if (integ?.secretsEnc && integ.provider !== "mock") {
+  if (integ?.secretsEnc && integ.provider !== "mock" && !(integ.config as { demo?: boolean }).demo) {
     try {
       external = await getCalendarProvider(integ.provider).busy(JSON.parse(decrypt(integ.secretsEnc)) as OAuthTokens, from, to);
     } catch (e) {
@@ -113,7 +113,7 @@ export async function bookSlot(token: string, startIso: string) {
   const title = `Interview: ${app.candidate.firstName} ${app.candidate.lastName} – ${app.job.title}`;
 
   const integ = await db.integration.findFirst({ where: { orgId: link.orgId, kind: "CALENDAR", status: "CONNECTED" } });
-  const provider = getCalendarProvider(integ?.provider);
+  const provider = getCalendarProvider((integ?.config as { demo?: boolean } | null)?.demo ? "mock" : integ?.provider);
   let tokens: OAuthTokens | null = null;
   try {
     tokens = integ?.secretsEnc ? (JSON.parse(decrypt(integ.secretsEnc)) as OAuthTokens) : null;

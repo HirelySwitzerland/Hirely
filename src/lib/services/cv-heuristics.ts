@@ -146,7 +146,7 @@ export function parseCvHeuristic(text: string): ParsedCv {
     out.region = { value: regionForPostalCode(Number(zip[1])), status: "inferred", source: "postal code" };
   }
   const firstLines = lines.filter((l) => l.trim()).slice(0, 3);
-  const nameLine = firstLines.find((l) => /^[A-ZÄÖÜ][\wäöüéèàç'-]+(\s[A-ZÄÖÜ][\wäöüéèàç'-]+){1,3}$/.test(l.trim()));
+  const nameLine = firstLines.find((l) => /^\p{Lu}[\p{L}'-]+(\s\p{Lu}[\p{L}'-]+){1,3}$/u.test(l.trim()));
   if (nameLine) out.name = { value: nameLine.trim(), status: "confirmed" };
   const headline = firstLines.find((l) => l !== nameLine && !/@|\d{4}/.test(l) && l.trim().length < 70);
   if (headline) out.currentTitle = { value: headline.trim(), status: "confirmed" };

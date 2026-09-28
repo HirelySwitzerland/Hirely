@@ -23,7 +23,9 @@ export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTi
   const t = node.text.toLowerCase();
   if (node.category === "knockout") {
     if (/führer|licen|permis|ausweis kat/i.test(t)) return ctx.hasLicense ? (de ? "Ja, ich habe den Führerausweis Kategorie B." : "Yes, I have a category B licence.") : de ? "Nein, leider nicht." : "No, unfortunately not.";
-    return de ? "Ja, ich habe eine C-Bewilligung." : "Yes, I have a permanent residence permit.";
+    if (/pikett|on-call|standby/i.test(t)) return de ? "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle." : "Yes, on-call duty is fine for me.";
+    if (/berechtigt|allowed|permit|bewilligung|arbeiten/i.test(t)) return de ? "Ja, ich habe eine gültige Arbeitsbewilligung (C)." : "Yes, I have a valid Swiss work permit.";
+    return de ? "Ja." : "Yes.";
   }
   if (/erläutern|situation|explain/.test(t)) return de ? "Ich bin daran, den Führerausweis zu machen, die Prüfung ist im nächsten Monat geplant." : "I'm currently taking lessons; my test is scheduled next month.";
   if (node.category === "motivation")

@@ -60,7 +60,7 @@ function escapeRe(s: string) {
 
 function answerHits(answers: AnswerInput[], req: RequirementInput, kws: string[]) {
   return answers.filter(
-    (a) => a.answer.trim() && (a.requirementId === req.id || kws.some((k) => a.answer.toLowerCase().includes(k) || a.question.toLowerCase().includes(k))),
+    (a) => a.answer.trim() && (a.requirementId === req.id || kws.some((k) => a.answer.toLowerCase().includes(k))),
   );
 }
 
@@ -173,9 +173,12 @@ function evalExperience(req: RequirementInput, ctx: EvalContext): EvalResult {
 function evalKeyword(req: RequirementInput, ctx: EvalContext): EvalResult {
   const kws = deriveKeywords(req.label, req.keywords);
   const evidence: Evidence[] = [];
-  const skillHit = ctx.cv?.skills.find((s) => kws.some((k) => s.value.toLowerCase().includes(k)));
-  const certHit = ctx.cv?.certifications.find((s) => kws.some((k) => s.value.toLowerCase().includes(k)));
+  let skillHit = ctx.cv?.skills.find((s) => kws.some((k) => s.value.toLowerCase().includes(k)));
+  let certHit = ctx.cv?.certifications.find((s) => kws.some((k) => s.value.toLowerCase().includes(k)));
   const eduHit = ctx.cv?.education.find((e) => kws.some((k) => `${e.degree} ${e.institution ?? ""}`.toLowerCase().includes(k)));
+  // Prefer the section that matches the requirement category.
+  if (req.category === "EDUCATION" && eduHit) skillHit = certHit = undefined;
+  if (req.category === "CERTIFICATION" && certHit) skillHit = undefined;
   const lines = linesContaining(ctx.cvText, kws);
   let status: EvalStatus = "UNKNOWN";
   let explanation = `"${req.label}" is not mentioned in the CV.`;
@@ -228,7 +231,17 @@ export function evaluateRequirement(req: RequirementInput, ctx: EvalContext): Ev
       r = evalKeyword(req, ctx);
   }
   // Anti-hallucination guard: every CV quote must be grounded in the CV text.
-  r.evidence = r.evidence.filter((e) => e.source !== "CV" || quoteIsGrounded(e.quote, ctx.cvText));
+  const seen = new Set<string>();
+  r.evidence = r.evidence
+    .filter((e) => e.source !== "CV" || quoteIsGrounded(e.quote, ctx.cvText))
+    .map((e) => ({ ...e, quote: e.quote.replace(/^[-•*]\s*/, "") }))
+    .filter((e) => {
+      const k = `${e.source}:${e.quote.toLowerCase().slice(0, 80)}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 5);
   if (r.evidence.length === 0 && r.status !== "UNKNOWN") {
     r.status = "UNKNOWN";
     r.explanation = "Evidence could not be verified against the source; marked as missing information.";
