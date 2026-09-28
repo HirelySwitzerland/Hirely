@@ -288,7 +288,8 @@ export async function completeInterview(interviewId: string) {
   if (iv.status === "COMPLETED") return;
   const state = iv.state as unknown as FlowState;
   const structured = extractStructured(state);
-  const answers = Object.values(state.answers ?? {}).filter((a) => a.category !== "general" || a.nodeId !== "consent");
+  const order = (id: string) => { const i = state.visited?.indexOf(id) ?? -1; return i < 0 ? 999 : i; };
+  const answers = Object.values(state.answers ?? {}).filter((a) => a.nodeId !== "consent").sort((a, b) => order(a.nodeId) - order(b.nodeId));
   let summary: string | null = null;
   try {
     const res = await generate(

@@ -1,7 +1,7 @@
 import type { EvidenceStatus, InterviewState, ProcessStatus, Stage } from "@prisma/client";
 import { AlertTriangle, CheckCircle2, CircleDashed, CircleHelp, Loader2, MinusCircle, PhoneMissed, XCircle } from "lucide-react";
 import { Badge, type Tone } from "./ui";
-import { STAGE_LABEL } from "@/lib/services/pipeline";
+import { STAGE_LABEL } from "@/lib/stages";
 import { cn } from "@/lib/utils";
 
 const STAGE_TONE: Record<Stage, Tone> = {

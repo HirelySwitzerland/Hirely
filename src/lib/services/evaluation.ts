@@ -96,7 +96,7 @@ function evalLanguage(req: RequirementInput, ctx: EvalContext): EvalResult {
     }
   }
   for (const a of answerHits(ctx.answers, req, [...kws, ...(target ? LANG_SYNONYMS[target] : [])])) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
     if (status === "UNKNOWN" || status === "PARTIAL") {
       status = interpretYesNo(a.answer) === "no" ? "NOT_MET" : "CONFIRMED";
       explanation = status === "CONFIRMED" ? `Candidate stated relevant ${target ?? "language"} experience during the ${a.source === "INTERVIEW" ? "AI interview" : "screening"}.` : `Candidate indicated insufficient ${target ?? "language"} skills.`;
@@ -112,7 +112,7 @@ function evalYesNoStyle(req: RequirementInput, ctx: EvalContext, cvLines: string
   const kws = deriveKeywords(req.label, req.keywords);
   for (const a of answerHits(ctx.answers, req, kws)) {
     const yn = interpretYesNo(a.answer);
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
     if (yn === "yes") {
       status = "CONFIRMED";
       explanation = `Candidate confirmed ${what} (${a.source === "INTERVIEW" ? "AI interview" : "application form"}).`;
@@ -152,7 +152,7 @@ function evalExperience(req: RequirementInput, ctx: EvalContext): EvalResult {
     }
   }
   for (const a of answerHits(ctx.answers, req, kws)) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
     const n = extractNumber(a.answer);
     if (n != null && min) {
       if (n >= min) {
@@ -195,7 +195,7 @@ function evalKeyword(req: RequirementInput, ctx: EvalContext): EvalResult {
     explanation = `Mentioned in the context of the candidate's work history; depth not stated.`;
   }
   for (const a of answerHits(ctx.answers, req, kws)) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
     const yn = interpretYesNo(a.answer);
     if (yn === "no" && status !== "CONFIRMED") {
       status = "NOT_MET";

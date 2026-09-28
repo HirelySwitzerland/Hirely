@@ -34,8 +34,8 @@ export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTi
       : `I'm mainly attracted by the chance to apply my experience${latest ? ` from ${latest.company}` : ""} in an industrial company with modern equipment, and by the responsibility the role offers.`;
   if (node.personalized && latest)
     return de
-      ? `Als ${latest.title} war ich hauptsächlich für ${latest.description?.split("\n")[0]?.toLowerCase() ?? "die Planung und Umsetzung im Tagesgeschäft"} zuständig. Dazu kamen Abstimmungen mit Qualitätssicherung und Produktion.`
-      : `As ${latest.title} I was mainly responsible for ${latest.description?.split("\n")[0]?.toLowerCase() ?? "day-to-day planning and execution"}, plus coordination with QA and production.`;
+      ? `Als ${latest.title} war ich hauptsächlich zuständig für: ${(latest.description?.split("\n")[0]?.replace(/\.$/, "") ?? "Planung und Umsetzung im Tagesgeschäft")}. Dazu kamen Abstimmungen mit Qualitätssicherung und Produktion.`
+      : `As ${latest.title} I was mainly responsible for: ${(latest.description?.split("\n")[0]?.replace(/\.$/, "") ?? "day-to-day planning and execution")}, plus coordination with QA and production.`;
   if (/führung|geführt|leadership|led|mentor/.test(t))
     return years > 8
       ? de ? "Ja, ich habe zuletzt ein Team von vier Personen fachlich geführt und Lernende betreut." : "Yes, most recently I led a team of four and mentored apprentices."
