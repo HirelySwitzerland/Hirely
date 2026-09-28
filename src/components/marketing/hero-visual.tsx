@@ -17,7 +17,7 @@ const tone: Record<string, string> = {
 /** Static, realistic rendering of the Hirely dashboard used on the landing page. */
 export function HeroVisual() {
   return (
-    <div className="relative mx-auto max-w-5xl">
+    <div className="relative mx-auto max-w-5xl text-left">
       <div className="absolute -inset-x-10 -top-10 bottom-0 -z-10 rounded-[40px] bg-gradient-to-b from-brand-50 via-white to-white" />
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_30px_80px_-30px_rgba(16,24,40,0.35)]">
         <div className="flex items-center gap-1.5 border-b border-slate-100 bg-slate-50/80 px-4 py-2.5">

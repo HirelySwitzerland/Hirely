@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { audit, type Actor } from "@/lib/audit";
 import { decrypt, randomToken } from "@/lib/crypto";
 import { generate } from "@/lib/providers/llm";
-import { getVoiceProvider, VOICE_COST_CENTS_PER_MIN, type TwilioCreds } from "@/lib/providers/voice";
+import { getVoiceProvider, platformTwilio, startTwilioRecording, VOICE_COST_CENTS_PER_MIN, type TwilioCreds } from "@/lib/providers/voice";
 import { TRANSCRIPTION_COST_CENTS_PER_MIN } from "@/lib/providers/transcription";
 import { enqueue } from "@/lib/queue";
 import { parseCvHeuristic, type ParsedCv } from "./cv-heuristics";
@@ -289,6 +289,12 @@ export async function interviewTurn(interviewId: string, answer: string | null, 
   }
   const state = iv.state as unknown as FlowState;
   const next = answerFlow(nodes, state, answer, vars, profile, app.job.language);
+  // Live phone call: begin recording only once the candidate has consented.
+  if (via === "PHONE" && state.consent === undefined && next.state.consent === true && iv.providerCallId && iv.provider === "twilio") {
+    const creds = (await tenantTwilio(iv.orgId)) ?? platformTwilio();
+    if (creds) await startTwilioRecording(creds, iv.providerCallId, appUrl(`/api/voice/twilio/${iv.id}/recording`));
+    await db.candidate.update({ where: { id: app.candidateId }, data: { consentRecordingAt: new Date(), consentTranscriptAt: new Date() } });
+  }
   await appendSegments(iv, [{ speaker: "CANDIDATE", text: answer.slice(0, 4000), nodeId: state.cursor }, ...next.say.map((t) => ({ speaker: "AI" as const, text: t, nodeId: next.currentNodeId }))]);
   await db.interview.update({ where: { id: iv.id }, data: { state: next.state as object } });
   await db.application.update({ where: { id: iv.applicationId }, data: { lastCandidateActionAt: new Date() } });

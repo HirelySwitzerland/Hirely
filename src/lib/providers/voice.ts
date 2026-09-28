@@ -94,3 +94,28 @@ export function verifyTwilioSignature(url: string, params: Record<string, string
 }
 
 export const VOICE_COST_CENTS_PER_MIN = 14;
+
+/** Starts recording an in-progress call — called only after the candidate gave recording consent. */
+export async function startTwilioRecording(creds: TwilioCreds, callSid: string, callbackUrl: string): Promise<boolean> {
+  try {
+    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${creds.accountSid}/Calls/${callSid}/Recordings.json`, {
+      method: "POST",
+      headers: { authorization: "Basic " + Buffer.from(`${creds.accountSid}:${creds.authToken}`).toString("base64") },
+      body: new URLSearchParams({ RecordingStatusCallback: callbackUrl, RecordingStatusCallbackEvent: "completed", RecordingChannels: "dual" }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function downloadTwilioRecording(creds: TwilioCreds, recordingUrl: string): Promise<Buffer | null> {
+  const res = await fetch(`${recordingUrl}.mp3`, { headers: { authorization: "Basic " + Buffer.from(`${creds.accountSid}:${creds.authToken}`).toString("base64") } });
+  return res.ok ? Buffer.from(await res.arrayBuffer()) : null;
+}
+
+export function platformTwilio(): TwilioCreds | null {
+  return process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER
+    ? { accountSid: process.env.TWILIO_ACCOUNT_SID, authToken: process.env.TWILIO_AUTH_TOKEN, fromNumber: process.env.TWILIO_FROM_NUMBER }
+    : null;
+}

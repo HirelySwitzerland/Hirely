@@ -1,9 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { ActionForm, SubmitButton } from "@/components/forms";
 import { Checkbox, Field, Input } from "@/components/ui";
 import { register } from "@/app/actions/auth";
-
-export const metadata = { title: "Create account" };
 
 export default function RegisterPage() {
   return (

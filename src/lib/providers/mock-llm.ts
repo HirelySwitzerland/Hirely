@@ -18,11 +18,12 @@ const H = {
   it: { about: "Chi siamo", role: "I suoi compiti", profile: "Il suo profilo", nice: "Costituisce un vantaggio", offer: "Offriamo", apply: "Interessato/a?", applyText: "Attendiamo con piacere la sua candidatura.", details: "In breve" },
 };
 
+// Deliberately non-committal: concrete benefits (vacation weeks, pension, etc.) are never invented.
 const OFFER = {
-  de: ["Moderne Arbeitsplätze und Werkzeuge", "Flexible Arbeitszeitmodelle", "Gezielte Weiterbildung und Entwicklungsmöglichkeiten", "Fortschrittliche Sozialleistungen und 5 Wochen Ferien", "Ein kollegiales, offenes Team mit kurzen Entscheidungswegen"],
-  en: ["Modern workplace and tools", "Flexible working-time models", "Targeted training and development", "Attractive benefits and 5 weeks of vacation", "A collegial, open team with short decision paths"],
-  fr: ["Un environnement de travail moderne", "Des horaires flexibles", "Formation continue ciblée", "Prestations sociales attractives et 5 semaines de vacances", "Une équipe ouverte et collégiale"],
-  it: ["Ambiente di lavoro moderno", "Orari flessibili", "Formazione continua mirata", "Prestazioni sociali interessanti e 5 settimane di vacanza", "Un team aperto e collegiale"],
+  de: ["Eine verantwortungsvolle und abwechslungsreiche Aufgabe", "Ein engagiertes Team, das Sie unterstützt", "Eine sorgfältige Einarbeitung"],
+  en: ["A responsible and varied role", "A committed team that supports you", "A thorough onboarding"],
+  fr: ["Une fonction variée et pleine de responsabilités", "Une équipe engagée", "Une intégration soignée"],
+  it: ["Un ruolo vario e di responsabilità", "Un team motivato", "Un inserimento accurato"],
 };
 
 function bulletsFromNotes(notes: string): string[] {
