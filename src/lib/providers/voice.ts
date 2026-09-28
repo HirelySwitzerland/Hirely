@@ -41,14 +41,17 @@ class MockVoice implements VoiceProvider {
   }
 }
 
+export type TwilioCreds = { accountSid: string; authToken: string; fromNumber: string };
+
 class TwilioVoice implements VoiceProvider {
   name = "twilio";
   supportsLanguages = ["de-CH", "de", "en", "fr", "it"];
+  constructor(private creds: TwilioCreds) {}
   async placeCall(req: CallRequest): Promise<CallResult> {
-    const sid = process.env.TWILIO_ACCOUNT_SID!;
+    const sid = this.creds.accountSid;
     const body = new URLSearchParams({
       To: req.to,
-      From: process.env.TWILIO_FROM_NUMBER!,
+      From: this.creds.fromNumber,
       Url: `${req.callbackBaseUrl}/api/voice/twilio/${req.interviewId}`,
       StatusCallback: `${req.callbackBaseUrl}/api/voice/twilio/${req.interviewId}/status`,
       StatusCallbackEvent: "completed",
@@ -58,7 +61,7 @@ class TwilioVoice implements VoiceProvider {
     try {
       const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Calls.json`, {
         method: "POST",
-        headers: { authorization: "Basic " + Buffer.from(`${sid}:${process.env.TWILIO_AUTH_TOKEN}`).toString("base64") },
+        headers: { authorization: "Basic " + Buffer.from(`${sid}:${this.creds.authToken}`).toString("base64") },
         body,
       });
       const data = (await res.json()) as { sid?: string; message?: string };
@@ -70,14 +73,21 @@ class TwilioVoice implements VoiceProvider {
   }
 }
 
-export function getVoiceProvider(): VoiceProvider {
-  if (process.env.VOICE_PROVIDER === "twilio" && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) return new TwilioVoice();
+/** Tenant credentials (Integrations → Phone) take precedence over the platform-wide Twilio account. */
+export function getVoiceProvider(tenant?: TwilioCreds | null): VoiceProvider {
+  if (tenant?.accountSid && tenant.authToken && tenant.fromNumber) return new TwilioVoice(tenant);
+  if (process.env.VOICE_PROVIDER === "twilio" && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER)
+    return new TwilioVoice({ accountSid: process.env.TWILIO_ACCOUNT_SID, authToken: process.env.TWILIO_AUTH_TOKEN, fromNumber: process.env.TWILIO_FROM_NUMBER });
   return new MockVoice();
 }
 
+export function twilioAuthTokenFor(creds?: TwilioCreds | null) {
+  return creds?.authToken ?? process.env.TWILIO_AUTH_TOKEN ?? null;
+}
+
 /** Twilio request signature validation (X-Twilio-Signature). */
-export function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string | null): boolean {
-  const token = process.env.TWILIO_AUTH_TOKEN;
+export function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string | null, authToken?: string | null): boolean {
+  const token = authToken ?? process.env.TWILIO_AUTH_TOKEN;
   if (!token || !signature) return false;
   const data = url + Object.keys(params).sort().map((k) => k + params[k]).join("");
   return safeEqual(crypto.createHmac("sha1", token).update(data).digest("base64"), signature);

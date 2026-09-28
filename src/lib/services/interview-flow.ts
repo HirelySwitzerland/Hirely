@@ -86,8 +86,8 @@ export function extractSalary(answer: string): string | null {
     if (n >= 20000 && n <= 500000) vals.push(n);
   }
   if (!vals.length) return null;
-  const f = (n: number) => "CHF " + n.toLocaleString("de-CH");
-  return vals.length > 1 ? `${f(Math.min(...vals))}–${Math.max(...vals).toLocaleString("de-CH")}` : f(vals[0]);
+  const sw = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+  return vals.length > 1 ? `CHF ${sw(Math.min(...vals))}–${sw(Math.max(...vals))}` : `CHF ${sw(vals[0])}`;
 }
 
 export function extractNotice(answer: string): string | null {

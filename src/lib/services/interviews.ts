@@ -1,9 +1,9 @@
 import type { Interview, InterviewType } from "@prisma/client";
 import { db } from "@/lib/db";
 import { audit, type Actor } from "@/lib/audit";
-import { randomToken } from "@/lib/crypto";
+import { decrypt, randomToken } from "@/lib/crypto";
 import { generate } from "@/lib/providers/llm";
-import { getVoiceProvider, VOICE_COST_CENTS_PER_MIN } from "@/lib/providers/voice";
+import { getVoiceProvider, VOICE_COST_CENTS_PER_MIN, type TwilioCreds } from "@/lib/providers/voice";
 import { TRANSCRIPTION_COST_CENTS_PER_MIN } from "@/lib/providers/transcription";
 import { enqueue } from "@/lib/queue";
 import { parseCvHeuristic, type ParsedCv } from "./cv-heuristics";
@@ -16,6 +16,16 @@ import { checkLimit, recordUsage } from "./usage";
 import { fireTrigger } from "./automation";
 
 export class InterviewError extends Error {}
+
+export async function tenantTwilio(orgId: string): Promise<TwilioCreds | null> {
+  const integ = await db.integration.findFirst({ where: { orgId, kind: "PHONE", provider: "twilio", status: "CONNECTED" } });
+  if (!integ?.secretsEnc) return null;
+  try {
+    return JSON.parse(decrypt(integ.secretsEnc)) as TwilioCreds;
+  } catch {
+    return null;
+  }
+}
 
 export async function flowForJob(jobId: string): Promise<FlowNode[]> {
   const job = await db.job.findUniqueOrThrow({ where: { id: jobId }, include: { interviewFlow: true, questions: { orderBy: { order: "asc" } }, requirements: true } });
@@ -122,7 +132,7 @@ export async function requestCallNow(token: string, phone: string) {
   await db.candidate.update({ where: { id: iv.application.candidateId }, data: { phone: cleanPhone } });
   await db.interview.update({ where: { id: iv.id }, data: { type: "PHONE", status: "SCHEDULED", scheduledAt: new Date(), error: null } });
   await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "SCHEDULED", lastCandidateActionAt: new Date() } });
-  await enqueue("interview.call", { interviewId: iv.id }, { orgId: iv.orgId });
+  await enqueue("interview.call", { interviewId: iv.id, explicit: true }, { orgId: iv.orgId });
 }
 
 export async function scheduleCall(token: string, phone: string, at: Date) {
@@ -132,13 +142,13 @@ export async function scheduleCall(token: string, phone: string, at: Date) {
   await db.candidate.update({ where: { id: iv.application.candidateId }, data: { phone: phone.replace(/[^\d+]/g, "") } });
   await db.interview.update({ where: { id: iv.id }, data: { type: "PHONE", status: "SCHEDULED", scheduledAt: at, error: null } });
   await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "SCHEDULED", lastCandidateActionAt: new Date() } });
-  await enqueue("interview.call", { interviewId: iv.id }, { orgId: iv.orgId, runAt: at });
+  await enqueue("interview.call", { interviewId: iv.id, explicit: true }, { orgId: iv.orgId, runAt: at });
   await audit(iv.orgId, { type: "CANDIDATE", name: iv.application.candidate.firstName }, "interview.scheduled", { type: "Interview", id: iv.id }, { at: at.toISOString() });
 }
 
 // ─────────────── phone calls ───────────────
 
-export async function placeCall(interviewId: string) {
+export async function placeCall(interviewId: string, opts: { explicit?: boolean } = {}) {
   const iv = await db.interview.findUnique({ where: { id: interviewId }, include: { application: { include: { candidate: true } } } });
   if (!iv || !["SCHEDULED", "NO_ANSWER", "PENDING"].includes(iv.status)) return;
   const limit = await checkLimit(iv.orgId, "VOICE_MINUTES");
@@ -146,26 +156,44 @@ export async function placeCall(interviewId: string) {
     await failInterview(iv.id, "Voice minute limit reached for this billing period. Raise the limit in Settings → Usage to resume calls.", "FAILED");
     return;
   }
+  // Respect the organization's call window (Europe/Zurich) and max attempts.
+  const org = await db.organization.findUniqueOrThrow({ where: { id: iv.orgId } });
+  const voice = ((org.settings as Record<string, unknown>).voice ?? {}) as { callWindowStart?: string; callWindowEnd?: string; maxAttempts?: number };
+  const maxAttempts = Number(voice.maxAttempts) || 3;
+  const nowZ = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Zurich", hour: "2-digit", minute: "2-digit", hour12: false });
+  const winStart = voice.callWindowStart ?? "08:00";
+  const winEnd = voice.callWindowEnd ?? "19:30";
+  if (!opts.explicit && (nowZ < winStart || nowZ > winEnd)) {
+    const [h, m] = winStart.split(":").map(Number);
+    const zurichNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Zurich" }));
+    const next = new Date(zurichNow);
+    next.setHours(h, m, 0, 0);
+    if (next <= zurichNow) next.setDate(next.getDate() + 1);
+    const at = new Date(Date.now() + (next.getTime() - zurichNow.getTime()));
+    await db.interview.update({ where: { id: iv.id }, data: { status: "SCHEDULED", scheduledAt: at, error: `Outside the call window (${winStart}–${winEnd}); call rescheduled.` } });
+    await enqueue("interview.call", { interviewId: iv.id }, { orgId: iv.orgId, runAt: at });
+    return;
+  }
   const phone = iv.application.candidate.phone;
   if (!phone) {
     await failInterview(iv.id, "Candidate has no phone number.", "FAILED");
     return;
   }
-  const provider = getVoiceProvider();
+  const provider = getVoiceProvider(await tenantTwilio(iv.orgId));
   const res = await provider.placeCall({ interviewId: iv.id, to: phone, language: iv.language, callbackBaseUrl: appUrl() });
   const attempts = iv.attempts + 1;
   if (!res.ok) {
     if (res.code === "NO_ANSWER" || res.code === "BUSY") {
       await db.interview.update({ where: { id: iv.id }, data: { status: "NO_ANSWER", attempts, error: res.error, provider: provider.name } });
       await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "NO_ANSWER" } });
-      if (attempts < 3) {
+      if (attempts < maxAttempts) {
         await enqueue("interview.call", { interviewId: iv.id }, { orgId: iv.orgId, runAt: new Date(Date.now() + 2 * 3600_000 * Number(process.env.AUTOMATION_TIME_SCALE ?? 1)) });
         await sendMessage({ orgId: iv.orgId, applicationId: iv.applicationId, channel: "SMS", templateKey: "call_missed", actor: { type: "AI" } }).catch(() => undefined);
       } else {
         await sendMessage({ orgId: iv.orgId, applicationId: iv.applicationId, channel: "EMAIL", templateKey: "call_missed", actor: { type: "AI" } }).catch(() => undefined);
         await notify(iv.orgId, {
           type: "ai_call_failed",
-          title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} did not answer (3 attempts)`,
+          title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} did not answer (${attempts} attempts)`,
           body: "Hirely sent a link to reschedule. You can also call manually or send a browser-interview link.",
           link: `/app/candidates/${iv.applicationId}?tab=interview`,
           severity: "warning",
@@ -237,13 +265,15 @@ export async function runSimulatedCall(interviewId: string) {
 export async function interviewTurn(interviewId: string, answer: string | null, via: "WEB" | "PHONE") {
   const { iv, profile, vars, nodes, app } = await loadContext(interviewId);
   if (iv.status === "COMPLETED" || iv.status === "CANCELLED") return { say: [] as string[], done: true, awaitingAnswer: false };
-  if (answer === null || !iv.startedAt) {
+  const current = iv.state as unknown as FlowState | null;
+  const fresh = !current || !Array.isArray(current.visited);
+  if (answer === null || fresh) {
     const started = await db.interview.update({
       where: { id: iv.id },
       data: { status: "IN_PROGRESS", type: via, startedAt: iv.startedAt ?? new Date(), aiDisclosedAt: new Date(), provider: via === "WEB" ? "browser" : iv.provider, attempts: iv.attempts + (iv.startedAt ? 0 : 1) },
     });
     await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "IN_PROGRESS", lastCandidateActionAt: new Date() } });
-    if (!iv.startedAt) {
+    if (fresh) {
       await audit(iv.orgId, { type: "AI" }, "interview.started", { type: "Interview", id: iv.id, label: `${app.candidate.firstName} ${app.candidate.lastName}` }, { via });
       const turn = startFlow(nodes, vars, profile);
       await db.transcriptSegment.deleteMany({ where: { interviewId: iv.id } });
@@ -251,8 +281,8 @@ export async function interviewTurn(interviewId: string, answer: string | null, 
       await db.interview.update({ where: { id: iv.id }, data: { state: turn.state as object } });
       return { say: turn.say, done: turn.state.done, awaitingAnswer: turn.awaitingAnswer, nodeId: turn.currentNodeId };
     }
-    // Resume: repeat the current question.
-    const state = iv.state as unknown as FlowState;
+    // Resume (page reload / call redirect): repeat the current question.
+    const state = current!;
     const node = nodes.find((n) => n.id === state.cursor);
     const say = state.pendingFollowUp ? [state.pendingFollowUp.text] : node && "text" in node ? [node.text.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, k) => String(vars[k] ?? profile[k as keyof FlowProfile] ?? ""))] : [];
     return { say, done: state.done, awaitingAnswer: !state.done, nodeId: state.cursor };
@@ -354,6 +384,6 @@ export async function completeInterview(interviewId: string) {
 export async function resetInterviewForRetry(orgId: string, interviewId: string, actor: Actor, type: InterviewType = "PHONE") {
   const iv = await db.interview.findFirstOrThrow({ where: { id: interviewId, orgId } });
   await db.interview.update({ where: { id: iv.id }, data: { status: type === "PHONE" ? "SCHEDULED" : "PENDING", error: null, type, scheduledAt: new Date() } });
-  if (type === "PHONE") await enqueue("interview.call", { interviewId: iv.id }, { orgId });
+  if (type === "PHONE") await enqueue("interview.call", { interviewId: iv.id, explicit: true }, { orgId });
   await audit(orgId, actor, "interview.retry", { type: "Interview", id: iv.id }, { type });
 }

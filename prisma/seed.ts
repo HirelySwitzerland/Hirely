@@ -263,7 +263,7 @@ async function main() {
       if (cs.target === "NO_ANSWER") {
         const iv = await ensurePrescreen(O, app.id);
         await db.interview.update({ where: { id: iv.id }, data: { status: "SCHEDULED", scheduledAt: subDays(now, 1) } });
-        await placeCall(iv.id);
+        await placeCall(iv.id, { explicit: true });
       }
     }
     if (cs.interview) await seedInterview(app.id, (cs.answers ?? {}) as Record<string, string>, addDays(appliedAt, 1));

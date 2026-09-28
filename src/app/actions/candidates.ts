@@ -335,3 +335,28 @@ export async function processQueueNow(_?: ActionState): Promise<ActionState> {
     return toActionError(e);
   }
 }
+
+export async function addPoolCandidateToJob(_: ActionState, fd: FormData): Promise<ActionState> {
+  try {
+    const ctx = await requirePermission("candidates.manage");
+    const cand = await db.candidate.findFirst({ where: { id: str(fd, "candidateId"), orgId: ctx.orgId, anonymizedAt: null } });
+    const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId } });
+    if (!cand || !job) return fail("Candidate or job not found.");
+    if (!cand.consentTalentPoolAt) return fail("This candidate has not consented to being contacted from the talent pool.");
+    const existing = await db.application.findUnique({ where: { candidateId_jobId: { candidateId: cand.id, jobId: job.id } } });
+    if (existing) return ok("Already in this job's pipeline.", { redirect: `/app/candidates/${existing.id}` });
+    const doc = await db.document.findFirst({ where: { candidateId: cand.id, kind: "CV" }, orderBy: { createdAt: "desc" } });
+    const app = await db.application.create({
+      data: {
+        orgId: ctx.orgId, candidateId: cand.id, jobId: job.id, source: "MANUAL", sourceDetail: "Talent pool", screeningStatus: "PENDING",
+        stageHistory: { create: { orgId: ctx.orgId, toStage: "NEW", actorType: "USER", actorId: ctx.user.id, reason: "Added from talent pool" } },
+      },
+    });
+    void doc;
+    await analyzeApplication(app.id);
+    await audit(ctx.orgId, userActor(ctx.user), "candidate.added_from_pool", { type: "Application", id: app.id, label: `${cand.firstName} ${cand.lastName} → ${job.title}` });
+    return ok(`${cand.firstName} was added to ${job.title} and screened against its requirements.`, { redirect: `/app/candidates/${app.id}` });
+  } catch (e) {
+    return toActionError(e);
+  }
+}

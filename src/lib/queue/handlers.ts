@@ -10,7 +10,7 @@ import { formatZurich } from "@/lib/services/scheduling";
 
 registerHandler("cv.analyze", async (p) => analyzeApplication(p.applicationId));
 registerHandler("automation.step", async (p) => executeRun(p.runId));
-registerHandler("interview.call", async (p) => placeCall(p.interviewId));
+registerHandler("interview.call", async (p) => placeCall(p.interviewId, { explicit: Boolean(p.explicit) }));
 registerHandler("message.retry", async (p) => {
   const m = await db.message.findUnique({ where: { id: p.messageId } });
   if (m && m.status === "FAILED") await deliver(m.id);

@@ -196,6 +196,14 @@ export async function deliver(messageId: string, actor: Actor = { type: "SYSTEM"
     await db.message.update({ where: { id: msg.id }, data: { status: "DELIVERED", sentAt: new Date(), provider: "hirely" } });
     return { ok: true, messageId };
   }
+  if (msg.channel === "SMS" || msg.channel === "WHATSAPP") {
+    const { checkLimit } = await import("./usage");
+    const lim = await checkLimit(msg.orgId, "SMS");
+    if (!lim.allowed) {
+      await db.message.update({ where: { id: msg.id }, data: { status: "FAILED", error: "SMS hard usage limit reached for this billing period." } });
+      return { ok: false, messageId, error: "SMS hard usage limit reached — raise it under Settings → AI usage & costs." };
+    }
+  }
   const provider = getMessageProvider(msg.channel as "EMAIL" | "SMS" | "WHATSAPP");
   const org = await db.organization.findUniqueOrThrow({ where: { id: msg.orgId } });
   const res = await provider.send({ to: msg.to, subject: msg.subject ?? undefined, body: msg.body, orgName: org.name });
