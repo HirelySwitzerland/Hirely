@@ -168,7 +168,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                               {evidence.slice(0, 3).map((ev, i) => (
                                 <li key={i} className="flex gap-2 text-[13px]">
                                   <span className="mt-px shrink-0 rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase leading-5 text-slate-500">{ev.source === "INTERVIEW" ? "Interview" : ev.source === "SCREENING" ? "Formular" : ev.source === "VIDEO" ? "Video" : "CV"}</span>
-                                  <span className="text-slate-700">“{ev.quote}”{ev.note && <span className="text-slate-400"> — {ev.note}</span>}</span>
+                                  <span className="text-slate-700">„{ev.quote}“{ev.note && <span className="text-slate-400"> — {ev.note}</span>}</span>
                                 </li>
                               ))}
                             </ul>

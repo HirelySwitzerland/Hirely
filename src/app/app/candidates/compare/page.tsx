@@ -39,7 +39,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
     { label: "Verfügbar ab", render: (a) => a.availability ?? <span className="text-slate-400">Unbekannt</span> },
     { label: "Kündigungsfrist", render: (a) => a.noticePeriod ?? <span className="text-slate-400">Unbekannt</span> },
     { label: "Lohnvorstellung", render: (a) => a.salaryExpectation ?? <span className="text-slate-400">Unbekannt</span> },
-    { label: "Motivation (eigene Worte)", render: (a) => <span className="text-[13px] text-slate-600">{keyAnswer(a, "motivation") ? `“${keyAnswer(a, "motivation")!.slice(0, 180)}”` : "—"}</span> },
+    { label: "Motivation (eigene Worte)", render: (a) => <span className="text-[13px] text-slate-600">{keyAnswer(a, "motivation") ? `„${keyAnswer(a, "motivation")!.slice(0, 180)}“` : "—"}</span> },
   ];
   return (
     <div>
@@ -80,7 +80,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   return (
                     <td key={a.id} className="border-b border-l border-slate-100 px-4 py-3 align-top">
                       <span className={cn("inline-flex items-center gap-1.5 text-[13px] font-medium", m.cls)}><Icon className="h-4 w-4" />{m.label}</span>
-                      {ev && <p className="mt-1 line-clamp-2 text-xs text-slate-500">“{ev.quote}”</p>}
+                      {ev && <p className="mt-1 line-clamp-2 text-xs text-slate-500">„{ev.quote}“</p>}
                     </td>
                   );
                 })}

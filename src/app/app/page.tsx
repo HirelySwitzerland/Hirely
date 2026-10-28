@@ -3,9 +3,10 @@ import { ArrowRight, CalendarCheck, Clock, FileSearch, Briefcase, Users, AlertTr
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
 import { applicationScope } from "@/lib/services/scope";
-import { applicationsOverTime, dashboardMetrics, funnel, TIME_SAVED_MINUTES } from "@/lib/services/analytics";
+import { applicationsOverTime, dashboardMetrics, funnel, interviewCompletion, pipelineByJob, sourcePerformance, TIME_SAVED_MINUTES } from "@/lib/services/analytics";
+import { STAGES } from "@/lib/stages";
 import { Alert, Avatar, Card, CardHeader, EmptyState, LinkButton, StatCard } from "@/components/ui";
-import { FunnelChart, TrendChart } from "@/components/charts";
+import { FunnelChart, GroupedBars, StackedStageBars, StatusBars, TrendChart } from "@/components/charts";
 import { InterviewBadge, RequirementsMeter, StageBadge } from "@/components/status";
 import { ago, fmtDateTime } from "@/lib/utils";
 
@@ -14,10 +15,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const ctx = await pageContext();
   const scope = applicationScope(ctx);
   const canCandidates = ctx.can("candidates.view");
-  const [m, trend, fun, ready, upcoming, attention] = await Promise.all([
+  const [m, trend, fun, byJob, sources, ivStatus, ready, upcoming, attention] = await Promise.all([
     dashboardMetrics(ctx.orgId, scope),
     applicationsOverTime(scope, 10),
     funnel(scope),
+    pipelineByJob(ctx.orgId, scope),
+    sourcePerformance(scope),
+    interviewCompletion(ctx.orgId, scope),
     canCandidates ? db.application.findMany({ where: { ...scope, stage: "REVIEW" }, include: { candidate: true, job: true }, orderBy: { readyForReviewAt: "desc" }, take: 6 }) : [],
     db.calendarEvent.findMany({ where: { orgId: ctx.orgId, startsAt: { gte: new Date() }, status: { not: "CANCELLED" }, application: scope }, include: { application: { include: { candidate: true, job: true } } }, orderBy: { startsAt: "asc" }, take: 4 }),
     canCandidates ? db.application.findMany({ where: { ...scope, OR: [{ interviewStatus: { in: ["NO_ANSWER", "FAILED"] } }, { screeningStatus: "FAILED" }], stage: { notIn: ["REJECTED", "HIRED"] } }, include: { candidate: true }, take: 4 }) : [],
@@ -25,6 +29,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const hour = Number(new Date().toLocaleString("de-CH", { hour: "2-digit", hour12: false, timeZone: "Europe/Zurich" }));
   const greeting = hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend";
   const firstName = ctx.user.name.split(" ")[0];
+  const stageKeys = STAGES.filter((s) => !["REJECTED", "TALENT_POOL"].includes(s.id)).map((s) => ({ key: s.id, label: s.label }));
 
   return (
     <div className="space-y-6">
@@ -140,6 +145,24 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <div className="p-5"><FunnelChart data={fun} /></div>
         </Card>
       </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
+        <Card className="xl:col-span-3">
+          <CardHeader title="Kandidierende pro Stelle" description="Wie viele Personen in welcher Stufe sind" />
+          <div className="p-5">{byJob.length ? <StackedStageBars data={byJob} stages={stageKeys} /> : <EmptyState title="Keine offenen Stellen" action={<LinkButton href="/app/jobs/new" size="sm">Stelle erstellen</LinkButton>} />}</div>
+        </Card>
+        <Card className="xl:col-span-2">
+          <CardHeader title="KI-Interviews" description="Stand aller eingeladenen Personen" />
+          <div className="p-5">{ivStatus.length ? <StatusBars data={ivStatus} /> : <EmptyState title="Noch keine KI-Interviews" />}</div>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader title="Bewerbungsquellen" description="Bewerbungen, KI-Interviews und engere Wahl pro Quelle" />
+        <div className="p-5">
+          <GroupedBars data={sources.slice(0, 6)} categoryKey="source" keys={[{ key: "applications", label: "Bewerbungen" }, { key: "interviewed", label: "KI-Interview" }, { key: "shortlisted", label: "Engere Wahl+" }]} />
+        </div>
+      </Card>
 
       <p className="text-xs text-slate-400">
         Die gesparte Zeit ist geschätzt: CV-Prüfung {TIME_SAVED_MINUTES.cvScreened} Min., KI-Interview {TIME_SAVED_MINUTES.aiInterview} Min., Nachricht {TIME_SAVED_MINUTES.messageSent} Min., Terminbuchung {TIME_SAVED_MINUTES.interviewBooked} Min.
