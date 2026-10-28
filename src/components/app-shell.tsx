@@ -295,7 +295,7 @@ export function AssistantChat({ suggestions, onNavigate }: { suggestions: string
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [msgs, busy]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
   const ask = async (q: string) => {
     if (!q.trim() || busy) return;
     setMsgs((m) => [...m, { role: "user", text: q }]);

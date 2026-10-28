@@ -43,7 +43,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
   return (
     <div>
       {sel.length > 0 && (
-        <div className="sticky top-16 z-10 flex flex-wrap items-center gap-2 border-b border-brand-200 bg-brand-50 px-4 py-2.5 text-sm">
+        <div className="flex flex-wrap items-center gap-2 border-b border-brand-200 bg-brand-50 px-4 py-2.5 text-sm">
           <span className="font-medium text-brand-900">{sel.length} ausgewählt</span>
           <Link href={`/app/candidates/compare?ids=${sel.join(",")}`} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-white px-3 text-[13px] font-medium text-ink shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
             <GitCompareArrows className="h-3.5 w-3.5" />Vergleichen

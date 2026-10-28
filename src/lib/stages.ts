@@ -44,4 +44,9 @@ export const LANGUAGE_LABEL: Record<string, string> = {
   Spanish: "Spanisch", Portuguese: "Portugiesisch", Serbian: "Serbisch", Croatian: "Kroatisch", Bosnian: "Bosnisch", Albanian: "Albanisch",
   Turkish: "Türkisch", Polish: "Polnisch", Romansh: "Rätoromanisch", Russian: "Russisch", Arabic: "Arabisch", Tamil: "Tamil", Dutch: "Niederländisch",
 };
-export const langLabel = (l: string) => LANGUAGE_LABEL[l] ?? l;
+/** "German" → "Deutsch", also with a level suffix: "German C2" → "Deutsch C2". */
+export const langLabel = (l: string) => {
+  if (LANGUAGE_LABEL[l]) return LANGUAGE_LABEL[l];
+  const m = l.match(/^(.+?)\s+(\S+)$/);
+  return m && LANGUAGE_LABEL[m[1]] ? `${LANGUAGE_LABEL[m[1]]} ${m[2]}` : l;
+};

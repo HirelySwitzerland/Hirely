@@ -22,11 +22,11 @@ export interface VoiceProvider {
 }
 
 export const VOICE_LANGUAGES = [
-  { code: "de-CH", label: "Swiss German (beta, understands dialect; speaks Standard German)" },
-  { code: "de", label: "German" },
-  { code: "en", label: "English" },
-  { code: "fr", label: "French" },
-  { code: "it", label: "Italian" },
+  { code: "de-CH", label: "Schweizerdeutsch (Beta – versteht Dialekt, spricht Hochdeutsch)" },
+  { code: "de", label: "Deutsch" },
+  { code: "en", label: "Englisch" },
+  { code: "fr", label: "Französisch" },
+  { code: "it", label: "Italienisch" },
 ];
 
 class MockVoice implements VoiceProvider {

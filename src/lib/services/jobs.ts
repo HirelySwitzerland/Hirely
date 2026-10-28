@@ -35,6 +35,20 @@ export async function createJobRecord(ctx: { orgId: string; user: { id: string; 
   return job;
 }
 
+/** Starting criteria from the job form, so a new job is never without criteria. HR reviews and edits them on the next page. */
+export function deriveRequirements(d: Pick<JobInput, "experience" | "education" | "skills" | "roughNotes" | "language">): { kind: RequirementKind; label: string }[] {
+  const de = d.language === "de";
+  const out: { kind: RequirementKind; label: string }[] = [];
+  const exp = d.experience?.trim();
+  if (exp) out.push({ kind: "MUST", label: /erfahrung|experience/i.test(exp) ? exp : de ? `${exp} Berufserfahrung` : `${exp} professional experience` });
+  const edu = d.education?.trim();
+  if (edu) out.push({ kind: "MUST", label: /ausbildung|education|degree/i.test(edu) ? edu : de ? `Ausbildung: ${edu}` : `Education: ${edu}` });
+  const licence = (d.roughNotes ?? "").split("\n").map((l) => l.replace(/^[-*•\s]+/, "").trim()).find((l) => /führerausweis|führerschein|driving licen[cs]e|permis de conduire/i.test(l));
+  if (licence) out.push({ kind: "MUST", label: licence.slice(0, 120) });
+  for (const skill of d.skills.slice(0, 6)) out.push({ kind: "NICE", label: skill });
+  return out;
+}
+
 export function guessCategory(label: string): RequirementCategory {
   const l = label.toLowerCase();
   if (/\b(deutsch|german|englisch|english|französisch|french|italienisch|italian)\b|\b[abc][12]\b/.test(l)) return "LANGUAGE";

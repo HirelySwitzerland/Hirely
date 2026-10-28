@@ -7,6 +7,7 @@ import { getT } from "@/lib/i18n";
 import { ActionButton } from "@/components/forms";
 import { Alert, Avatar, LinkButton } from "@/components/ui";
 import { candidatePortalAction } from "@/app/actions/public";
+import { AutoRefresh } from "@/components/candidate/auto-refresh";
 import { cn, fmtDateTime } from "@/lib/utils";
 
 export const metadata = { title: "Ihre Bewerbung", robots: { index: false } };
@@ -50,6 +51,7 @@ export default async function PortalPage({ params, searchParams }: { params: Pro
           <h1 className="text-2xl font-semibold tracking-tight text-ink">{de ? `Hallo ${cand.firstName}` : `Hi ${cand.firstName}`}</h1>
           <p className="mt-1 text-sm text-slate-500">{t("portal.title")}</p>
         </div>
+        {cand.applications.some((a) => ["NEW", "AI_SCREENING"].includes(a.stage) && !a.interviews.some((i) => i.status !== "CANCELLED")) && <AutoRefresh />}
         {cand.applications.map((a) => {
           const step = publicStep(a.stage, a.interviewStatus);
           const pre = a.interviews.find((i) => i.type !== "VIDEO" && i.status !== "COMPLETED" && i.status !== "CANCELLED");

@@ -261,7 +261,7 @@ function FlowTester({ nodes, vars, language }: { nodes: FlowNode[]; vars: Record
   const [state, setState] = useState<FlowState | null>(null);
   const [answer, setAnswer] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
-  useEffect(() => endRef.current?.scrollIntoView({ block: "nearest" }), [log]);
+  useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [log]);
   const profile = { yearsExperience: Number(years) || 0, licenses: license ? ["Kat. B"] : [], latestRole: "Konstrukteur", latestCompany: "Muster AG" };
   const start = () => {
     const t = startFlow(nodes, vars, profile);

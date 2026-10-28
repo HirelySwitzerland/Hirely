@@ -15,6 +15,7 @@ export type AssistantItem = { title: string; subtitle?: string; href?: string; b
 export type AssistantReply = { text: string; items?: AssistantItem[]; draft?: { subject?: string; body: string }; suggestions?: string[] };
 
 const SUGGESTIONS = [
+  "Wer wartet auf einen Entscheid?",
   "Wer hat das KI-Interview abgeschlossen?",
   "Fasse die drei neuesten Bewerbungen zusammen.",
   "Wer hat das Interview noch nicht abgeschlossen?",
@@ -58,12 +59,12 @@ export async function askAssistant(ctx: Ctx, question: string): Promise<Assistan
     };
   }
   // 3) Ready for review
-  if (/ready for review|review|prüfen|zur prüfung/.test(lq) && !/draft|email|mail/.test(lq)) {
+  if (/ready for review|review|prüfen|zur prüfung|\bwartet\b|\bwarten\b|entscheid/.test(lq) && !/draft|email|mail/.test(lq)) {
     if (!canSeeCandidates) return denied;
     const apps = await db.application.findMany({ where: { ...appWhere, stage: "REVIEW" }, include: { candidate: true, job: true }, orderBy: { readyForReviewAt: "desc" }, take: 25 });
     return {
-      text: `${apps.length} ${apps.length === 1 ? "Person wartet" : "Personen warten"} auf Ihre Prüfung:`,
-      items: apps.map((a) => ({ title: `${a.candidate.firstName} ${a.candidate.lastName}`, subtitle: `${a.job.title} · erfüllt ${a.requirementsMet}/${a.requirementsTotal} Anforderungen`, href: `/app/candidates/${a.id}` })),
+      text: apps.length ? `${apps.length} ${apps.length === 1 ? "Person wartet" : "Personen warten"} auf Ihren Entscheid:` : "Im Moment wartet niemand auf Ihren Entscheid.",
+      items: apps.map((a) => ({ title: `${a.candidate.firstName} ${a.candidate.lastName}`, subtitle: `${a.job.title} · erfüllt ${a.requirementsMet}/${a.requirementsTotal} Anforderungen`, href: `/app/candidates/${a.id}`, badge: STAGE_LABEL[a.stage] })),
     };
   }
   // 4) Summaries of newest candidates

@@ -22,7 +22,7 @@ export default async function WebInterviewPage({ params }: { params: Promise<{ t
           </div>
         </div>
       </header>
-      <WebInterview token={token} locale={app.job.language} initialHistory={history} completed={iv.status === "COMPLETED"} />
+      <WebInterview token={token} locale={app.job.language} initialHistory={history} completed={iv.status === "COMPLETED"} portalHref={`/portal/${app.candidate.portalToken}`} />
     </div>
   );
 }

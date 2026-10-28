@@ -8,7 +8,7 @@ import { requirePermission } from "@/lib/auth/session";
 import { generate, parseJsonLoose, AIUnavailableError } from "@/lib/providers/llm";
 import { wrapUntrusted } from "@/lib/ai-safety";
 import { validateFlow, type FlowNode } from "@/lib/services/interview-flow";
-import { createJobRecord, ensureFlow, regenerateFlow, uniqueJobSlug } from "@/lib/services/jobs";
+import { createJobRecord, deriveRequirements, ensureFlow, regenerateFlow, uniqueJobSlug } from "@/lib/services/jobs";
 import { fail, ok, str, toActionError, type ActionState } from "@/lib/action-state";
 
 const jobSchema = z.object({
@@ -43,7 +43,7 @@ export async function createJob(_: ActionState, fd: FormData): Promise<ActionSta
   try {
     const ctx = await requirePermission("jobs.manage");
     const d = parseJobForm(fd);
-    const job = await createJobRecord(ctx, { ...d, status: str(fd, "publish") === "1" ? "OPEN" : "DRAFT" });
+    const job = await createJobRecord(ctx, { ...d, status: str(fd, "publish") === "1" ? "OPEN" : "DRAFT" }, deriveRequirements(d));
     await ensureFlow(job.id);
     return ok("Stelle erstellt.", { redirect: `/app/jobs/${job.id}/ai` });
   } catch (e) {

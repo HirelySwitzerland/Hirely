@@ -4,10 +4,10 @@ import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  if (!rateLimit(`video:${token}`, 30, 3600_000).ok) return NextResponse.json({ error: "Too many uploads." }, { status: 429 });
+  if (!rateLimit(`video:${token}`, 30, 3600_000).ok) return NextResponse.json({ error: "Zu viele Uploads. Bitte warten Sie einen Moment." }, { status: 429 });
   const fd = await req.formData();
   const file = fd.get("file");
-  if (!(file instanceof File)) return NextResponse.json({ error: "No recording received." }, { status: 400 });
+  if (!(file instanceof File)) return NextResponse.json({ error: "Keine Aufnahme erhalten." }, { status: 400 });
   try {
     const r = await saveVideoAnswer(token, Number(fd.get("index")), { buffer: Buffer.from(await file.arrayBuffer()), mime: file.type || "video/webm" }, String(fd.get("captions") ?? "") || undefined, Number(fd.get("duration")) || 0);
     return NextResponse.json({ ok: true, transcriptStatus: r.transcriptStatus });

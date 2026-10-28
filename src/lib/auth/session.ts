@@ -107,7 +107,7 @@ export async function getContext(opts: { allowIncompleteOnboarding?: boolean } =
 
 export class ForbiddenError extends Error {
   constructor(permission: string) {
-    super(`You don't have permission to perform this action (${permission}).`);
+    super(`Sie haben keine Berechtigung für diese Aktion (${permission}).`);
   }
 }
 

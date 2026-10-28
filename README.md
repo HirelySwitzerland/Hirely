@@ -46,12 +46,16 @@ The seed creates 8 jobs (6 open), 28 candidates with realistic Swiss CVs, AI int
 ### Try the complete end-to-end flow (≈3 minutes)
 
 1. Open the career page: <http://localhost:3000/careers/helvetic-engineering> → **Servicetechniker/in** → apply with any CV (PDF, DOCX or TXT).
-2. You land in the candidate portal. The *Standard pre-screening pipeline* automation waits, analyzes the CV, checks the minimum criteria and sends an AI interview invitation (with `AUTOMATION_TIME_SCALE=0.005`, "wait 10 minutes" takes 3 seconds). Refresh the portal.
+2. You land in the candidate portal. The *Standard pre-screening pipeline* automation waits, analyzes the CV, checks the minimum criteria and sends an AI interview invitation (with `AUTOMATION_TIME_SCALE=0.005`, "wait 10 minutes" takes 3 seconds). The portal refreshes itself while the CV is being screened.
 3. Click **Start pre-screening interview** → **Do it in the browser** and answer the AI's questions (type or speak — Chrome supports voice input/output), or choose **Call me now** (simulated call without Twilio).
 4. Sign in as `laura.frei@…` → the notification **“New candidate ready for review”** appears → open the profile: summary, requirement evidence, transcript, availability, notice period, salary expectation.
 5. Click **Invite to personal interview** → open the candidate portal again → **Choose an interview time** → pick a slot. The calendar event is created, confirmation email sent, and the candidate moves to **Personal Interview**.
 
 Every email/SMS is recorded in **Automations → Outbox** (mock provider) so the flow is fully visible without external accounts.
+
+### Live demo on Windows
+
+Double-click **`Hirely-Vorfuehrung.bat`**: it optionally resets the demo data, builds a production bundle (pages open instantly, no dev overlay) and starts Hirely on <http://localhost:3000>. A click-by-click German demo script is in [`demo/Vorfuehrung.md`](demo/Vorfuehrung.md), with a sample CV in `demo/Lebenslauf-Max-Muster.txt`. For day-to-day development keep using `Hirely-starten.bat` (`npm run dev`).
 
 ---
 

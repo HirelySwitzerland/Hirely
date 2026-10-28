@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     data = await getStorage().get(doc.storageKey);
   } catch (e) {
     console.error("[files] storage read failed", e);
-    return new NextResponse("The file could not be retrieved from storage. Please contact support.", { status: 502 });
+    return new NextResponse("Die Datei konnte nicht geladen werden. Bitte wenden Sie sich an den Support.", { status: 502 });
   }
   await audit(ctx.orgId, userActor(ctx.user), "document.downloaded", { type: "Document", id: doc.id, label: doc.filename });
   const inline = new URL(req.url).searchParams.get("inline") === "1" && doc.mimeType === "application/pdf";

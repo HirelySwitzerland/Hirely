@@ -10,6 +10,8 @@ import { detectInjection, quoteIsGrounded } from "../src/lib/ai-safety";
 import { verifyWebhookSignature } from "../src/lib/providers/ats";
 import { computeOverage } from "../src/lib/billing";
 import { parseTalentQuery } from "../src/lib/services/search";
+import { deriveRequirements, guessCategory } from "../src/lib/services/jobs";
+import { langLabel } from "../src/lib/stages";
 
 const CV = `Marco Rossi
 CNC-Fräser / Polymechaniker EFZ
@@ -163,4 +165,24 @@ test("Talent search query parsing", () => {
   const q = parseTalentQuery("Show candidates with electrical engineering experience in Eastern Switzerland");
   assert.equal(q.region, "Ostschweiz");
   assert.deepEqual(q.terms, ["electrical", "engineering"]);
+});
+
+test("new jobs start with criteria derived from the job form", () => {
+  const reqs = deriveRequirements({ language: "de", experience: "2+ Jahre", education: "EFZ Elektroinstallateur", skills: ["NIV", "Baustelle"], roughNotes: "Neubauten\n- Führerausweis B\nTeam von 8" });
+  assert.deepEqual(reqs, [
+    { kind: "MUST", label: "2+ Jahre Berufserfahrung" },
+    { kind: "MUST", label: "Ausbildung: EFZ Elektroinstallateur" },
+    { kind: "MUST", label: "Führerausweis B" },
+    { kind: "NICE", label: "NIV" },
+    { kind: "NICE", label: "Baustelle" },
+  ]);
+  assert.equal(guessCategory(reqs[2].label), "LICENSE");
+  assert.deepEqual(deriveRequirements({ language: "de", skills: [] }), []);
+});
+
+test("language names are shown in German, with or without a level", () => {
+  assert.equal(langLabel("German"), "Deutsch");
+  assert.equal(langLabel("German C2"), "Deutsch C2");
+  assert.equal(langLabel("Swiss German"), "Schweizerdeutsch");
+  assert.equal(langLabel("Klingon B1"), "Klingon B1");
 });

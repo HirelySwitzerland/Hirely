@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bot, CheckCircle2, Loader2, Mic, MicOff, Send, Volume2, VolumeX } from "lucide-react";
 import { getT } from "@/lib/i18n";
+import { LinkButton } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 type Line = { who: "ai" | "me"; text: string };
@@ -13,7 +14,7 @@ type SR = { lang: string; interimResults: boolean; continuous: boolean; start():
 
 const LANG_TAG: Record<string, string> = { de: "de-CH", en: "en-GB", fr: "fr-CH", it: "it-CH" };
 
-export function WebInterview({ token, locale, initialHistory, completed }: { token: string; locale: string; initialHistory: Line[]; completed: boolean }) {
+export function WebInterview({ token, locale, initialHistory, completed, portalHref }: { token: string; locale: string; initialHistory: Line[]; completed: boolean; portalHref?: string }) {
   const t = getT(locale);
   const [lines, setLines] = useState<Line[]>(initialHistory);
   const [input, setInput] = useState("");
@@ -28,7 +29,7 @@ export function WebInterview({ token, locale, initialHistory, completed }: { tok
   const [speechSupported, setSpeechSupported] = useState(false);
   useEffect(() => setSpeechSupported("webkitSpeechRecognition" in window || "SpeechRecognition" in window), []);
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [lines, busy]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [lines, busy]);
 
   const say = useCallback((texts: string[]) => {
     if (!speak || typeof window === "undefined" || !window.speechSynthesis) return;
@@ -109,6 +110,7 @@ export function WebInterview({ token, locale, initialHistory, completed }: { tok
             <div className="card p-6 text-center">
               <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-500" />
               <p className="mt-3 font-semibold text-ink">{t("interview.completed")}</p>
+              {portalHref && <LinkButton href={portalHref} variant="secondary" className="mt-4">{t("portal.back")}</LinkButton>}
             </div>
           )}
           <div ref={endRef} />
