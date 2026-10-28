@@ -56,7 +56,7 @@ export default async function InterviewsPage() {
                             <p className="truncate text-sm font-medium text-ink">{e.application?.candidate.firstName} {e.application?.candidate.lastName}</p>
                             <p className="truncate text-xs text-slate-500">{e.application?.job.title} · {e.location}</p>
                           </div>
-                          {e.status === "SYNC_FAILED" ? <Badge tone="red">Kalender-Sync fehlgeschlagen</Badge> : <Badge tone="green">{e.provider === "mock" ? "Hirely-Kalender" : e.provider}</Badge>}
+                          {e.status === "SYNC_FAILED" ? <Badge tone="red">Kalender-Sync fehlgeschlagen</Badge> : <Badge tone="green">{({ mock: "Hirely-Kalender", microsoft: "Outlook-Kalender", google: "Google Kalender" } as Record<string, string>)[e.provider] ?? e.provider}</Badge>}
                         </Link>
                       </li>
                     ))}
