@@ -302,7 +302,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "mech", daysAgo: 21, source: "CAREER_SITE", sourceDetail: "Career website", target: "PERSONAL_INTERVIEW", interview: true, video: true,
+    job: "mech", daysAgo: 21, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "PERSONAL_INTERVIEW", interview: true, video: true,
     answers: { motivation: "Nach meinem Master an der ETH habe ich vier Jahre in der Medizintechnik entwickelt. Ich suche jetzt eine Stelle, in der ich grössere mechanische Systeme verantworte und näher an der Fertigung bin. Ihre Maschinen kenne ich von der Swissmem-Messe.", salary: "Zwischen 105'000 und 115'000 Franken.", notice: "Zwei Monate auf Ende Monat.", availability: "Ab dem 1. Dezember." },
     persona: P({
       first: "Sarah", last: "Baumann", headline: "Entwicklungsingenieurin MSc ETH", street: "Rosenbergstrasse 45", zip: "8304", city: "Wallisellen", phone: "+41 78 204 91 55",
@@ -377,7 +377,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "cnc", daysAgo: 14, source: "CAREER_SITE", sourceDetail: "Career website", target: "REVIEW", interview: true,
+    job: "cnc", daysAgo: 14, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "REVIEW", interview: true,
     answers: { motivation: "Ich habe sechs Jahre an Fanuc-Maschinen gearbeitet und suche eine feste Stelle mit Perspektive. Mein Deutsch verbessere ich gerade mit einem Abendkurs.", salary: "78'000 Franken.", notice: "Zwei Monate.", availability: "Ab dem 1. Dezember." },
     persona: P({
       first: "Dragan", last: "Petrović", headline: "CNC Operator", street: "Tösstalstrasse 60", zip: "8400", city: "Winterthur", phone: "+41 76 480 13 72",
@@ -390,7 +390,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "cnc", daysAgo: 6, source: "CAREER_SITE", sourceDetail: "Career website", target: "SCREENED",
+    job: "cnc", daysAgo: 6, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "SCREENED",
     persona: P({
       first: "Kevin", last: "Brunner", headline: "Polymechaniker EFZ", street: "Wülflingerstrasse 190", zip: "8408", city: "Winterthur", phone: "+41 79 377 09 18",
       experience: [{ from: "2022", to: "heute", title: "Polymechaniker", company: "Kistler Instrumente AG", city: "Winterthur", bullets: ["Konventionelles und CNC-Fräsen (Heidenhain)"] }],
@@ -468,7 +468,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "pm", daysAgo: 1, source: "CAREER_SITE", sourceDetail: "Career website", target: "NEW",
+    job: "pm", daysAgo: 1, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "NEW",
     persona: P({
       first: "Anna", last: "Schneider", headline: "Project Engineer", street: "Kasernenstrasse 20", zip: "3013", city: "Bern", phone: "+41 78 740 28 11", lang: "en",
       experience: [{ from: "2019", to: "present", title: "Project Engineer", company: "BKW Engineering", city: "Bern", bullets: ["Planning of industrial infrastructure projects"] }],
@@ -492,7 +492,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "prod", daysAgo: 7, source: "CAREER_SITE", sourceDetail: "Career website", target: "REVIEW", interview: true,
+    job: "prod", daysAgo: 7, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "REVIEW", interview: true,
     answers: { motivation: "Als Automatiker bin ich täglich an den Anlagen und möchte mich jetzt mehr in Richtung Prozessoptimierung entwickeln. Die HF mache ich berufsbegleitend.", salary: "88'000 Franken.", notice: "Zwei Monate.", availability: "Ab dem 1. Dezember." },
     persona: P({
       first: "Sandro", last: "Vogel", headline: "Automatiker EFZ, Techniker HF (in Ausbildung)", street: "Neuwiesenstrasse 30", zip: "8400", city: "Winterthur", phone: "+41 76 520 33 47",
@@ -511,7 +511,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "prod", daysAgo: 60, source: "CAREER_SITE", sourceDetail: "Career website", target: "TALENT_POOL", talentPoolConsent: true,
+    job: "prod", daysAgo: 60, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "TALENT_POOL", talentPoolConsent: true,
     persona: P({
       first: "Luca", last: "Bianchi", headline: "Produktionsleiter", street: "Via Nassa 20", zip: "6900", city: "Lugano", phone: "+41 79 223 84 50",
       experience: [{ from: "2014", to: "heute", title: "Produktionsleiter", company: "Ferrari Formaggi SA", city: "Lugano", bullets: ["Leitung Produktion mit 25 Mitarbeitenden", "Einführung Lean"] }],
@@ -522,7 +522,7 @@ export const CANDIDATES: CandidateSeed[] = [
 
   // ───────── Servicetechniker/in ─────────
   {
-    job: "service", daysAgo: 6, source: "CAREER_SITE", sourceDetail: "Career website", target: "REVIEW", interview: true,
+    job: "service", daysAgo: 6, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "REVIEW", interview: true,
     answers: { motivation: "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.", salary: "85'000 Franken inklusive Pikett.", notice: "Zwei Monate.", availability: "Ab dem 1. Dezember." },
     persona: P({
       first: "Roman", last: "Egli", headline: "Servicetechniker / Elektroinstallateur EFZ", street: "Dorfstrasse 41", zip: "8352", city: "Elsau", phone: "+41 79 330 71 84",
@@ -544,7 +544,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "service", daysAgo: 0, source: "CAREER_SITE", sourceDetail: "Career website", target: "NEW",
+    job: "service", daysAgo: 0, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "NEW",
     persona: P({
       first: "Thomas", last: "Ammann", headline: "Servicemonteur", street: "Schaffhauserstrasse 55", zip: "8200", city: "Schaffhausen", phone: "+41 79 610 42 38",
       experience: [{ from: "2017", to: "heute", title: "Servicemonteur", company: "Schindler Aufzüge AG", city: "Schaffhausen", bullets: ["Wartung und Reparatur von Aufzugsanlagen"] }],
@@ -568,7 +568,7 @@ export const CANDIDATES: CandidateSeed[] = [
     }),
   },
   {
-    job: "elec", daysAgo: 45, source: "CAREER_SITE", sourceDetail: "Career website", target: "TALENT_POOL", talentPoolConsent: true,
+    job: "elec", daysAgo: 45, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "TALENT_POOL", talentPoolConsent: true,
     persona: P({
       first: "Adrian", last: "Frick", headline: "Elektrotechniker HF", street: "Zürcherstrasse 210", zip: "8500", city: "Frauenfeld", phone: "+41 78 205 87 43",
       experience: [{ from: "2016", to: "heute", title: "Elektrotechniker", company: "Stadler Rail AG", city: "Bussnang", bullets: ["Elektrokonstruktion für Schienenfahrzeuge", "Automatisierung von Prüfständen"] }],

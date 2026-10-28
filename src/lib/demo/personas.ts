@@ -98,6 +98,6 @@ export function randomPersonaApplication(): NormalizedApplication {
     location: `${p.zip} ${p.city}`,
     cvText: buildCv(p, email),
     appliedAt: new Date(),
-    sourceDetail: ["jobs.ch", "LinkedIn", "Indeed", "Career website"][Math.floor(Math.random() * 4)],
+    sourceDetail: ["jobs.ch", "LinkedIn", "Indeed", "Karriereseite"][Math.floor(Math.random() * 4)],
   };
 }

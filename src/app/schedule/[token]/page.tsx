@@ -37,7 +37,7 @@ export default async function SchedulePage({ params }: { params: Promise<{ token
         <p className="text-sm text-slate-500">{job.title}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink">{booked ? t("schedule.booked") : t("schedule.title")}</h1>
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-600">
-          <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-slate-400" />{t("schedule.duration")}: {link.durationMin} min</span>
+          <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-slate-400" />{t("schedule.duration")}: {link.durationMin} Min.</span>
           {link.location && <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-slate-400" />{link.location}</span>}
           {interviewer && <span className="inline-flex items-center gap-1.5"><Avatar name={interviewer.name} size={20} />{interviewer.name}</span>}
         </div>
