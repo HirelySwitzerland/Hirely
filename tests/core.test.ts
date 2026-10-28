@@ -53,8 +53,8 @@ test("CV parser extracts confirmed facts and tags inferences", () => {
 test("CEFR mapping and regions", () => {
   assert.deepEqual(toCefr("C1"), { cefr: "C1", inferred: false });
   assert.equal(toCefr("Muttersprache").cefr, "C2");
-  assert.equal(regionForPostalCode(9000), "Eastern Switzerland");
-  assert.equal(regionForPostalCode(6900), "Ticino");
+  assert.equal(regionForPostalCode(9000), "Ostschweiz");
+  assert.equal(regionForPostalCode(6900), "Tessin");
 });
 
 test("Requirement evaluation is evidence-based", () => {
@@ -83,7 +83,7 @@ test("Answer interpretation (multilingual)", () => {
   assert.equal(interpretYesNo("Oui"), "yes");
   assert.equal(extractSalary("Etwa 95'000 Franken"), "CHF 95'000");
   assert.equal(extractSalary("zwischen 105'000 und 115'000"), "CHF 105'000–115'000");
-  assert.equal(extractNotice("Ich habe drei Monate Kündigungsfrist"), "3 months");
+  assert.equal(extractNotice("Ich habe drei Monate Kündigungsfrist"), "3 Monate");
   assert.equal(extractAvailability("Ab dem 1. Januar."), "Ab dem 1. Januar");
 });
 
@@ -117,7 +117,7 @@ test("Declining consent ends the interview", () => {
 
 test("Flow validation requires AI disclosure", () => {
   const bad: FlowNode[] = [{ id: "w", type: "welcome", text: "Hello!" }, { id: "e", type: "end", text: "Bye" }];
-  assert.ok(validateFlow(bad).some((e) => e.includes("AI")));
+  assert.ok(validateFlow(bad).some((e) => e.includes("KI")));
 });
 
 test("TOTP", () => {
@@ -161,6 +161,6 @@ test("Billing overage", () => {
 
 test("Talent search query parsing", () => {
   const q = parseTalentQuery("Show candidates with electrical engineering experience in Eastern Switzerland");
-  assert.equal(q.region, "Eastern Switzerland");
+  assert.equal(q.region, "Ostschweiz");
   assert.deepEqual(q.terms, ["electrical", "engineering"]);
 });

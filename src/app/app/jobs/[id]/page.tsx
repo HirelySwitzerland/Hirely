@@ -21,18 +21,18 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
     : [];
   const flowNodes = Array.isArray(job.interviewFlow?.nodes) ? (job.interviewFlow!.nodes as unknown[]).length : 0;
   const checklist = [
-    { done: Boolean(job.description), label: "Job advertisement written", href: `/app/jobs/${id}/edit` },
-    { done: job.requirements.some((r) => r.kind === "MUST"), label: "Must-have requirements configured", href: `/app/jobs/${id}/ai` },
-    { done: job.questions.length > 0, label: "Screening & interview questions defined", href: `/app/jobs/${id}/ai` },
-    { done: flowNodes > 0, label: "AI interview flow ready", href: `/app/jobs/${id}/interview` },
-    { done: job.status === "OPEN", label: "Published on the career page", href: `/app/jobs/${id}` },
+    { done: Boolean(job.description), label: "Stelleninserat geschrieben", href: `/app/jobs/${id}/edit` },
+    { done: job.requirements.some((r) => r.kind === "MUST"), label: "Muss-Kriterien festgelegt", href: `/app/jobs/${id}/ai` },
+    { done: job.questions.length > 0, label: "Fragen für Formular & Interview festgelegt", href: `/app/jobs/${id}/ai` },
+    { done: flowNodes > 0, label: "KI-Interview-Ablauf bereit", href: `/app/jobs/${id}/interview` },
+    { done: job.status === "OPEN", label: "Auf der Karriereseite veröffentlicht", href: `/app/jobs/${id}` },
   ];
   return (
     <div className="grid gap-5 xl:grid-cols-3">
       <div className="space-y-5 xl:col-span-2">
         {sp.welcome && (
-          <Alert tone="success" title="Your first job is ready">
-            Hirely generated the job ad and an AI interview from your notes. Review the AI configuration, then publish — applications will be screened automatically.
+          <Alert tone="success" title="Ihre erste Stelle ist bereit">
+            Hirely hat aus Ihren Stichworten Inserat und KI-Interview erstellt. Prüfen Sie die KI-Kriterien und veröffentlichen Sie dann – Bewerbungen werden automatisch geprüft.
           </Alert>
         )}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -44,12 +44,12 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
           ))}
         </div>
         <Card>
-          <CardHeader title={`Candidates (${apps.length})`} action={<Link href={`/app/candidates?job=${id}`} className="link text-xs">Open in inbox</Link>} />
+          <CardHeader title={`Kandidierende (${apps.length})`} action={<Link href={`/app/candidates?job=${id}`} className="link text-xs">Alle anzeigen</Link>} />
           {apps.length === 0 ? (
-            <EmptyState title="No applications yet" description={job.status === "OPEN" ? "Applications from your career page and ATS will appear here." : "Publish the job to start receiving applications."} />
+            <EmptyState title="Noch keine Bewerbungen" description={job.status === "OPEN" ? "Bewerbungen von Karriereseite und ATS erscheinen hier." : "Veröffentlichen Sie die Stelle, um Bewerbungen zu erhalten."} />
           ) : (
             <Table>
-              <thead><tr><Th>Candidate</Th><Th>Stage</Th><Th>Requirements</Th><Th>AI interview</Th><Th>Applied</Th></tr></thead>
+              <thead><tr><Th>Kandidat/in</Th><Th>Stufe</Th><Th>Anforderungen</Th><Th>KI-Interview</Th><Th>Eingegangen</Th></tr></thead>
               <tbody>
                 {apps.slice(0, 12).map((a) => (
                   <tr key={a.id} className="hover:bg-slate-50/60">
@@ -70,13 +70,13 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
           )}
         </Card>
         <Card>
-          <CardHeader title="Job advertisement" action={ctx.can("jobs.manage") && <LinkButton href={`/app/jobs/${id}/edit`} size="sm" variant="secondary">Edit</LinkButton>} />
-          <div className="p-5 sm:p-6">{job.description ? <Markdown text={job.description} /> : <p className="text-sm text-slate-500">No description yet.</p>}</div>
+          <CardHeader title="Stelleninserat" action={ctx.can("jobs.manage") && <LinkButton href={`/app/jobs/${id}/edit`} size="sm" variant="secondary">Bearbeiten</LinkButton>} />
+          <div className="p-5 sm:p-6">{job.description ? <Markdown text={job.description} /> : <p className="text-sm text-slate-500">Noch keine Beschreibung.</p>}</div>
         </Card>
       </div>
       <div className="space-y-5">
         <Card>
-          <CardHeader title="Setup checklist" />
+          <CardHeader title="Einrichtung" />
           <ul className="space-y-1 p-3">
             {checklist.map((c) => (
               <li key={c.label}>
@@ -89,27 +89,27 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
           </ul>
         </Card>
         <Card>
-          <CardHeader title="AI screening criteria" description="What Hirely checks — and nothing else" action={ctx.can("jobs.manage") && <Link href={`/app/jobs/${id}/ai`} className="link text-xs">Configure</Link>} />
+          <CardHeader title="KI-Kriterien" description="Was Hirely prüft – und nichts anderes" action={ctx.can("jobs.manage") && <Link href={`/app/jobs/${id}/ai`} className="link text-xs">Anpassen</Link>} />
           <div className="space-y-4 p-5">
             {(["MUST", "NICE"] as const).map((k) => (
               <div key={k}>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{k === "MUST" ? "Must-have" : "Nice-to-have"}</p>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{k === "MUST" ? "Muss" : "Wünschenswert"}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {job.requirements.filter((r) => r.kind === k).map((r) => <Badge key={r.id} tone={k === "MUST" ? "brand" : "slate"}>{r.label}</Badge>)}
-                  {!job.requirements.some((r) => r.kind === k) && <span className="text-xs text-slate-400">None</span>}
+                  {!job.requirements.some((r) => r.kind === k) && <span className="text-xs text-slate-400">Keine</span>}
                 </div>
               </div>
             ))}
             <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
-              <div><ListChecks className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{job.questions.filter((q) => q.type === "KNOCKOUT").length}</p><p className="text-[11px] text-slate-500">Knockout</p></div>
-              <div><MessageSquareText className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{job.questions.filter((q) => q.type !== "KNOCKOUT").length}</p><p className="text-[11px] text-slate-500">Questions</p></div>
-              <div><Workflow className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{flowNodes}</p><p className="text-[11px] text-slate-500">Flow steps</p></div>
+              <div><ListChecks className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{job.questions.filter((q) => q.type === "KNOCKOUT").length}</p><p className="text-[11px] text-slate-500">Ausschlussfragen</p></div>
+              <div><MessageSquareText className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{job.questions.filter((q) => q.type !== "KNOCKOUT").length}</p><p className="text-[11px] text-slate-500">Fragen</p></div>
+              <div><Workflow className="mx-auto h-4 w-4 text-slate-400" /><p className="mt-1 text-lg font-semibold text-ink">{flowNodes}</p><p className="text-[11px] text-slate-500">Ablaufschritte</p></div>
             </div>
           </div>
         </Card>
         <Card className="p-5 text-sm">
           <dl className="space-y-2.5">
-            {[["Experience", job.experience], ["Education", job.education], ["Working hours", job.workingHours], ["Skills", job.skills.join(", ")], ["Published", job.publishedAt ? ago(job.publishedAt) : "Not published"]].map(([k, v]) => (
+            {[["Erfahrung", job.experience], ["Ausbildung", job.education], ["Arbeitszeit", job.workingHours], ["Skills", job.skills.join(", ")], ["Veröffentlicht", job.publishedAt ? ago(job.publishedAt) : "Nicht veröffentlicht"]].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4"><dt className="text-slate-500">{k}</dt><dd className="text-right text-ink">{v || "—"}</dd></div>
             ))}
           </dl>

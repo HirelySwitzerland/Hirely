@@ -23,7 +23,7 @@ const isMockEmail = () => getMessageProvider("EMAIL").name === "mock-email";
 
 async function sendSystemEmail(to: string, subject: string, body: string) {
   const res = await getMessageProvider("EMAIL").send({ to, subject, body });
-  if (!res.ok) throw new Error(`Email could not be sent: ${res.error}`);
+  if (!res.ok) throw new Error(`E-Mail konnte nicht gesendet werden: ${res.error}`);
 }
 
 async function issueToken(userId: string, type: "EMAIL_VERIFY" | "PASSWORD_RESET", hours: number) {
@@ -36,26 +36,26 @@ async function sendVerificationEmail(userId: string) {
   const user = await db.user.findUniqueOrThrow({ where: { id: userId } });
   const token = await issueToken(user.id, "EMAIL_VERIFY", 48);
   const link = appUrl(`/verify-email/${token}`);
-  await sendSystemEmail(user.email, "Confirm your email address", `Hi ${user.name}\n\nPlease confirm your email address for Hirely:\n${link}\n\nThis link is valid for 48 hours.`);
+  await sendSystemEmail(user.email, "Bitte bestätigen Sie Ihre E-Mail-Adresse", `Hallo ${user.name}\n\nBitte bestätigen Sie Ihre E-Mail-Adresse für Hirely:\n${link}\n\nDer Link ist 48 Stunden gültig.`);
   if (process.env.NODE_ENV !== "production") console.log(`[auth] verification link for ${user.email}: ${link}`);
   return link;
 }
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Please enter your full name.").max(80),
-  email: z.string().email("Please enter a valid email address.").max(160),
+  name: z.string().min(2, "Bitte geben Sie Ihren vollständigen Namen ein.").max(80),
+  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein.").max(160),
   password: z.string().max(200),
 });
 
 export async function register(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
-    if (!rateLimit(`register:${await clientIp()}`, 10, 3600_000).ok) return fail("Too many sign-up attempts. Please try again later.");
+    if (!rateLimit(`register:${await clientIp()}`, 10, 3600_000).ok) return fail("Zu viele Registrierungsversuche. Bitte später erneut versuchen.");
     const data = registerSchema.parse({ name: str(fd, "name"), email: str(fd, "email").toLowerCase(), password: String(fd.get("password") ?? "") });
     const issue = passwordIssues(data.password);
     if (issue) return fail(issue, { password: issue });
-    if (fd.get("terms") !== "on") return fail("Please accept the terms and the data processing agreement.");
+    if (fd.get("terms") !== "on") return fail("Bitte akzeptieren Sie die AGB und den Auftragsverarbeitungsvertrag.");
     const exists = await db.user.findUnique({ where: { email: data.email } });
-    if (exists) return fail("An account with this email already exists. Sign in instead.", { email: "Already registered" });
+    if (exists) return fail("Mit dieser E-Mail gibt es bereits ein Konto. Bitte melden Sie sich an.", { email: "Bereits registriert" });
     const user = await db.user.create({ data: { name: data.name, email: data.email, passwordHash: await hashPassword(data.password) } });
     await sendVerificationEmail(user.id).catch((e) => console.error("[auth] verification email failed", e));
     await createSession(user.id, { twoFactorVerified: true });
@@ -72,11 +72,11 @@ export async function login(_: ActionState, fd: FormData): Promise<ActionState> 
     const password = String(fd.get("password") ?? "");
     const ip = await clientIp();
     const rl = rateLimit(`login:${ip}:${email}`, 8, 15 * 60_000);
-    if (!rl.ok) return fail(`Too many sign-in attempts. Try again in ${Math.ceil(rl.retryAfterMs / 60000)} minutes.`);
+    if (!rl.ok) return fail(`Zu viele Anmeldeversuche. Bitte in ${Math.ceil(rl.retryAfterMs / 60000)} Minuten erneut versuchen.`);
     const user = await db.user.findUnique({ where: { email } });
     // Constant-ish time: always run a hash verification.
     const valid = user ? await verifyPassword(password, user.passwordHash) : await verifyPassword(password, "scrypt$16384$AAAAAAAAAAAAAAAAAAAAAA==$AAAA");
-    if (!user || !valid) return fail("Email or password is incorrect.");
+    if (!user || !valid) return fail("E-Mail oder Passwort ist falsch.");
     await createSession(user.id, { twoFactorVerified: !user.totpEnabled });
     if (user.totpEnabled) dest = "/two-factor";
     else {
@@ -95,8 +95,8 @@ export async function login(_: ActionState, fd: FormData): Promise<ActionState> 
 export async function verifyTwoFactor(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
     const session = await getSession();
-    if (!session) return fail("Your session expired. Please sign in again.");
-    if (!rateLimit(`2fa:${session.id}`, 6, 10 * 60_000).ok) return fail("Too many attempts. Please sign in again later.");
+    if (!session) return fail("Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.");
+    if (!rateLimit(`2fa:${session.id}`, 6, 10 * 60_000).ok) return fail("Zu viele Versuche. Bitte später erneut anmelden.");
     const code = str(fd, "code").replace(/\s/g, "");
     const user = session.user;
     let valid = false;
@@ -108,7 +108,7 @@ export async function verifyTwoFactor(_: ActionState, fd: FormData): Promise<Act
         await db.user.update({ where: { id: user.id }, data: { recoveryCodes: user.recoveryCodes.filter((c) => c !== h) } });
       }
     }
-    if (!valid) return fail("That code is not valid. Check your authenticator app and try again.");
+    if (!valid) return fail("Dieser Code ist ungültig. Bitte prüfen Sie Ihre Authenticator-App.");
     await db.session.update({ where: { id: session.id }, data: { twoFactorVerified: true } });
     await db.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
   } catch (e) {
@@ -125,16 +125,16 @@ export async function logout() {
 export async function forgotPassword(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
     const email = str(fd, "email").toLowerCase();
-    if (!rateLimit(`forgot:${await clientIp()}`, 5, 3600_000).ok) return fail("Too many requests. Please try again later.");
+    if (!rateLimit(`forgot:${await clientIp()}`, 5, 3600_000).ok) return fail("Zu viele Anfragen. Bitte später erneut versuchen.");
     const user = await db.user.findUnique({ where: { email } });
     let devLink: string | undefined;
     if (user) {
       const token = await issueToken(user.id, "PASSWORD_RESET", 1);
       devLink = appUrl(`/reset-password/${token}`);
-      await sendSystemEmail(user.email, "Reset your Hirely password", `Hi ${user.name}\n\nUse this link to set a new password (valid for 1 hour):\n${devLink}\n\nIf you didn't request this, you can ignore this email.`);
+      await sendSystemEmail(user.email, "Hirely-Passwort zurücksetzen", `Hallo ${user.name}\n\nÜber diesen Link legen Sie ein neues Passwort fest (1 Stunde gültig):\n${devLink}\n\nFalls Sie das nicht angefordert haben, können Sie diese E-Mail ignorieren.`);
     }
     // Same response whether or not the account exists (no user enumeration).
-    return ok("If an account exists for this email, we've sent a link to reset the password.", isMockEmail() && devLink ? { data: { devLink } } : {});
+    return ok("Falls es zu dieser E-Mail ein Konto gibt, haben wir einen Link zum Zurücksetzen gesendet.", isMockEmail() && devLink ? { data: { devLink } } : {});
   } catch (e) {
     return toActionError(e);
   }
@@ -147,13 +147,13 @@ export async function resetPassword(_: ActionState, fd: FormData): Promise<Actio
     const issue = passwordIssues(password);
     if (issue) return fail(issue);
     const rec = await db.verificationToken.findUnique({ where: { tokenHash: sha256(token) } });
-    if (!rec || rec.type !== "PASSWORD_RESET" || rec.usedAt || rec.expiresAt < new Date()) return fail("This reset link is invalid or has expired. Please request a new one.");
+    if (!rec || rec.type !== "PASSWORD_RESET" || rec.usedAt || rec.expiresAt < new Date()) return fail("Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.");
     await db.$transaction([
       db.user.update({ where: { id: rec.userId }, data: { passwordHash: await hashPassword(password) } }),
       db.verificationToken.update({ where: { id: rec.id }, data: { usedAt: new Date() } }),
       db.session.deleteMany({ where: { userId: rec.userId } }),
     ]);
-    return ok("Your password has been updated. You can now sign in.", { redirect: "/login?reset=1" });
+    return ok("Ihr Passwort wurde geändert. Sie können sich jetzt anmelden.", { redirect: "/login?reset=1" });
   } catch (e) {
     return toActionError(e);
   }
@@ -162,10 +162,10 @@ export async function resetPassword(_: ActionState, fd: FormData): Promise<Actio
 export async function resendVerification(): Promise<ActionState> {
   try {
     const s = await requireUser();
-    if (s.user.emailVerifiedAt) return ok("Your email is already verified.");
-    if (!rateLimit(`resend:${s.userId}`, 3, 3600_000).ok) return fail("Please wait before requesting another email.");
+    if (s.user.emailVerifiedAt) return ok("Ihre E-Mail ist bereits bestätigt.");
+    if (!rateLimit(`resend:${s.userId}`, 3, 3600_000).ok) return fail("Bitte warten Sie kurz, bevor Sie eine weitere E-Mail anfordern.");
     const link = await sendVerificationEmail(s.userId);
-    return ok(`Verification email sent to ${s.user.email}.`, isMockEmail() ? { data: { devLink: link } } : {});
+    return ok(`Bestätigungs-E-Mail an ${s.user.email} gesendet.`, isMockEmail() ? { data: { devLink: link } } : {});
   } catch (e) {
     return toActionError(e);
   }
@@ -175,18 +175,18 @@ export async function acceptInvite(_: ActionState, fd: FormData): Promise<Action
   try {
     const token = str(fd, "token");
     const inv = await db.invitation.findUnique({ where: { tokenHash: sha256(token) }, include: { org: true } });
-    if (!inv || inv.acceptedAt || inv.revokedAt || inv.expiresAt < new Date()) return fail("This invitation is invalid or has expired. Ask your administrator for a new one.");
+    if (!inv || inv.acceptedAt || inv.revokedAt || inv.expiresAt < new Date()) return fail("Diese Einladung ist ungültig oder abgelaufen. Bitte fordern Sie eine neue an.");
     let user = await db.user.findUnique({ where: { email: inv.email } });
     if (!user) {
       const name = str(fd, "name");
       const password = String(fd.get("password") ?? "");
-      if (name.length < 2) return fail("Please enter your name.");
+      if (name.length < 2) return fail("Bitte geben Sie Ihren Namen ein.");
       const issue = passwordIssues(password);
       if (issue) return fail(issue);
       user = await db.user.create({ data: { email: inv.email, name, passwordHash: await hashPassword(password), emailVerifiedAt: new Date() } });
     } else {
       const s = await getSession();
-      if (!s || s.userId !== user.id) return fail("An account with this email exists. Sign in first, then open the invitation link again.");
+      if (!s || s.userId !== user.id) return fail("Mit dieser E-Mail gibt es bereits ein Konto. Melden Sie sich an und öffnen Sie dann den Einladungslink erneut.");
     }
     await db.membership.upsert({ where: { userId_orgId: { userId: user.id, orgId: inv.orgId } }, create: { userId: user.id, orgId: inv.orgId, role: inv.role }, update: {} });
     await db.invitation.update({ where: { id: inv.id }, data: { acceptedAt: new Date() } });
@@ -226,12 +226,12 @@ export async function confirmTotpSetup(_: ActionState, fd: FormData): Promise<Ac
   try {
     const s = await requireUser();
     const user = await db.user.findUniqueOrThrow({ where: { id: s.userId } });
-    if (!user.totpSecretEnc) return fail("Start the setup first.");
-    if (!verifyTotp(decrypt(user.totpSecretEnc), str(fd, "code"))) return fail("The code is not valid. Make sure your device time is correct.");
+    if (!user.totpSecretEnc) return fail("Bitte starten Sie zuerst die Einrichtung.");
+    if (!verifyTotp(decrypt(user.totpSecretEnc), str(fd, "code"))) return fail("Der Code ist ungültig. Prüfen Sie, ob die Uhrzeit Ihres Geräts stimmt.");
     const codes = Array.from({ length: 8 }, () => randomToken(6).toUpperCase().replace(/[^A-Z0-9]/g, "X").slice(0, 10));
     await db.user.update({ where: { id: user.id }, data: { totpEnabled: true, recoveryCodes: codes.map((c) => sha256(c)) } });
     await db.session.update({ where: { id: s.id }, data: { twoFactorVerified: true } });
-    return ok("Two-factor authentication is now enabled.", { data: { recoveryCodes: codes } });
+    return ok("Die Zwei-Faktor-Anmeldung ist jetzt aktiv.", { data: { recoveryCodes: codes } });
   } catch (e) {
     return toActionError(e);
   }
@@ -241,9 +241,9 @@ export async function disableTotp(_: ActionState, fd: FormData): Promise<ActionS
   try {
     const s = await requireUser();
     const user = await db.user.findUniqueOrThrow({ where: { id: s.userId } });
-    if (!(await verifyPassword(String(fd.get("password") ?? ""), user.passwordHash))) return fail("Password is incorrect.");
+    if (!(await verifyPassword(String(fd.get("password") ?? ""), user.passwordHash))) return fail("Das Passwort ist falsch.");
     await db.user.update({ where: { id: user.id }, data: { totpEnabled: false, totpSecretEnc: null, recoveryCodes: [] } });
-    return ok("Two-factor authentication has been disabled.");
+    return ok("Die Zwei-Faktor-Anmeldung wurde ausgeschaltet.");
   } catch (e) {
     return toActionError(e);
   }
@@ -253,7 +253,7 @@ export async function changePassword(_: ActionState, fd: FormData): Promise<Acti
   try {
     const s = await requireUser();
     const user = await db.user.findUniqueOrThrow({ where: { id: s.userId } });
-    if (!(await verifyPassword(String(fd.get("current") ?? ""), user.passwordHash))) return fail("Current password is incorrect.");
+    if (!(await verifyPassword(String(fd.get("current") ?? ""), user.passwordHash))) return fail("Das aktuelle Passwort ist falsch.");
     const next = String(fd.get("password") ?? "");
     const issue = passwordIssues(next);
     if (issue) return fail(issue);
@@ -261,7 +261,7 @@ export async function changePassword(_: ActionState, fd: FormData): Promise<Acti
     const jar = await cookies();
     const current = jar.get(SESSION_COOKIE)?.value;
     await db.session.deleteMany({ where: { userId: user.id, NOT: { tokenHash: sha256(current ?? "") } } });
-    return ok("Password updated. Other sessions were signed out.");
+    return ok("Passwort geändert. Andere Sitzungen wurden abgemeldet.");
   } catch (e) {
     return toActionError(e);
   }
@@ -271,10 +271,10 @@ export async function updateProfile(_: ActionState, fd: FormData): Promise<Actio
   try {
     const s = await requireUser();
     const name = str(fd, "name");
-    if (name.length < 2) return fail("Please enter your name.");
+    if (name.length < 2) return fail("Bitte geben Sie Ihren Namen ein.");
     const locale = ["en", "de", "fr", "it"].includes(str(fd, "locale")) ? str(fd, "locale") : "en";
     await db.user.update({ where: { id: s.userId }, data: { name, title: str(fd, "title") || null, locale } });
-    return ok("Profile saved.");
+    return ok("Profil gespeichert.");
   } catch (e) {
     return toActionError(e);
   }

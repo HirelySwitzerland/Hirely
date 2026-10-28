@@ -27,7 +27,7 @@ export function FormMessage({ state, className }: { state: ActionState; classNam
     <div className={cn("flex items-start gap-2 rounded-lg border px-3 py-2 text-sm", err ? "border-rose-200 bg-rose-50 text-rose-800" : "border-emerald-200 bg-emerald-50 text-emerald-800", className)} role={err ? "alert" : "status"}>
       {err ? <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /> : <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />}
       <span className="flex-1">{state.error ?? state.message}</span>
-      <button type="button" onClick={() => setHidden(true)} className="opacity-60 hover:opacity-100" aria-label="Dismiss">
+      <button type="button" onClick={() => setHidden(true)} className="opacity-60 hover:opacity-100" aria-label="Schliessen">
         <X className="h-4 w-4" />
       </button>
     </div>

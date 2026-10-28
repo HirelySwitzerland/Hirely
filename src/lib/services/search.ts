@@ -4,6 +4,10 @@ import { db } from "@/lib/db";
 const SYNONYMS: Record<string, string[]> = {
   electrical: ["electrical", "elektro", "elektrotechnik", "electric", "elektriker", "automation", "automatisierung"],
   elektro: ["electrical", "elektro", "elektrotechnik", "elektriker"],
+  elektrotechnik: ["electrical", "elektro", "elektrotechnik", "elektriker", "automation", "automatisierung"],
+  projektleiter: ["project", "projekt", "projektleit"],
+  projektleitung: ["project", "projekt", "projektleit"],
+  produktion: ["production", "produktion", "fertigung", "lean"],
   mechanical: ["mechanical", "maschinenbau", "maschinen", "mechanik", "konstruktion", "polymechan"],
   maschinenbau: ["mechanical", "maschinenbau", "maschinen", "konstruktion"],
   engineering: ["engineer", "ingenieur", "technik", "engineering"],
@@ -16,15 +20,15 @@ const SYNONYMS: Record<string, string[]> = {
 };
 
 const REGIONS: Record<string, string> = {
-  "eastern switzerland": "Eastern Switzerland", ostschweiz: "Eastern Switzerland", "st. gallen": "Eastern Switzerland", thurgau: "Eastern Switzerland",
-  "central switzerland": "Central Switzerland", zentralschweiz: "Central Switzerland", luzern: "Central Switzerland",
-  "western switzerland": "Western Switzerland", westschweiz: "Western Switzerland", romandie: "Western Switzerland",
-  zurich: "Zurich Region", zürich: "Zurich Region", "zurich region": "Zurich Region",
-  bern: "Bern / Mittelland", mittelland: "Bern / Mittelland", basel: "Northwestern Switzerland", aargau: "Northwestern Switzerland",
-  "northwestern switzerland": "Northwestern Switzerland", nordwestschweiz: "Northwestern Switzerland", ticino: "Ticino", tessin: "Ticino",
+  "eastern switzerland": "Ostschweiz", ostschweiz: "Ostschweiz", "st. gallen": "Ostschweiz", thurgau: "Ostschweiz",
+  "central switzerland": "Zentralschweiz", zentralschweiz: "Zentralschweiz", luzern: "Zentralschweiz",
+  "western switzerland": "Westschweiz", westschweiz: "Westschweiz", romandie: "Westschweiz",
+  zurich: "Region Zürich", zürich: "Region Zürich", "zurich region": "Region Zürich", "region zürich": "Region Zürich",
+  bern: "Bern / Mittelland", mittelland: "Bern / Mittelland", basel: "Nordwestschweiz", aargau: "Nordwestschweiz",
+  "northwestern switzerland": "Nordwestschweiz", nordwestschweiz: "Nordwestschweiz", ticino: "Tessin", tessin: "Tessin",
 };
 
-const FILLER = new Set(["show", "me", "candidates", "candidate", "with", "in", "experience", "zeige", "mir", "kandidaten", "kandidatinnen", "mit", "erfahrung", "who", "have", "has", "and", "the", "from", "aus", "der", "die", "das", "find", "finde", "suche", "all", "alle", "switzerland", "schweiz", "of", "people", "profiles"]);
+const FILLER = new Set(["zeig", "personen", "bewerbende", "kandidierende", "leute", "in", "im", "der", "region", "show", "me", "candidates", "candidate", "with", "in", "experience", "zeige", "mir", "kandidaten", "kandidatinnen", "mit", "erfahrung", "who", "have", "has", "and", "the", "from", "aus", "der", "die", "das", "find", "finde", "suche", "all", "alle", "switzerland", "schweiz", "of", "people", "profiles"]);
 
 export function parseTalentQuery(q: string) {
   let text = q.toLowerCase();

@@ -82,7 +82,7 @@ export async function inviteToAiInterview(orgId: string, applicationId: string, 
       interviewStatus: iv.status === "SCHEDULED" ? "SCHEDULED" : "INVITED",
       invitedAt: new Date(),
       ...(["NEW", "AI_SCREENING"].includes(app.stage)
-        ? { stage: "AI_INTERVIEW", stageChangedAt: new Date(), stageHistory: { create: { orgId, fromStage: app.stage, toStage: "AI_INTERVIEW", actorType: actor.type, actorId: actor.type === "USER" ? actor.id : null, reason: "Invited to AI pre-screening interview" } } }
+        ? { stage: "AI_INTERVIEW", stageChangedAt: new Date(), stageHistory: { create: { orgId, fromStage: app.stage, toStage: "AI_INTERVIEW", actorType: actor.type, actorId: actor.type === "USER" ? actor.id : null, reason: "Zum KI-Vorabgespräch eingeladen" } } }
         : {}),
     },
   });
@@ -125,10 +125,10 @@ export async function interviewByToken(token: string) {
 
 export async function requestCallNow(token: string, phone: string) {
   const iv = await interviewByToken(token);
-  if (!iv) throw new InterviewError("Interview link is invalid.");
-  if (iv.status === "COMPLETED") throw new InterviewError("This interview has already been completed.");
+  if (!iv) throw new InterviewError("Der Interview-Link ist ungültig.");
+  if (iv.status === "COMPLETED") throw new InterviewError("Dieses Interview ist bereits abgeschlossen.");
   const cleanPhone = phone.replace(/[^\d+]/g, "");
-  if (cleanPhone.replace(/\D/g, "").length < 9) throw new InterviewError("Please enter a valid phone number.");
+  if (cleanPhone.replace(/\D/g, "").length < 9) throw new InterviewError("Bitte geben Sie eine gültige Telefonnummer ein.");
   await db.candidate.update({ where: { id: iv.application.candidateId }, data: { phone: cleanPhone } });
   await db.interview.update({ where: { id: iv.id }, data: { type: "PHONE", status: "SCHEDULED", scheduledAt: new Date(), error: null } });
   await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "SCHEDULED", lastCandidateActionAt: new Date() } });
@@ -137,8 +137,8 @@ export async function requestCallNow(token: string, phone: string) {
 
 export async function scheduleCall(token: string, phone: string, at: Date) {
   const iv = await interviewByToken(token);
-  if (!iv) throw new InterviewError("Interview link is invalid.");
-  if (at.getTime() < Date.now() + 5 * 60_000) throw new InterviewError("Please choose a time at least 5 minutes from now.");
+  if (!iv) throw new InterviewError("Der Interview-Link ist ungültig.");
+  if (at.getTime() < Date.now() + 5 * 60_000) throw new InterviewError("Bitte wählen Sie einen Zeitpunkt, der mindestens 5 Minuten in der Zukunft liegt.");
   await db.candidate.update({ where: { id: iv.application.candidateId }, data: { phone: phone.replace(/[^\d+]/g, "") } });
   await db.interview.update({ where: { id: iv.id }, data: { type: "PHONE", status: "SCHEDULED", scheduledAt: at, error: null } });
   await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "SCHEDULED", lastCandidateActionAt: new Date() } });
@@ -153,7 +153,7 @@ export async function placeCall(interviewId: string, opts: { explicit?: boolean 
   if (!iv || !["SCHEDULED", "NO_ANSWER", "PENDING"].includes(iv.status)) return;
   const limit = await checkLimit(iv.orgId, "VOICE_MINUTES");
   if (!limit.allowed) {
-    await failInterview(iv.id, "Voice minute limit reached for this billing period. Raise the limit in Settings → Usage to resume calls.", "FAILED");
+    await failInterview(iv.id, "Limit für Telefonminuten in dieser Periode erreicht. Erhöhen Sie es unter Einstellungen → Verbrauch & Kosten.", "FAILED");
     return;
   }
   // Respect the organization's call window (Europe/Zurich) and max attempts.
@@ -176,7 +176,7 @@ export async function placeCall(interviewId: string, opts: { explicit?: boolean 
   }
   const phone = iv.application.candidate.phone;
   if (!phone) {
-    await failInterview(iv.id, "Candidate has no phone number.", "FAILED");
+    await failInterview(iv.id, "Keine Telefonnummer vorhanden.", "FAILED");
     return;
   }
   const provider = getVoiceProvider(await tenantTwilio(iv.orgId));
@@ -193,8 +193,8 @@ export async function placeCall(interviewId: string, opts: { explicit?: boolean 
         await sendMessage({ orgId: iv.orgId, applicationId: iv.applicationId, channel: "EMAIL", templateKey: "call_missed", actor: { type: "AI" } }).catch(() => undefined);
         await notify(iv.orgId, {
           type: "ai_call_failed",
-          title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} did not answer (${attempts} attempts)`,
-          body: "Hirely sent a link to reschedule. You can also call manually or send a browser-interview link.",
+          title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} nicht erreicht (${attempts} Versuche)`,
+          body: "Hirely hat einen Link zum Verschieben gesendet. Sie können auch selbst anrufen oder einen Browser-Link senden.",
           link: `/app/candidates/${iv.applicationId}?tab=interview`,
           severity: "warning",
         });
@@ -216,8 +216,8 @@ async function failInterview(interviewId: string, error: string, status: "FAILED
   await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "FAILED" } });
   await notify(iv.orgId, {
     type: "ai_call_failed",
-    title: `AI call failed: ${iv.application.candidate.firstName} ${iv.application.candidate.lastName}`,
-    body: `${error} — Retry the call, send a browser-interview link, or contact the candidate manually.`,
+    title: `KI-Anruf fehlgeschlagen: ${iv.application.candidate.firstName} ${iv.application.candidate.lastName}`,
+    body: `${error} – Anruf wiederholen, Browser-Link senden oder die Person selbst kontaktieren.`,
     link: `/app/candidates/${iv.applicationId}?tab=interview`,
     severity: "error",
   });
@@ -244,7 +244,7 @@ export async function runSimulatedCall(interviewId: string) {
   const { iv, app, cv, profile, vars, nodes } = await loadContext(interviewId);
   let turn = startFlow(nodes, vars, profile);
   let offset = 0;
-  offset = (await appendSegments(iv, [{ speaker: "SYSTEM", text: "Simulated call (mock voice provider) — no real phone call was placed." }, ...turn.say.map((t) => ({ speaker: "AI" as const, text: t, nodeId: turn.currentNodeId }))], offset)) ?? 0;
+  offset = (await appendSegments(iv, [{ speaker: "SYSTEM", text: "Simulierter Anruf – es wurde nicht wirklich telefoniert." }, ...turn.say.map((t) => ({ speaker: "AI" as const, text: t, nodeId: turn.currentNodeId }))], offset)) ?? 0;
   let guard = 0;
   while (turn.awaitingAnswer && guard++ < 60) {
     const node = nodes.find((n) => n.id === turn.currentNodeId)!;
@@ -309,8 +309,8 @@ async function finishFromState(interviewId: string, state: FlowState) {
     await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "DECLINED", lastCandidateActionAt: new Date() } });
     await notify(iv.orgId, {
       type: "candidate_cancelled",
-      title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} declined the AI interview recording`,
-      body: "Offer a personal phone call or review the application manually.",
+      title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} hat die Aufnahme des KI-Interviews abgelehnt`,
+      body: "Bieten Sie ein persönliches Telefonat an oder prüfen Sie die Bewerbung selbst.",
       link: `/app/candidates/${iv.applicationId}`,
       severity: "warning",
     });
@@ -332,7 +332,7 @@ export async function completeInterview(interviewId: string) {
       {
         task: "interview_summary",
         orgId: iv.orgId,
-        prompt: `Summarize this structured pre-screening interview for a recruiter in 4–8 bullet points. Only use what the candidate said. Mark anything unclear as unclear.\n${JSON.stringify(answers.map((a) => ({ q: a.question, a: [a.answer, ...a.followUps.map((f) => f.a)].join(" ") })))}`,
+        prompt: `Fasse dieses strukturierte Vorabgespräch für das HR-Team in 4–8 Stichpunkten auf Deutsch zusammen (Schweizer Schreibweise, ss statt ß). Verwende nur, was die Person gesagt hat. Markiere Unklares als unklar.\n${JSON.stringify(answers.map((a) => ({ q: a.question, a: [a.answer, ...a.followUps.map((f) => f.a)].join(" ") })))}`,
         input: { answers: answers.map((a) => ({ question: a.question, answer: [a.answer, ...a.followUps.map((f) => f.a)].join(" ") })), salary: structured.salaryExpectation, availability: structured.availability, notice: structured.noticePeriod },
       },
       { fallbackToMock: true },
@@ -356,7 +356,7 @@ export async function completeInterview(interviewId: string) {
       readyForReviewAt: endedAt,
       lastCandidateActionAt: endedAt,
       ...(["NEW", "AI_SCREENING", "AI_INTERVIEW"].includes(app.stage)
-        ? { stage: "REVIEW", stageChangedAt: endedAt, stageHistory: { create: { orgId: iv.orgId, fromStage: app.stage, toStage: "REVIEW", actorType: "AI", reason: "AI interview completed — ready for recruiter review" } } }
+        ? { stage: "REVIEW", stageChangedAt: endedAt, stageHistory: { create: { orgId: iv.orgId, fromStage: app.stage, toStage: "REVIEW", actorType: "AI", reason: "KI-Interview abgeschlossen – bereit zur Prüfung" } } }
         : {}),
     },
   });
@@ -378,8 +378,8 @@ export async function completeInterview(interviewId: string) {
     const fresh = await db.application.findUniqueOrThrow({ where: { id: app.id } });
     await notify(iv.orgId, {
       type: "candidate_ready",
-      title: `New candidate ready for review: ${app.candidate.firstName} ${app.candidate.lastName}`,
-      body: `${app.job.title} · meets ${fresh.requirementsMet} of ${fresh.requirementsTotal} configured requirements`,
+      title: `Neue Bewerbung bereit zur Prüfung: ${app.candidate.firstName} ${app.candidate.lastName}`,
+      body: `${app.job.title} · erfüllt ${fresh.requirementsMet} von ${fresh.requirementsTotal} Anforderungen`,
       link: `/app/candidates/${app.id}`,
       severity: "success",
     });

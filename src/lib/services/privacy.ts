@@ -26,7 +26,7 @@ export async function exportCandidateData(orgId: string, candidateId: string, ac
   return {
     exportedAt: new Date().toISOString(),
     controller: (await db.organization.findUniqueOrThrow({ where: { id: orgId } })).name,
-    processor: "Hirely (AI recruiting assistant). AI outputs are recommendations only; hiring decisions are made by humans.",
+    processor: "Hirely (KI-Recruiting-Assistent). KI-Ergebnisse sind nur Empfehlungen; Anstellungsentscheide treffen Menschen.",
     candidate: rest,
   };
 }

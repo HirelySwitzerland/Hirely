@@ -56,11 +56,11 @@ async function http(url: string, init: RequestInit) {
   try {
     res = await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
   } catch (e) {
-    throw new AtsError(`ATS unreachable: ${(e as Error).message}`, true);
+    throw new AtsError(`ATS nicht erreichbar: ${(e as Error).message}`, true);
   }
-  if (res.status === 401 || res.status === 403) throw new AtsError("ATS rejected the credentials (unauthorized).", false);
-  if (res.status === 429) throw new AtsError("ATS rate limit reached.", true);
-  if (!res.ok) throw new AtsError(`ATS returned HTTP ${res.status}.`, res.status >= 500);
+  if (res.status === 401 || res.status === 403) throw new AtsError("Das ATS hat die Zugangsdaten abgelehnt (nicht autorisiert).", false);
+  if (res.status === 429) throw new AtsError("Anfragelimit des ATS erreicht.", true);
+  if (!res.ok) throw new AtsError(`Das ATS meldete HTTP ${res.status}.`, res.status >= 500);
   return res.json();
 }
 
@@ -79,10 +79,10 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "personio",
     label: "Personio",
     vendor: "Personio GmbH",
-    description: "Recruiting API v1 — applications, candidates and status write-back.",
+    description: "Recruiting API v1 – Bewerbungen, Kandidierende und Status-Rückmeldung.",
     authFields: [
       { key: "clientId", label: "Client ID", type: "text" },
-      { key: "clientSecret", label: "Client secret", type: "password" },
+      { key: "clientSecret", label: "Client Secret", type: "password" },
     ],
     webhookSignatureHeader: "x-personio-signature",
     async fetchApplications(c, since) {
@@ -117,7 +117,7 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "workday",
     label: "Workday Recruiting",
     vendor: "Workday, Inc.",
-    description: "Workday REST (Recruiting) via Integration System User + webhook (Business Process events).",
+    description: "Workday REST (Recruiting) über Integration System User + Webhook (Business-Process-Events).",
     authFields: [
       { key: "tenantUrl", label: "Tenant REST URL", type: "url", placeholder: "https://wd3-services1.myworkday.com/ccx/api/v1/tenant" },
       { key: "clientId", label: "API client ID", type: "text" },
@@ -143,12 +143,12 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "successfactors",
     label: "SAP SuccessFactors",
     vendor: "SAP SE",
-    description: "OData v2 JobApplication entity + Intelligent Services event notifications.",
+    description: "OData v2 JobApplication + Intelligent-Services-Benachrichtigungen.",
     authFields: [
       { key: "apiServer", label: "API server", type: "url", placeholder: "https://api012.successfactors.eu" },
       { key: "companyId", label: "Company ID", type: "text" },
-      { key: "username", label: "API user", type: "text" },
-      { key: "password", label: "Password", type: "password" },
+      { key: "username", label: "API-Benutzer", type: "text" },
+      { key: "password", label: "Passwort", type: "password" },
     ],
     webhookSignatureHeader: "x-sf-signature",
     async fetchApplications(c, since) {
@@ -172,11 +172,11 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "abacus",
     label: "Abacus (AbaRecruiting)",
     vendor: "Abacus Research AG",
-    description: "Abacus REST API (AbaConnect) for Swiss SMEs — applicants and dossiers.",
+    description: "Abacus REST-API (AbaConnect) für Schweizer KMU – Bewerbende und Dossiers.",
     authFields: [
-      { key: "baseUrl", label: "Abacus server URL", type: "url" },
+      { key: "baseUrl", label: "Abacus-Server-URL", type: "url" },
       { key: "mandant", label: "Mandant", type: "text" },
-      { key: "clientId", label: "Service user", type: "text" },
+      { key: "clientId", label: "Service-Benutzer", type: "text" },
       { key: "clientSecret", label: "Secret", type: "password" },
     ],
     webhookSignatureHeader: "x-abacus-signature",
@@ -197,10 +197,10 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "rexx",
     label: "rexx systems",
     vendor: "rexx systems GmbH",
-    description: "rexx Recruiting REST interface with applicant export and status callbacks.",
+    description: "rexx Recruiting REST-Schnittstelle mit Bewerbenden-Export und Status-Rückmeldung.",
     authFields: [
-      { key: "baseUrl", label: "rexx instance URL", type: "url" },
-      { key: "apiKey", label: "API key", type: "password" },
+      { key: "baseUrl", label: "rexx-Instanz-URL", type: "url" },
+      { key: "apiKey", label: "API-Schlüssel", type: "password" },
     ],
     webhookSignatureHeader: "x-rexx-signature",
     async fetchApplications(c) {
@@ -218,10 +218,10 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
     id: "recruitee",
     label: "Recruitee",
     vendor: "Tellent",
-    description: "Recruitee Careers & Candidates API with signed webhooks (candidate_applied).",
+    description: "Recruitee Careers & Candidates API mit signierten Webhooks (candidate_applied).",
     authFields: [
       { key: "companyId", label: "Company ID", type: "text" },
-      { key: "apiToken", label: "Personal API token", type: "password" },
+      { key: "apiToken", label: "Persönlicher API-Token", type: "password" },
     ],
     webhookSignatureHeader: "x-recruitee-signature",
     async fetchApplications(c) {

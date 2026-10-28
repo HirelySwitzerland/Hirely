@@ -8,7 +8,7 @@ import { Alert, Avatar, Card, EmptyState, LinkButton, PageHeader } from "@/compo
 import { EVIDENCE_META, InterviewBadge, RequirementsMeter, StageBadge } from "@/components/status";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Compare candidates" };
+export const metadata = { title: "Vergleich" };
 
 export default async function ComparePage({ searchParams }: { searchParams: Promise<{ ids?: string }> }) {
   const ctx = await pageContext("candidates.view");
@@ -20,8 +20,8 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   if (apps.length < 2) {
     return (
       <div>
-        <PageHeader title="Compare candidates" />
-        <Card><EmptyState title="Select at least two candidates" description="Tick the checkboxes in the candidate list and click Compare." action={<LinkButton href="/app/candidates" size="sm">Go to candidates</LinkButton>} /></Card>
+        <PageHeader title="Kandidierende vergleichen" />
+        <Card><EmptyState title="Mindestens zwei Personen auswählen" description="Haken Sie in der Liste die Personen an und klicken Sie auf „Vergleichen“." action={<LinkButton href="/app/candidates" size="sm">Zu den Kandidierenden</LinkButton>} /></Card>
       </div>
     );
   }
@@ -32,24 +32,24 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
     return Object.values(st?.answers ?? {}).find((x) => x.category === cat)?.answer;
   };
   const rows: { label: string; render: (a: (typeof apps)[number]) => React.ReactNode }[] = [
-    { label: "Stage", render: (a) => <StageBadge stage={a.stage} /> },
-    { label: "Experience", render: (a) => <span>{a.candidate.yearsExperience != null ? `≈ ${a.candidate.yearsExperience} years` : "—"}<span className="block text-[11px] text-slate-400">{a.candidate.currentTitle}</span></span> },
-    { label: "Required skills", render: (a) => <RequirementsMeter met={a.requirementsMet} total={a.requirementsTotal} mustMet={a.mustHaveMet} mustTotal={a.mustHaveTotal} /> },
-    { label: "Interview completion", render: (a) => <InterviewBadge status={a.interviewStatus} /> },
-    { label: "Availability", render: (a) => a.availability ?? <span className="text-slate-400">Unknown</span> },
-    { label: "Notice period", render: (a) => a.noticePeriod ?? <span className="text-slate-400">Unknown</span> },
-    { label: "Salary expectation", render: (a) => a.salaryExpectation ?? <span className="text-slate-400">Unknown</span> },
-    { label: "Motivation (in their words)", render: (a) => <span className="text-[13px] text-slate-600">{keyAnswer(a, "motivation") ? `“${keyAnswer(a, "motivation")!.slice(0, 180)}”` : "—"}</span> },
+    { label: "Stufe", render: (a) => <StageBadge stage={a.stage} /> },
+    { label: "Erfahrung", render: (a) => <span>{a.candidate.yearsExperience != null ? `≈ ${a.candidate.yearsExperience} Jahre` : "—"}<span className="block text-[11px] text-slate-400">{a.candidate.currentTitle}</span></span> },
+    { label: "Anforderungen", render: (a) => <RequirementsMeter met={a.requirementsMet} total={a.requirementsTotal} mustMet={a.mustHaveMet} mustTotal={a.mustHaveTotal} /> },
+    { label: "KI-Interview", render: (a) => <InterviewBadge status={a.interviewStatus} /> },
+    { label: "Verfügbar ab", render: (a) => a.availability ?? <span className="text-slate-400">Unbekannt</span> },
+    { label: "Kündigungsfrist", render: (a) => a.noticePeriod ?? <span className="text-slate-400">Unbekannt</span> },
+    { label: "Lohnvorstellung", render: (a) => a.salaryExpectation ?? <span className="text-slate-400">Unbekannt</span> },
+    { label: "Motivation (eigene Worte)", render: (a) => <span className="text-[13px] text-slate-600">{keyAnswer(a, "motivation") ? `“${keyAnswer(a, "motivation")!.slice(0, 180)}”` : "—"}</span> },
   ];
   return (
     <div>
-      <PageHeader breadcrumb={<Link href="/app/candidates" className="hover:text-ink">Candidates</Link>} title="Compare candidates" description="Side-by-side on configured, job-related criteria only. There is no personality or overall score." />
-      {jobs.size > 1 && <Alert tone="warning" className="mb-4">You are comparing candidates from different positions — requirements differ between jobs.</Alert>}
+      <PageHeader breadcrumb={<Link href="/app/candidates" className="hover:text-ink">Kandidierende</Link>} title="Kandidierende vergleichen" description="Nebeneinander, nur nach festgelegten, stellenbezogenen Kriterien. Es gibt keine Persönlichkeits- oder Gesamtpunktzahl." />
+      {jobs.size > 1 && <Alert tone="warning" className="mb-4">Sie vergleichen Personen aus verschiedenen Stellen – die Anforderungen unterscheiden sich.</Alert>}
       <Card className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
             <tr>
-              <th className="w-56 border-b border-slate-100 bg-slate-50/60 px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-slate-500">Candidate</th>
+              <th className="w-56 border-b border-slate-100 bg-slate-50/60 px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-slate-500">Kandidat/in</th>
               {apps.map((a) => (
                 <th key={a.id} className="border-b border-l border-slate-100 px-4 py-3 text-left align-top">
                   <Link href={`/app/candidates/${a.id}`} className="flex items-center gap-2.5">
@@ -67,13 +67,13 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                 {apps.map((a) => <td key={a.id} className="border-b border-l border-slate-100 px-4 py-3 align-top">{r.render(a)}</td>)}
               </tr>
             ))}
-            <tr><td colSpan={apps.length + 1} className="bg-slate-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Requirements & evidence</td></tr>
+            <tr><td colSpan={apps.length + 1} className="bg-slate-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Anforderungen & Belege</td></tr>
             {reqs.map((req) => (
               <tr key={req.id}>
-                <td className="border-b border-slate-100 bg-slate-50/40 px-4 py-3 text-[13px]"><span className="font-medium text-ink">{req.label}</span><span className="block text-[11px] uppercase text-slate-400">{req.kind === "MUST" ? "Must-have" : "Nice-to-have"}</span></td>
+                <td className="border-b border-slate-100 bg-slate-50/40 px-4 py-3 text-[13px]"><span className="font-medium text-ink">{req.label}</span><span className="block text-[11px] uppercase text-slate-400">{req.kind === "MUST" ? "Muss" : "Wünschenswert"}</span></td>
                 {apps.map((a) => {
                   const e = a.evaluations.find((x) => x.requirementId === req.id);
-                  if (!e) return <td key={a.id} className="border-b border-l border-slate-100 px-4 py-3 text-xs text-slate-400">n/a for this job</td>;
+                  if (!e) return <td key={a.id} className="border-b border-l border-slate-100 px-4 py-3 text-xs text-slate-400">gilt nicht für diese Stelle</td>;
                   const m = EVIDENCE_META[e.status as EvidenceStatus];
                   const Icon = m.icon;
                   const ev = ((e.evidence ?? []) as Evidence[])[0];

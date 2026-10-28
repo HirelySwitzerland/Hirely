@@ -5,6 +5,7 @@ import { analyzeApplication, reevaluate } from "./screening";
 import { inviteToAiInterview, inviteToVideoInterview } from "./interviews";
 import { notify } from "./notifications";
 import { changeStage } from "./pipeline";
+import { STAGE_LABEL } from "@/lib/stages";
 
 export async function runAction(step: Extract<Step, { type: "action" }>, applicationId: string, orgId: string): Promise<string> {
   const actor = { type: "AI" as const, name: "Hirely Automation" };
@@ -12,41 +13,45 @@ export async function runAction(step: Extract<Step, { type: "action" }>, applica
   const name = `${app.candidate.firstName} ${app.candidate.lastName}`;
   switch (step.action) {
     case "analyze_cv":
-      if (app.screeningStatus === "COMPLETED") return "CV already analyzed";
+      if (app.screeningStatus === "COMPLETED") return "CV bereits ausgewertet";
       await analyzeApplication(applicationId);
-      return "CV analyzed";
+      return "CV ausgewertet";
     case "send_message":
     case "send_reminder": {
       let channel = step.channel ?? "EMAIL";
       if (channel !== "EMAIL" && !app.candidate.phone) channel = "EMAIL";
       const r = await sendMessage({ orgId, applicationId, channel, templateKey: step.templateKey ?? "interview_reminder", actor });
-      if (!r.ok) throw new Error(`Message could not be delivered: ${r.error}`);
-      return `${channel.toLowerCase()} sent (${step.templateKey})`;
+      if (!r.ok) throw new Error(`Nachricht konnte nicht zugestellt werden: ${r.error}`);
+      return `${channel === "EMAIL" ? "E-Mail" : channel === "SMS" ? "SMS" : "WhatsApp"} gesendet (${step.templateKey})`;
     }
     case "invite_ai_interview":
       await inviteToAiInterview(orgId, applicationId, actor, step.channel ?? "EMAIL");
-      return "AI interview invitation sent";
+      return "Einladung zum KI-Interview gesendet";
     case "invite_video_interview":
       await inviteToVideoInterview(orgId, applicationId, actor);
-      return "Video interview invitation sent";
+      return "Einladung zum Video-Interview gesendet";
     case "generate_report":
       await reevaluate(applicationId);
-      return "Candidate report generated";
+      return "Bericht erstellt";
     case "notify_recruiter":
       await notify(orgId, {
         type: "candidate_ready",
-        title: step.note?.startsWith("New candidate") ? `New candidate ready for review: ${name}` : `${name}: ${step.note ?? "please review"}`,
-        body: `${app.job.title} · meets ${app.requirementsMet} of ${app.requirementsTotal} requirements`,
+        title: isReady(step.note) ? `Neue Bewerbung bereit zur Prüfung: ${name}` : `${name}: ${step.note ?? "bitte prüfen"}`,
+        body: `${app.job.title} · erfüllt ${app.requirementsMet} von ${app.requirementsTotal} Anforderungen`,
         link: `/app/candidates/${applicationId}`,
-        severity: step.note?.startsWith("New candidate") ? "success" : "info",
+        severity: isReady(step.note) ? "success" : "info",
       }, app.assignedToId ? { userIds: [app.assignedToId] } : {});
-      return "Recruiter notified";
+      return "Team benachrichtigt";
     case "move_stage":
-      if (!step.stage) throw new Error("No target stage configured");
+      if (!step.stage) throw new Error("Keine Zielstufe festgelegt");
       await changeStage(orgId, applicationId, step.stage, actor, "Automation");
-      return `Moved to ${step.stage}`;
+      return `Verschoben nach ${STAGE_LABEL[step.stage]}`;
     case "add_tag":
       await db.candidate.update({ where: { id: app.candidateId }, data: { tags: { push: step.tag ?? "automation" } } });
-      return `Tagged "${step.tag}"`;
+      return `Tag "${step.tag}" gesetzt`;
   }
+}
+
+function isReady(note?: string) {
+  return Boolean(note && (note.startsWith("Neue Bewerbung") || note.startsWith("New candidate")));
 }

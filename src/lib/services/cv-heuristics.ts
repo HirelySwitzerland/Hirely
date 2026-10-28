@@ -94,19 +94,19 @@ function parseDate(s: string, end = false): Date {
 }
 
 export function regionForPostalCode(zip: number): string {
-  if (zip >= 1000 && zip < 2000) return "Western Switzerland";
-  if (zip >= 2000 && zip < 3000) return "Western Switzerland";
+  if (zip >= 1000 && zip < 2000) return "Westschweiz";
+  if (zip >= 2000 && zip < 3000) return "Westschweiz";
   if (zip >= 3000 && zip < 4000) return "Bern / Mittelland";
-  if (zip >= 4000 && zip < 5000) return "Northwestern Switzerland";
-  if (zip >= 5000 && zip < 6000) return "Northwestern Switzerland";
-  if (zip >= 6500 && zip < 7000) return "Ticino";
-  if (zip >= 6000 && zip < 6500) return "Central Switzerland";
-  if (zip >= 7000 && zip < 8000) return "Eastern Switzerland";
-  if (zip >= 8200 && zip < 8300) return "Eastern Switzerland";
-  if (zip >= 8500 && zip < 8600) return "Eastern Switzerland";
-  if (zip >= 8700 && zip < 9000 && zip >= 8730) return "Eastern Switzerland";
-  if (zip >= 9000) return "Eastern Switzerland";
-  return "Zurich Region";
+  if (zip >= 4000 && zip < 5000) return "Nordwestschweiz";
+  if (zip >= 5000 && zip < 6000) return "Nordwestschweiz";
+  if (zip >= 6500 && zip < 7000) return "Tessin";
+  if (zip >= 6000 && zip < 6500) return "Zentralschweiz";
+  if (zip >= 7000 && zip < 8000) return "Ostschweiz";
+  if (zip >= 8200 && zip < 8300) return "Ostschweiz";
+  if (zip >= 8500 && zip < 8600) return "Ostschweiz";
+  if (zip >= 8700 && zip < 9000 && zip >= 8730) return "Ostschweiz";
+  if (zip >= 9000) return "Ostschweiz";
+  return "Region Zürich";
 }
 
 function mergeMonths(ranges: { from: Date; to: Date }[]): number {
@@ -226,8 +226,8 @@ export function parseCvHeuristic(text: string): ParsedCv {
     const current = out.experience.find((e) => e.current) ?? out.experience[0];
     if (current && !out.currentTitle) out.currentTitle = { value: current.title, status: "inferred", source: "latest position" };
   } else {
-    out.warnings.push("No dated employment history found — years of experience cannot be computed.");
+    out.warnings.push("Keine datierte Berufserfahrung gefunden – die Berufsjahre können nicht berechnet werden.");
   }
-  if (!out.email) out.warnings.push("No email address found in CV.");
+  if (!out.email) out.warnings.push("Keine E-Mail-Adresse im CV gefunden.");
   return out;
 }

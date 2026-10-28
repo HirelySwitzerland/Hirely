@@ -22,12 +22,12 @@ export function toActionError(e: unknown): ActionState {
   if (e instanceof ZodError) {
     const fieldErrors: Record<string, string> = {};
     for (const i of e.issues) fieldErrors[i.path.join(".")] = i.message;
-    return { ok: false, error: e.issues[0]?.message ?? "Invalid input.", fieldErrors };
+    return { ok: false, error: e.issues[0]?.message ?? "Ungültige Eingabe.", fieldErrors };
   }
   // Next.js redirects/notFound must propagate.
   if (e && typeof e === "object" && "digest" in e && String((e as { digest: string }).digest).startsWith("NEXT_")) throw e;
   console.error("[action]", e);
-  return { ok: false, error: e instanceof Error ? e.message : "Something went wrong. Please try again." };
+  return { ok: false, error: e instanceof Error ? e.message : "Etwas ist schiefgelaufen. Bitte erneut versuchen." };
 }
 
 export function str(fd: FormData, key: string): string {

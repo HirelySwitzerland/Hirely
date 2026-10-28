@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDistanceToNowStrict } from "date-fns";
+import { de } from "date-fns/locale";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,17 +13,17 @@ export function initials(name: string) {
 
 export function ago(d: Date | string | null | undefined) {
   if (!d) return "—";
-  return formatDistanceToNowStrict(new Date(d), { addSuffix: true });
+  return formatDistanceToNowStrict(new Date(d), { addSuffix: true, locale: de });
 }
 
 export function fmtDate(d: Date | string | null | undefined, opts: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" }) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-GB", { timeZone: "Europe/Zurich", ...opts });
+  return new Date(d).toLocaleDateString("de-CH", { timeZone: "Europe/Zurich", ...opts });
 }
 
 export function fmtDateTime(d: Date | string | null | undefined) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("en-GB", { timeZone: "Europe/Zurich", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+  return new Date(d).toLocaleString("de-CH", { timeZone: "Europe/Zurich", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
 export function fmtDuration(sec: number | null | undefined) {

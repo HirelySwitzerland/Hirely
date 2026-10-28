@@ -9,7 +9,7 @@ import { Alert, Avatar, LinkButton } from "@/components/ui";
 import { candidatePortalAction } from "@/app/actions/public";
 import { cn, fmtDateTime } from "@/lib/utils";
 
-export const metadata = { title: "Your application", robots: { index: false } };
+export const metadata = { title: "Ihre Bewerbung", robots: { index: false } };
 
 function publicStep(stage: Stage, interview: string) {
   if (["HIRED", "OFFER"].includes(stage)) return 4;

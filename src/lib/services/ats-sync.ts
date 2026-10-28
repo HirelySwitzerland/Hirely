@@ -53,7 +53,7 @@ export async function syncIntegration(integrationId: string, actor: Actor = { ty
   try {
     const apps = await adapter.fetchApplications(creds, integ.lastSyncAt);
     const { created, skipped } = await ingestNormalized(integ.orgId, integ.provider, apps, actor);
-    const message = `Fetched ${apps.length} application(s), created ${created}${skipped.length ? `, skipped ${skipped.length}: ${skipped.join("; ")}` : ""}.`;
+    const message = `${apps.length} Bewerbung(en) abgerufen, ${created} neu angelegt${skipped.length ? `, ${skipped.length} übersprungen: ${skipped.join("; ")}` : ""}.`;
     await db.integration.update({ where: { id: integ.id }, data: { status: "CONNECTED", lastSyncAt: new Date(), lastError: null } });
     await db.syncLog.create({ data: { orgId: integ.orgId, integrationId: integ.id, status: "SUCCESS", message, items: created } });
     await audit(integ.orgId, actor, "ats.synced", { type: "Integration", id: integ.id, label: adapter.label }, { created, fetched: apps.length });
@@ -65,8 +65,8 @@ export async function syncIntegration(integrationId: string, actor: Actor = { ty
     await audit(integ.orgId, actor, "ats.sync_failed", { type: "Integration", id: integ.id, label: adapter.label }, { error: err.message });
     await notify(integ.orgId, {
       type: "ats_sync_failed",
-      title: `${adapter.label} synchronization failed`,
-      body: `${err.message} ${err.retryable ? "Hirely will retry automatically." : "Please check the credentials in Integrations."} New applications from this ATS are queued until the connection is restored.`,
+      title: `${adapter.label}: Synchronisation fehlgeschlagen`,
+      body: `${err.message} ${err.retryable ? "Hirely versucht es automatisch erneut." : "Bitte prüfen Sie die Zugangsdaten unter Integrationen."} Neue Bewerbungen aus diesem ATS werden gesammelt, bis die Verbindung wieder steht.`,
       link: "/app/integrations",
       severity: "error",
     });

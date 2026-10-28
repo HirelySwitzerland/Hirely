@@ -94,10 +94,10 @@ export function extractNotice(answer: string): string | null {
   const m = answer.match(/(\d+|ein|einen|eine|zwei|drei|vier|sechs|one|two|three|four|six)\s*(monat|monate|months?|mois|mesi|wochen|weeks?|semaines)/i);
   if (m) {
     const n = /^\d+$/.test(m[1]) ? Number(m[1]) : NUM_WORDS[m[1].toLowerCase().replace(/^einen?$|^eine$/, "ein")] ?? 1;
-    const unit = /woche|week|semaine/i.test(m[2]) ? "week" : "month";
-    return `${n} ${unit}${n > 1 ? "s" : ""}`;
+    const week = /woche|week|semaine/i.test(m[2]);
+    return `${n} ${week ? (n > 1 ? "Wochen" : "Woche") : n > 1 ? "Monate" : "Monat"}`;
   }
-  if (/sofort|immediately|tout de suite|subito|keine kündigungsfrist|no notice/i.test(answer)) return "Immediately";
+  if (/sofort|immediately|tout de suite|subito|keine kündigungsfrist|no notice/i.test(answer)) return "Sofort";
   return null;
 }
 
@@ -108,7 +108,7 @@ export function extractAvailability(answer: string): string | null {
     const cut = rest.search(/(?<!\d)\.(\s|$)|[,;!?]/);
     return (cut > 0 ? rest.slice(0, cut) : rest).trim().slice(0, 60);
   }
-  if (/sofort|immediately|right away|tout de suite|subito/i.test(answer)) return "Immediately";
+  if (/sofort|immediately|right away|tout de suite|subito/i.test(answer)) return "Sofort";
   return answer.trim().length > 0 ? answer.trim().slice(0, 80) : null;
 }
 
@@ -361,17 +361,17 @@ export function validateFlow(nodes: FlowNode[]): string[] {
   const errors: string[] = [];
   const ids = new Set<string>();
   for (const n of nodes) {
-    if (ids.has(n.id)) errors.push(`Duplicate node id "${n.id}".`);
+    if (ids.has(n.id)) errors.push(`Doppelte Schritt-ID "${n.id}".`);
     ids.add(n.id);
   }
-  if (!nodes.some((n) => n.type === "end")) errors.push("The flow needs an End node.");
-  if (nodes[0] && nodes[0].type !== "welcome") errors.push("The first node should be a Welcome node that discloses the AI.");
+  if (!nodes.some((n) => n.type === "end")) errors.push("Der Ablauf braucht einen Ende-Schritt.");
+  if (nodes[0] && nodes[0].type !== "welcome") errors.push("Der erste Schritt muss eine Begrüssung mit KI-Hinweis sein.");
   for (const n of nodes) {
-    if (n.type === "condition") for (const r of n.rules) if (!ids.has(r.goto)) errors.push(`Condition "${n.label}" jumps to a missing node.`);
-    if ("text" in n && !n.text.trim()) errors.push(`Node "${n.id}" has no text.`);
+    if (n.type === "condition") for (const r of n.rules) if (!ids.has(r.goto)) errors.push(`Bedingung "${n.label}" springt zu einem fehlenden Schritt.`);
+    if ("text" in n && !n.text.trim()) errors.push(`Schritt "${n.id}" hat keinen Text.`);
   }
   const welcome = nodes.find((n) => n.type === "welcome");
   if (welcome && "text" in welcome && !/(KI|AI|automatis|IA|artificiel)/i.test(welcome.text))
-    errors.push("The welcome message must clearly state that the candidate is talking to an AI.");
+    errors.push("Die Begrüssung muss klar sagen, dass die Person mit einer KI spricht.");
   return errors;
 }

@@ -21,11 +21,11 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
   const tone = { COMPLETED: "green", WAITING: "sky", RUNNING: "violet", FAILED: "red", CANCELLED: "slate" } as const;
   return (
     <div>
-      <PageHeader breadcrumb={<Link href="/app/automations" className="hover:text-ink">Automations</Link>} title={a.name} actions={<ActionButton action={deleteAutomation} fields={{ id }} variant="ghost" confirm="Delete this automation? Running instances stop.">Delete</ActionButton>} />
+      <PageHeader breadcrumb={<Link href="/app/automations" className="hover:text-ink">Automationen</Link>} title={a.name} actions={<ActionButton action={deleteAutomation} fields={{ id }} variant="ghost" confirm="Automation löschen? Laufende Durchläufe werden gestoppt.">Löschen</ActionButton>} />
       <AutomationBuilder automation={{ ...a, steps: a.steps as unknown as Step[] }} jobs={jobs} />
       <Card className="mt-6">
-        <CardHeader title="Run log" description="Every candidate this automation processed, with each step" />
-        {runs.length === 0 ? <EmptyState title="No runs yet" description="Runs appear when the trigger fires." /> : (
+        <CardHeader title="Protokoll" description="Jede Bewerbung, die diese Automation bearbeitet hat, mit allen Schritten" />
+        {runs.length === 0 ? <EmptyState title="Noch keine Durchläufe" description="Erscheinen, sobald der Auslöser eintritt." /> : (
           <ul className="divide-y divide-slate-100">
             {runs.map((r) => {
               const log = (r.log ?? []) as { at: string; message: string; level: string }[];
@@ -33,17 +33,17 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
                 <li key={r.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <Link href={`/app/candidates/${r.applicationId}`} className="font-medium text-ink hover:text-brand-700">{r.application.candidate.firstName} {r.application.candidate.lastName}</Link>
-                    <Badge tone={tone[r.status as keyof typeof tone] ?? "slate"}>{r.status.toLowerCase()}</Badge>
-                    <span className="text-xs text-slate-500">started {ago(r.createdAt)}{r.status === "WAITING" && r.nextRunAt ? ` · continues ${fmtDateTime(r.nextRunAt)}` : ""}</span>
+                    <Badge tone={tone[r.status as keyof typeof tone] ?? "slate"}>{({ COMPLETED: "erledigt", WAITING: "wartet", RUNNING: "läuft", FAILED: "fehlgeschlagen", CANCELLED: "abgebrochen" } as Record<string, string>)[r.status] ?? r.status}</Badge>
+                    <span className="text-xs text-slate-500">gestartet {ago(r.createdAt)}{r.status === "WAITING" && r.nextRunAt ? ` · weiter am ${fmtDateTime(r.nextRunAt)}` : ""}</span>
                     {r.status === "WAITING" && (
                       <span className="ml-auto flex gap-2">
-                        <ActionButton action={runControl} fields={{ runId: r.id, op: "resume" }}>Skip wait</ActionButton>
-                        <ActionButton action={runControl} fields={{ runId: r.id, op: "cancel" }} variant="ghost">Cancel</ActionButton>
+                        <ActionButton action={runControl} fields={{ runId: r.id, op: "resume" }}>Wartezeit überspringen</ActionButton>
+                        <ActionButton action={runControl} fields={{ runId: r.id, op: "cancel" }} variant="ghost">Abbrechen</ActionButton>
                       </span>
                     )}
                   </div>
                   <details className="mt-2">
-                    <summary className="cursor-pointer text-xs text-slate-500">{log.length} log entries</summary>
+                    <summary className="cursor-pointer text-xs text-slate-500">{log.length} Protokolleinträge</summary>
                     <ol className="mt-2 space-y-1 border-l border-slate-200 pl-3">
                       {log.map((l, i) => <li key={i} className={l.level === "error" ? "text-xs text-rose-600" : "text-xs text-slate-600"}><span className="text-slate-400">{fmtDateTime(l.at)}</span> · {l.message}</li>)}
                     </ol>

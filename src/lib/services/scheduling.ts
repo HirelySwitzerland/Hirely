@@ -51,9 +51,9 @@ export async function createSchedulingLink(orgId: string, applicationId: string,
       vars: { schedulingLink: `${(process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "")}/schedule/${link.token}` },
       actor,
     });
-    if (!r.ok) throw new SchedulingError(`Invitation email could not be sent: ${r.error}`);
+    if (!r.ok) throw new SchedulingError(`Einladungs-E-Mail konnte nicht gesendet werden: ${r.error}`);
   }
-  if (app.stage === "REVIEW" && actor.type === "USER") await changeStage(orgId, applicationId, "SHORTLISTED", actor, "Invited to personal interview");
+  if (app.stage === "REVIEW" && actor.type === "USER") await changeStage(orgId, applicationId, "SHORTLISTED", actor, "Zum persönlichen Gespräch eingeladen");
   await audit(orgId, actor, "interview.invited_personal", { type: "Application", id: applicationId, label: `${app.candidate.firstName} ${app.candidate.lastName}` });
   return link;
 }
@@ -100,13 +100,13 @@ export async function availableSlots(token: string, days = 10) {
 
 export async function bookSlot(token: string, startIso: string) {
   const start = new Date(startIso);
-  if (Number.isNaN(start.getTime())) throw new SchedulingError("Invalid time.");
+  if (Number.isNaN(start.getTime())) throw new SchedulingError("Ungültige Zeit.");
   const link = await db.schedulingLink.findUnique({ where: { token }, include: { application: { include: { candidate: true, job: true, org: true } } } });
-  if (!link) throw new SchedulingError("This scheduling link is invalid.");
-  if (link.status === "BOOKED") throw new SchedulingError("An appointment has already been booked with this link.");
-  if (link.status !== "OPEN" || link.expiresAt < new Date()) throw new SchedulingError("This scheduling link has expired. Please contact us for a new one.");
+  if (!link) throw new SchedulingError("Dieser Terminlink ist ungültig.");
+  if (link.status === "BOOKED") throw new SchedulingError("Über diesen Link wurde bereits ein Termin gebucht.");
+  if (link.status !== "OPEN" || link.expiresAt < new Date()) throw new SchedulingError("Dieser Terminlink ist abgelaufen. Bitte kontaktieren Sie uns für einen neuen.");
   const slots = await availableSlots(token);
-  if (!slots.some((s) => s.getTime() === start.getTime())) throw new SchedulingError("This time is no longer available. Please choose another slot.");
+  if (!slots.some((s) => s.getTime() === start.getTime())) throw new SchedulingError("Dieser Termin ist nicht mehr frei. Bitte wählen Sie einen anderen.");
   const end = addMinutes(start, link.durationMin);
   const app = link.application;
   const interviewer = link.interviewerId ? await db.user.findUnique({ where: { id: link.interviewerId } }) : null;
@@ -122,7 +122,7 @@ export async function bookSlot(token: string, startIso: string) {
   }
   const res = await provider.createEvent(tokens, {
     title,
-    description: `Personal interview for ${app.job.title}.\nCandidate profile: ${(process.env.APP_URL ?? "").replace(/\/$/, "")}/app/candidates/${app.id}`,
+    description: `Persönliches Gespräch für ${app.job.title}.\nProfil: ${(process.env.APP_URL ?? "").replace(/\/$/, "")}/app/candidates/${app.id}`,
     start,
     end,
     location: link.location ?? undefined,
@@ -132,7 +132,7 @@ export async function bookSlot(token: string, startIso: string) {
 
   const event = await db.$transaction(async (tx) => {
     const fresh = await tx.schedulingLink.updateMany({ where: { id: link.id, status: "OPEN" }, data: { status: "BOOKED" } });
-    if (fresh.count === 0) throw new SchedulingError("An appointment has already been booked with this link.");
+    if (fresh.count === 0) throw new SchedulingError("Über diesen Link wurde bereits ein Termin gebucht.");
     return tx.calendarEvent.create({
       data: {
         orgId: link.orgId,
@@ -153,21 +153,21 @@ export async function bookSlot(token: string, startIso: string) {
   if (!res.ok) {
     await notify(link.orgId, {
       type: "integration_error",
-      title: "Calendar sync failed — interview saved in Hirely",
-      body: `${res.error} The appointment with ${app.candidate.firstName} ${app.candidate.lastName} is confirmed; please add it to your calendar manually or reconnect the calendar integration.`,
+      title: "Kalender-Sync fehlgeschlagen – Gespräch in Hirely gespeichert",
+      body: `${res.error} Der Termin mit ${app.candidate.firstName} ${app.candidate.lastName} ist bestätigt; bitte tragen Sie ihn selbst in den Kalender ein oder verbinden Sie den Kalender neu.`,
       link: "/app/integrations",
       severity: "error",
     });
   }
   const when = formatZurich(start, app.job.language === "en" ? "en-GB" : "de-CH");
   await sendMessage({ orgId: link.orgId, applicationId: app.id, channel: "EMAIL", templateKey: "interview_confirmation", vars: { interviewDate: when, location: link.location ?? "" }, actor: { type: "CANDIDATE" } }).catch(() => undefined);
-  await changeStage(link.orgId, app.id, "PERSONAL_INTERVIEW", { type: "CANDIDATE", name: app.candidate.firstName }, `Booked ${format(start, "yyyy-MM-dd HH:mm")}`);
+  await changeStage(link.orgId, app.id, "PERSONAL_INTERVIEW", { type: "CANDIDATE", name: app.candidate.firstName }, `Gebucht für ${format(start, "dd.MM.yyyy HH:mm")}`);
   await db.application.update({ where: { id: app.id }, data: { lastCandidateActionAt: new Date() } });
   const reminderAt = addMinutes(start, -24 * 60);
   if (reminderAt > new Date()) await enqueue("reminder.personal_interview", { eventId: event.id }, { orgId: link.orgId, runAt: reminderAt });
   await notify(link.orgId, {
     type: "interview_scheduled",
-    title: `Interview scheduled: ${app.candidate.firstName} ${app.candidate.lastName}`,
+    title: `Gespräch gebucht: ${app.candidate.firstName} ${app.candidate.lastName}`,
     body: `${app.job.title} · ${when}`,
     link: `/app/candidates/${app.id}`,
     severity: "success",

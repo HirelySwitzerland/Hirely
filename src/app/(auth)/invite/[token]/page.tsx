@@ -12,32 +12,32 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   if (!inv || inv.acceptedAt || inv.revokedAt || inv.expiresAt < new Date())
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-ink">Invitation not valid</h1>
-        <p className="mt-2 text-sm text-slate-500">This invitation has expired or was already used. Ask your administrator to send a new one.</p>
-        <LinkButton href="/login" className="mt-6">Go to sign in</LinkButton>
+        <h1 className="text-2xl font-semibold text-ink">Einladung ungültig</h1>
+        <p className="mt-2 text-sm text-slate-500">Diese Einladung ist abgelaufen oder wurde bereits verwendet. Bitten Sie um eine neue Einladung.</p>
+        <LinkButton href="/login" className="mt-6">Zur Anmeldung</LinkButton>
       </div>
     );
   const existing = await db.user.findUnique({ where: { email: inv.email } });
   const session = await getSession();
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">Join {inv.org.name}</h1>
-      <p className="mt-1.5 text-sm text-slate-500">You were invited as <strong>{ROLE_LABELS[inv.role]}</strong> ({inv.email}).</p>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{inv.org.name} beitreten</h1>
+      <p className="mt-1.5 text-sm text-slate-500">Sie wurden eingeladen als <strong>{ROLE_LABELS[inv.role]}</strong> ({inv.email}).</p>
       <ActionForm action={acceptInvite} className="mt-6 space-y-4">
         <input type="hidden" name="token" value={token} />
         {existing ? (
           session?.userId === existing.id ? (
             <p className="text-sm text-slate-600">Signed in as {existing.email}.</p>
           ) : (
-            <Alert tone="info">You already have an account. <a className="link" href={`/login?next=/invite/${token}`}>Sign in</a> first, then accept.</Alert>
+            <Alert tone="info">Sie haben bereits ein Konto. <a className="link" href={`/login?next=/invite/${token}`}>Melden Sie sich zuerst an</a> und nehmen Sie dann an.</Alert>
           )
         ) : (
           <>
-            <Field label="Your name"><Input name="name" required autoFocus /></Field>
-            <Field label="Password" hint="At least 10 characters with letters and numbers."><Input name="password" type="password" required minLength={10} /></Field>
+            <Field label="Ihr Name"><Input name="name" required autoFocus /></Field>
+            <Field label="Passwort" hint="Mindestens 10 Zeichen mit Buchstaben und Zahlen."><Input name="password" type="password" required minLength={10} /></Field>
           </>
         )}
-        <SubmitButton className="w-full" size="lg">Accept invitation</SubmitButton>
+        <SubmitButton className="w-full" size="lg">Einladung annehmen</SubmitButton>
       </ActionForm>
     </div>
   );

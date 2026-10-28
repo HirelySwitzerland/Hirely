@@ -36,7 +36,7 @@ class MockVoice implements VoiceProvider {
     const digits = req.to.replace(/\D/g, "");
     if (digits.length < 9) return { ok: false, error: `Phone number "${req.to}" is invalid.`, code: "INVALID_NUMBER" };
     // Deterministic "did not answer" for numbers ending in 00 lets the no-answer recovery flow be demonstrated.
-    if (digits.endsWith("00")) return { ok: false, error: "Candidate did not answer the call.", code: "NO_ANSWER" };
+    if (digits.endsWith("00")) return { ok: false, error: "Die Person hat den Anruf nicht angenommen.", code: "NO_ANSWER" };
     return { ok: true, providerCallId: `sim_${req.interviewId.slice(-8)}_${Date.now().toString(36)}`, mode: "simulated" };
   }
 }

@@ -108,12 +108,12 @@ function interviewSummary(i: Record<string, any>): string {
       return `- **${a.question.replace(/\?$/, "")}:** ${short}`;
     });
   const facts = [
-    i.availability && `Availability: ${i.availability}`,
-    i.notice && `Notice period: ${i.notice}`,
-    i.salary && `Salary expectation: ${i.salary}`,
+    i.availability && `Verfügbar ab: ${i.availability}`,
+    i.notice && `Kündigungsfrist: ${i.notice}`,
+    i.salary && `Lohnvorstellung: ${i.salary}`,
   ].filter(Boolean);
   return [
-    `The candidate completed ${answers.filter((a) => a.answer).length} of ${answers.length} interview questions.`,
+    `Die Person hat ${answers.filter((a) => a.answer).length} von ${answers.length} Interviewfragen beantwortet.`,
     facts.length ? facts.join(" · ") : "",
     "",
     ...lines,
@@ -206,7 +206,7 @@ function videoAnalysis(i: Record<string, any>): string {
   return JSON.stringify({
     keyPoints: sentences.slice(0, 3),
     relatedRequirements: mentioned.map((r) => r.id),
-    note: "Analysis is based solely on the spoken content of the answer.",
+    note: "Ausgewertet wird nur der gesprochene Inhalt der Antwort.",
   });
 }
 
@@ -230,6 +230,6 @@ export function mockGenerate(req: LLMRequest): string {
     case "video_answer_analysis":
       return videoAnalysis(input);
     case "assistant":
-      return String(input.fallback ?? "I can help with candidates, interviews, jobs and drafting messages.");
+      return String(input.fallback ?? "Ich helfe bei Kandidierenden, Interviews, Stellen und beim Entwerfen von Nachrichten.");
   }
 }

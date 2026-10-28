@@ -19,7 +19,7 @@ const STAGES = ["NEW", "AI_SCREENING", "AI_INTERVIEW", "REVIEW", "SHORTLISTED", 
 
 async function loadApp(ctx: Awaited<ReturnType<typeof requirePermission>>, id: string) {
   const app = await db.application.findFirst({ where: { ...applicationScope(ctx), id }, include: { candidate: true, job: true } });
-  if (!app) throw new Error("Candidate not found or not accessible.");
+  if (!app) throw new Error("Kandidat/in nicht gefunden oder kein Zugriff.");
   return app;
 }
 
@@ -33,17 +33,17 @@ export async function moveStage(_: ActionState, fd: FormData): Promise<ActionSta
     let extra = "";
     if (stage === "REJECTED" && str(fd, "notify") === "on") {
       const r = await sendMessage({ orgId: ctx.orgId, applicationId: app.id, channel: "EMAIL", templateKey: "rejection", actor: userActor(ctx.user) });
-      extra = r.ok ? " Rejection email sent." : ` Rejection email failed: ${r.error}`;
+      extra = r.ok ? " Absage-E-Mail gesendet." : ` Absage-E-Mail fehlgeschlagen: ${r.error}`;
     }
     if (stage === "TALENT_POOL" && str(fd, "notify") === "on") {
       await sendMessage({ orgId: ctx.orgId, applicationId: app.id, channel: "EMAIL", templateKey: "talent_pool_invitation", actor: userActor(ctx.user) });
-      extra = " Talent pool invitation sent (consent requested).";
+      extra = " Einladung in den Talent-Pool gesendet (Einwilligung angefragt).";
     }
     if (stage === "OFFER" && str(fd, "notify") === "on") {
       await sendMessage({ orgId: ctx.orgId, applicationId: app.id, channel: "EMAIL", templateKey: "offer", actor: userActor(ctx.user) });
-      extra = " Offer email sent.";
+      extra = " Angebots-E-Mail gesendet.";
     }
-    return ok(`Moved to ${STAGE_LABEL[stage]}.${extra}`);
+    return ok(`Verschoben nach „${STAGE_LABEL[stage]}“.${extra}`);
   } catch (e) {
     return toActionError(e);
   }
@@ -58,10 +58,10 @@ export async function bulkMoveStage(_: ActionState, fd: FormData): Promise<Actio
     for (const id of ids) {
       const app = await db.application.findFirst({ where: { ...applicationScope(ctx), id } });
       if (!app) continue;
-      await changeStage(ctx.orgId, id, stage, userActor(ctx.user), "Bulk update");
+      await changeStage(ctx.orgId, id, stage, userActor(ctx.user), "Sammeländerung");
       n++;
     }
-    return ok(`${n} candidate(s) moved to ${STAGE_LABEL[stage]}.`);
+    return ok(`${n} Person(en) verschoben nach „${STAGE_LABEL[stage]}“.`);
   } catch (e) {
     return toActionError(e);
   }
@@ -72,9 +72,9 @@ export async function addComment(_: ActionState, fd: FormData): Promise<ActionSt
     const ctx = await requirePermission("candidates.view");
     const app = await loadApp(ctx, str(fd, "applicationId"));
     const body = str(fd, "body");
-    if (!body) return fail("Write a note first.");
+    if (!body) return fail("Bitte zuerst eine Notiz schreiben.");
     await db.comment.create({ data: { orgId: ctx.orgId, applicationId: app.id, userId: ctx.user.id, authorName: ctx.user.name, body: body.slice(0, 4000) } });
-    return ok("Note added.");
+    return ok("Notiz gespeichert.");
   } catch (e) {
     return toActionError(e);
   }
@@ -84,21 +84,21 @@ export async function overrideEvaluation(_: ActionState, fd: FormData): Promise<
   try {
     const ctx = await requirePermission("candidates.stage");
     const ev = await db.requirementEvaluation.findFirst({ where: { id: str(fd, "evaluationId"), orgId: ctx.orgId }, include: { requirement: true } });
-    if (!ev) return fail("Evaluation not found.");
+    if (!ev) return fail("Bewertung nicht gefunden.");
     await loadApp(ctx, ev.applicationId);
     const status = str(fd, "status");
     if (status === "RESET") {
       await db.requirementEvaluation.update({ where: { id: ev.id }, data: { overriddenBy: null, overrideNote: null } });
       await reevaluate(ev.applicationId);
-      return ok("Override removed — evaluation recomputed from evidence.");
+      return ok("Anpassung entfernt – Bewertung wieder aus den Belegen berechnet.");
     }
     const s = z.enum(["CONFIRMED", "PARTIAL", "NOT_MET", "UNKNOWN"]).parse(status);
     const note = str(fd, "note");
-    if (note.length < 5) return fail("Please add a short justification — overrides are documented in the audit log.");
+    if (note.length < 5) return fail("Bitte kurz begründen – Anpassungen werden im Protokoll festgehalten.");
     await db.requirementEvaluation.update({ where: { id: ev.id }, data: { status: s, overriddenBy: ctx.user.name, overrideNote: note.slice(0, 1000) } });
     await reevaluate(ev.applicationId);
     await audit(ctx.orgId, userActor(ctx.user), "requirement.overridden", { type: "Application", id: ev.applicationId, label: ev.requirement.label }, { from: ev.status, to: s, note });
-    return ok("Evaluation updated.");
+    return ok("Bewertung angepasst.");
   } catch (e) {
     return toActionError(e);
   }
@@ -109,7 +109,7 @@ export async function rerunScreening(_: ActionState, fd: FormData): Promise<Acti
     const ctx = await requirePermission("candidates.manage");
     const app = await loadApp(ctx, str(fd, "applicationId"));
     await analyzeApplication(app.id, { force: true });
-    return ok("CV re-analyzed against the current job configuration.");
+    return ok("CV mit den aktuellen Kriterien neu ausgewertet.");
   } catch (e) {
     return toActionError(e);
   }
@@ -121,7 +121,7 @@ export async function inviteAi(_: ActionState, fd: FormData): Promise<ActionStat
     const app = await loadApp(ctx, str(fd, "applicationId"));
     const channel = (["EMAIL", "SMS", "WHATSAPP"].includes(str(fd, "channel")) ? str(fd, "channel") : "EMAIL") as "EMAIL";
     const r = await inviteToAiInterview(ctx.orgId, app.id, userActor(ctx.user), channel);
-    return r.delivered ? ok("AI interview invitation sent.") : fail(`Invitation created, but delivery failed: ${r.error}. You can copy the interview link from the profile.`);
+    return r.delivered ? ok("AI interview invitation sent.") : fail(`Einladung erstellt, aber nicht zugestellt: ${r.error}. Sie können den Interview-Link im Profil kopieren.`);
   } catch (e) {
     return toActionError(e);
   }
@@ -132,7 +132,7 @@ export async function inviteVideo(_: ActionState, fd: FormData): Promise<ActionS
     const ctx = await requirePermission("interviews.manage");
     const app = await loadApp(ctx, str(fd, "applicationId"));
     await inviteToVideoInterview(ctx.orgId, app.id, userActor(ctx.user));
-    return ok("Video interview invitation sent.");
+    return ok("Einladung zum Video-Interview gesendet.");
   } catch (e) {
     return toActionError(e);
   }
@@ -142,11 +142,11 @@ export async function callNowFromProfile(_: ActionState, fd: FormData): Promise<
   try {
     const ctx = await requirePermission("interviews.manage");
     const app = await loadApp(ctx, str(fd, "applicationId"));
-    if (!app.candidate.phone) return fail("This candidate has no phone number. Send an invitation instead — they can enter one.");
+    if (!app.candidate.phone) return fail("Keine Telefonnummer vorhanden. Senden Sie stattdessen eine Einladung – die Person kann ihre Nummer selbst eingeben.");
     const iv = await ensurePrescreen(ctx.orgId, app.id);
     await resetInterviewForRetry(ctx.orgId, iv.id, userActor(ctx.user), "PHONE");
     await db.application.update({ where: { id: app.id }, data: { interviewStatus: "SCHEDULED", ...(["NEW", "AI_SCREENING"].includes(app.stage) ? { stage: "AI_INTERVIEW" } : {}) } });
-    return ok("Call queued — Hirely is calling the candidate now.");
+    return ok("Anruf gestartet – Hirely ruft jetzt an.");
   } catch (e) {
     return toActionError(e);
   }
@@ -156,18 +156,18 @@ export async function retryInterview(_: ActionState, fd: FormData): Promise<Acti
   try {
     const ctx = await requirePermission("interviews.manage");
     const iv = await db.interview.findFirst({ where: { id: str(fd, "interviewId"), orgId: ctx.orgId } });
-    if (!iv) return fail("Interview not found.");
+    if (!iv) return fail("Interview nicht gefunden.");
     await loadApp(ctx, iv.applicationId);
     const mode = str(fd, "mode");
     if (mode === "browser") {
       await db.interview.update({ where: { id: iv.id }, data: { status: "PENDING", type: "WEB", error: null } });
       await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "INVITED" } });
       const r = await sendMessage({ orgId: ctx.orgId, applicationId: iv.applicationId, channel: "EMAIL", templateKey: "ai_interview_invitation", actor: userActor(ctx.user) });
-      return r.ok ? ok("Browser interview link sent to the candidate.") : fail(`Could not send email: ${r.error}`);
+      return r.ok ? ok("Link zum Browser-Interview gesendet.") : fail(`E-Mail konnte nicht gesendet werden: ${r.error}`);
     }
     await resetInterviewForRetry(ctx.orgId, iv.id, userActor(ctx.user), "PHONE");
     await db.application.update({ where: { id: iv.applicationId }, data: { interviewStatus: "SCHEDULED" } });
-    return ok("Call re-queued.");
+    return ok("Anruf neu eingeplant.");
   } catch (e) {
     return toActionError(e);
   }
@@ -179,7 +179,7 @@ export async function invitePersonal(_: ActionState, fd: FormData): Promise<Acti
     const app = await loadApp(ctx, str(fd, "applicationId"));
     const duration = Math.min(180, Math.max(15, Number(str(fd, "durationMin")) || 45));
     const link = await createSchedulingLink(ctx.orgId, app.id, userActor(ctx.user), { durationMin: duration, interviewerId: str(fd, "interviewerId") || undefined, location: str(fd, "location") || undefined });
-    return ok(`Invitation sent. ${app.candidate.firstName} can now pick a time — the calendar event is created automatically.`, { data: { token: link.token } });
+    return ok(`Einladung gesendet. ${app.candidate.firstName} kann jetzt einen Termin wählen – der Kalendereintrag entsteht automatisch.`, { data: { token: link.token } });
   } catch (e) {
     return toActionError(e);
   }
@@ -192,10 +192,10 @@ export async function sendCandidateMessage(_: ActionState, fd: FormData): Promis
     const channel = z.enum(["EMAIL", "SMS", "WHATSAPP"]).parse(str(fd, "channel") || "EMAIL");
     const templateKey = str(fd, "templateKey") || undefined;
     const body = str(fd, "body");
-    if (!templateKey && body.length < 2) return fail("Write a message or pick a template.");
-    if (channel !== "EMAIL" && !app.candidate.phone) return fail("No phone number on file for SMS/WhatsApp.");
+    if (!templateKey && body.length < 2) return fail("Schreiben Sie eine Nachricht oder wählen Sie eine Vorlage.");
+    if (channel !== "EMAIL" && !app.candidate.phone) return fail("Keine Telefonnummer für SMS/WhatsApp vorhanden.");
     const r = await sendMessage({ orgId: ctx.orgId, applicationId: app.id, channel, templateKey, subject: str(fd, "subject") || undefined, body: body || undefined, actor: userActor(ctx.user) });
-    return r.ok ? ok("Message sent.") : fail(`Delivery failed: ${r.error}`);
+    return r.ok ? ok("Nachricht gesendet.") : fail(`Zustellung fehlgeschlagen: ${r.error}`);
   } catch (e) {
     return toActionError(e);
   }
@@ -206,9 +206,9 @@ export async function assignCandidate(_: ActionState, fd: FormData): Promise<Act
     const ctx = await requirePermission("candidates.manage");
     const app = await loadApp(ctx, str(fd, "applicationId"));
     const userId = str(fd, "userId") || null;
-    if (userId && !(await db.membership.findFirst({ where: { orgId: ctx.orgId, userId } }))) return fail("User not in this organization.");
+    if (userId && !(await db.membership.findFirst({ where: { orgId: ctx.orgId, userId } }))) return fail("Diese Person gehört nicht zur Firma.");
     await db.application.update({ where: { id: app.id }, data: { assignedToId: userId } });
-    return ok("Owner updated.");
+    return ok("Verantwortliche Person geändert.");
   } catch (e) {
     return toActionError(e);
   }
@@ -218,19 +218,19 @@ export async function addCandidateManually(_: ActionState, fd: FormData): Promis
   try {
     const ctx = await requirePermission("candidates.manage");
     const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId } });
-    if (!job) return fail("Please choose a job.");
-    const d = z.object({ firstName: z.string().min(1, "First name required"), lastName: z.string().min(1, "Last name required"), email: z.string().email("Valid email required"), phone: z.string().optional(), location: z.string().optional() })
+    if (!job) return fail("Bitte wählen Sie eine Stelle.");
+    const d = z.object({ firstName: z.string().min(1, "First name required"), lastName: z.string().min(1, "Nachname fehlt"), email: z.string().email("Gültige E-Mail nötig"), phone: z.string().optional(), location: z.string().optional() })
       .parse({ firstName: str(fd, "firstName"), lastName: str(fd, "lastName"), email: str(fd, "email"), phone: str(fd, "phone") || undefined, location: str(fd, "location") || undefined });
     const file = fd.get("cv");
     let cv: { buffer: Buffer; filename: string; mime: string } | { text: string } | undefined;
     if (file instanceof File && file.size > 0) cv = { buffer: Buffer.from(await file.arrayBuffer()), filename: file.name, mime: file.type || "application/octet-stream" };
     else if (str(fd, "cvText")) cv = { text: str(fd, "cvText") };
     const r = await ingestApplication({
-      orgId: ctx.orgId, jobId: job.id, source: "MANUAL", sourceDetail: `Manual upload by ${ctx.user.name}`, candidate: d, cv, consents: { processing: fd.get("consent") === "on" },
+      orgId: ctx.orgId, jobId: job.id, source: "MANUAL", sourceDetail: `Manuell erfasst von ${ctx.user.name}`, candidate: d, cv, consents: { processing: fd.get("consent") === "on" },
       actor: userActor(ctx.user), sendConfirmation: fd.get("sendConfirmation") === "on",
     });
-    if (r.duplicate) return ok("This candidate already applied for this job.", { redirect: `/app/candidates/${r.application.id}` });
-    return ok("Candidate added — CV analysis started.", { redirect: `/app/candidates/${r.application.id}` });
+    if (r.duplicate) return ok("Diese Person hat sich bereits auf diese Stelle beworben.", { redirect: `/app/candidates/${r.application.id}` });
+    return ok("Person hinzugefügt – CV-Auswertung gestartet.", { redirect: `/app/candidates/${r.application.id}` });
   } catch (e) {
     if (e instanceof UploadError) return fail(e.message);
     return toActionError(e);
@@ -267,21 +267,21 @@ export async function importCsv(_: ActionState, fd: FormData): Promise<ActionSta
   try {
     const ctx = await requirePermission("candidates.manage");
     const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId } });
-    if (!job) return fail("Please choose a job.");
+    if (!job) return fail("Bitte wählen Sie eine Stelle.");
     const file = fd.get("file");
-    if (!(file instanceof File) || file.size === 0) return fail("Choose a CSV file.");
-    if (file.size > 5 * 1024 * 1024) return fail("CSV too large (max 5 MB).");
+    if (!(file instanceof File) || file.size === 0) return fail("Bitte eine CSV-Datei wählen.");
+    if (file.size > 5 * 1024 * 1024) return fail("CSV zu gross (max. 5 MB).");
     const rows = parseCsv(await file.text());
-    if (rows.length < 2) return fail("The CSV needs a header row and at least one candidate.");
+    if (rows.length < 2) return fail("Die CSV braucht eine Kopfzeile und mindestens eine Person.");
     const header = rows[0].map((h) => h.trim().toLowerCase().replace(/[\s_-]/g, ""));
     const col = (...names: string[]) => header.findIndex((h) => names.includes(h));
     const ix = { first: col("firstname", "vorname", "prenom"), last: col("lastname", "nachname", "name", "nom"), email: col("email", "e-mail", "mail"), phone: col("phone", "telefon", "mobile", "tel"), location: col("location", "ort", "wohnort", "city"), cv: col("cv", "cvtext", "lebenslauf", "resume") };
-    if (ix.first < 0 || ix.last < 0 || ix.email < 0) return fail("Required columns: firstName, lastName, email (optional: phone, location, cv).");
+    if (ix.first < 0 || ix.last < 0 || ix.email < 0) return fail("Pflichtspalten: firstName, lastName, email (optional: phone, location, cv).");
     let created = 0;
     const errors: string[] = [];
     for (const [n, r] of rows.slice(1, 501).entries()) {
       const email = r[ix.email]?.trim();
-      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { errors.push(`Row ${n + 2}: invalid email`); continue; }
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { errors.push(`Zeile ${n + 2}: ungültige E-Mail`); continue; }
       try {
         const res = await ingestApplication({
           orgId: ctx.orgId, jobId: job.id, source: "CSV_IMPORT", sourceDetail: `CSV import · ${file.name}`,
@@ -293,7 +293,7 @@ export async function importCsv(_: ActionState, fd: FormData): Promise<ActionSta
         errors.push(`Row ${n + 2}: ${(e as Error).message}`);
       }
     }
-    return errors.length ? { ok: true, message: `Imported ${created} candidate(s). ${errors.length} row(s) skipped: ${errors.slice(0, 3).join("; ")}${errors.length > 3 ? "…" : ""}` } : ok(`Imported ${created} candidate(s). CV analysis is running.`, { redirect: `/app/candidates?job=${job.id}` });
+    return errors.length ? { ok: true, message: `Imported ${created} candidate(s). ${errors.length} row(s) skipped: ${errors.slice(0, 3).join("; ")}${errors.length > 3 ? "…" : ""}` } : ok(`${created} Person(en) importiert. Die CV-Auswertung läuft.`, { redirect: `/app/candidates?job=${job.id}` });
   } catch (e) {
     return toActionError(e);
   }
@@ -303,9 +303,9 @@ export async function deleteCandidate(_: ActionState, fd: FormData): Promise<Act
   try {
     const ctx = await requirePermission("candidates.delete");
     const c = await db.candidate.findFirst({ where: { id: str(fd, "candidateId"), orgId: ctx.orgId } });
-    if (!c) return fail("Candidate not found.");
-    await anonymizeCandidate(ctx.orgId, c.id, userActor(ctx.user), str(fd, "reason") || "Deleted by recruiter");
-    return ok("Candidate data deleted and record anonymized.", { redirect: "/app/candidates" });
+    if (!c) return fail("Kandidat/in nicht gefunden.");
+    await anonymizeCandidate(ctx.orgId, c.id, userActor(ctx.user), str(fd, "reason") || "Gelöscht durch HR");
+    return ok("Daten gelöscht und Datensatz anonymisiert.", { redirect: "/app/candidates" });
   } catch (e) {
     return toActionError(e);
   }
@@ -315,10 +315,10 @@ export async function updateTags(_: ActionState, fd: FormData): Promise<ActionSt
   try {
     const ctx = await requirePermission("candidates.manage");
     const c = await db.candidate.findFirst({ where: { id: str(fd, "candidateId"), orgId: ctx.orgId } });
-    if (!c) return fail("Candidate not found.");
+    if (!c) return fail("Kandidat/in nicht gefunden.");
     const tags = str(fd, "tags").split(",").map((t) => t.trim().toLowerCase()).filter(Boolean).slice(0, 20);
     await db.candidate.update({ where: { id: c.id }, data: { tags } });
-    return ok("Tags saved.");
+    return ok("Tags gespeichert.");
   } catch (e) {
     return toActionError(e);
   }
@@ -341,21 +341,21 @@ export async function addPoolCandidateToJob(_: ActionState, fd: FormData): Promi
     const ctx = await requirePermission("candidates.manage");
     const cand = await db.candidate.findFirst({ where: { id: str(fd, "candidateId"), orgId: ctx.orgId, anonymizedAt: null } });
     const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId } });
-    if (!cand || !job) return fail("Candidate or job not found.");
-    if (!cand.consentTalentPoolAt) return fail("This candidate has not consented to being contacted from the talent pool.");
+    if (!cand || !job) return fail("Kandidat/in oder Stelle nicht gefunden.");
+    if (!cand.consentTalentPoolAt) return fail("Diese Person hat nicht eingewilligt, aus dem Talent-Pool kontaktiert zu werden.");
     const existing = await db.application.findUnique({ where: { candidateId_jobId: { candidateId: cand.id, jobId: job.id } } });
-    if (existing) return ok("Already in this job's pipeline.", { redirect: `/app/candidates/${existing.id}` });
+    if (existing) return ok("Bereits bei dieser Stelle im Prozess.", { redirect: `/app/candidates/${existing.id}` });
     const doc = await db.document.findFirst({ where: { candidateId: cand.id, kind: "CV" }, orderBy: { createdAt: "desc" } });
     const app = await db.application.create({
       data: {
         orgId: ctx.orgId, candidateId: cand.id, jobId: job.id, source: "MANUAL", sourceDetail: "Talent pool", screeningStatus: "PENDING",
-        stageHistory: { create: { orgId: ctx.orgId, toStage: "NEW", actorType: "USER", actorId: ctx.user.id, reason: "Added from talent pool" } },
+        stageHistory: { create: { orgId: ctx.orgId, toStage: "NEW", actorType: "USER", actorId: ctx.user.id, reason: "Aus dem Talent-Pool hinzugefügt" } },
       },
     });
     void doc;
     await analyzeApplication(app.id);
     await audit(ctx.orgId, userActor(ctx.user), "candidate.added_from_pool", { type: "Application", id: app.id, label: `${cand.firstName} ${cand.lastName} → ${job.title}` });
-    return ok(`${cand.firstName} was added to ${job.title} and screened against its requirements.`, { redirect: `/app/candidates/${app.id}` });
+    return ok(`${cand.firstName} wurde zur Stelle ${job.title} hinzugefügt und mit deren Anforderungen geprüft.`, { redirect: `/app/candidates/${app.id}` });
   } catch (e) {
     return toActionError(e);
   }

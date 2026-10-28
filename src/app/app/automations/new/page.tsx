@@ -9,7 +9,7 @@ export default async function NewAutomation() {
   const jobs = await db.job.findMany({ where: { orgId: ctx.orgId }, select: { id: true, title: true } });
   return (
     <div>
-      <PageHeader breadcrumb={<Link href="/app/automations" className="hover:text-ink">Automations</Link>} title="New automation" />
+      <PageHeader breadcrumb={<Link href="/app/automations" className="hover:text-ink">Automationen</Link>} title="Neue Automation" />
       <AutomationBuilder jobs={jobs} />
     </div>
   );

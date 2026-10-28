@@ -19,14 +19,14 @@ export const MAX_VIDEO_BYTES = 60 * 1024 * 1024;
  */
 export async function saveVideoAnswer(token: string, questionIndex: number, file: { buffer: Buffer; mime: string }, captionHint: string | undefined, durationSec: number) {
   const iv = await db.interview.findUnique({ where: { token }, include: { application: { include: { job: { include: { requirements: true } }, candidate: true } } } });
-  if (!iv || iv.type !== "VIDEO") throw new Error("Invalid video interview link.");
-  if (iv.status === "COMPLETED") throw new Error("This video interview has already been submitted.");
+  if (!iv || iv.type !== "VIDEO") throw new Error("Ungültiger Link zum Video-Interview.");
+  if (iv.status === "COMPLETED") throw new Error("Dieses Video-Interview wurde bereits übermittelt.");
   const questions = iv.flowSnapshot as unknown as VideoQuestion[];
   const q = questions.find((x) => x.index === questionIndex);
-  if (!q) throw new Error("Unknown question.");
-  if (file.buffer.length > MAX_VIDEO_BYTES) throw new Error("Recording is too large (max 60 MB).");
+  if (!q) throw new Error("Unbekannte Frage.");
+  if (file.buffer.length > MAX_VIDEO_BYTES) throw new Error("Die Aufnahme ist zu gross (max. 60 MB).");
   const mime = sniffMime(file.buffer, file.mime);
-  if (!mime || !(mime.startsWith("video") || mime.startsWith("audio"))) throw new Error("Unsupported recording format.");
+  if (!mime || !(mime.startsWith("video") || mime.startsWith("audio"))) throw new Error("Aufnahmeformat nicht unterstützt.");
 
   const key = await getStorage().put(iv.orgId, `video/${iv.id}`, file.buffer, mime.includes("mp4") ? "mp4" : "webm");
   if (iv.status === "PENDING") {
@@ -71,10 +71,10 @@ export async function saveVideoAnswer(token: string, questionIndex: number, file
 
 export async function submitVideoInterview(token: string) {
   const iv = await db.interview.findUnique({ where: { token }, include: { videoResponses: true, application: { include: { candidate: true, job: true } } } });
-  if (!iv || iv.type !== "VIDEO") throw new Error("Invalid link.");
+  if (!iv || iv.type !== "VIDEO") throw new Error("Ungültiger Link.");
   const questions = iv.flowSnapshot as unknown as VideoQuestion[];
   const missing = questions.filter((q) => !iv.videoResponses.some((r) => r.questionIndex === q.index));
-  if (missing.length) throw new Error(`Please answer all questions (${missing.length} remaining).`);
+  if (missing.length) throw new Error(`Bitte beantworten Sie alle Fragen (noch ${missing.length} offen).`);
   const duration = iv.videoResponses.reduce((s, r) => s + (r.durationSec ?? 0), 0);
   const unavailable = iv.videoResponses.filter((r) => r.transcriptStatus !== "COMPLETED").length;
   await db.interview.update({
@@ -95,8 +95,8 @@ export async function submitVideoInterview(token: string) {
   await audit(iv.orgId, { type: "CANDIDATE", name: iv.application.candidate.firstName }, "interview.completed", { type: "Interview", id: iv.id, label: `Video · ${iv.application.candidate.firstName} ${iv.application.candidate.lastName}` });
   await notify(iv.orgId, {
     type: "interview_completed",
-    title: `Video interview submitted: ${iv.application.candidate.firstName} ${iv.application.candidate.lastName}`,
-    body: unavailable ? `${unavailable} answer(s) have no transcript — recordings are available for review.` : `${iv.application.job.title} · ${questions.length} answers`,
+    title: `Video-Interview eingereicht: ${iv.application.candidate.firstName} ${iv.application.candidate.lastName}`,
+    body: unavailable ? `${unavailable} Antwort(en) ohne Transkript – die Aufnahmen stehen zur Ansicht bereit.` : `${iv.application.job.title} · ${questions.length} Antworten`,
     link: `/app/candidates/${iv.applicationId}?tab=interview`,
     severity: unavailable ? "warning" : "success",
   });

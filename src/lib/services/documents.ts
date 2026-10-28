@@ -10,7 +10,7 @@ export class UploadError extends Error {}
 /** Minimal ZIP reader to pull word/document.xml out of a .docx without extra dependencies. */
 function docxToText(buf: Buffer): string {
   const eocd = buf.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
-  if (eocd < 0) throw new UploadError("Invalid DOCX file.");
+  if (eocd < 0) throw new UploadError("Ungültige DOCX-Datei.");
   const cdCount = buf.readUInt16LE(eocd + 10);
   let p = buf.readUInt32LE(eocd + 16);
   for (let i = 0; i < cdCount; i++) {
@@ -35,7 +35,7 @@ function docxToText(buf: Buffer): string {
     }
     p += 46 + nameLen + extraLen + commentLen;
   }
-  throw new UploadError("DOCX contains no document body.");
+  throw new UploadError("Die DOCX-Datei enthält keinen Text.");
 }
 
 export async function extractText(buf: Buffer, mime: string): Promise<string> {
@@ -52,11 +52,11 @@ export async function extractText(buf: Buffer, mime: string): Promise<string> {
 
 /** Validates (size + magic bytes), encrypts, stores and extracts text from a candidate document. */
 export async function storeCandidateDocument(orgId: string, candidateId: string, file: { buffer: Buffer; filename: string; mime: string }, kind = "CV") {
-  if (file.buffer.length === 0) throw new UploadError("The uploaded file is empty.");
-  if (file.buffer.length > MAX_CV_BYTES) throw new UploadError("File is too large (max 10 MB).");
+  if (file.buffer.length === 0) throw new UploadError("Die hochgeladene Datei ist leer.");
+  if (file.buffer.length > MAX_CV_BYTES) throw new UploadError("Die Datei ist zu gross (max. 10 MB).");
   const mime = sniffMime(file.buffer, file.mime);
   if (!mime || !ALLOWED_UPLOADS[mime] || mime.startsWith("video") || mime.startsWith("audio"))
-    throw new UploadError("Unsupported file type. Please upload a PDF, DOCX or TXT file.");
+    throw new UploadError("Dateityp nicht unterstützt. Bitte laden Sie ein PDF, DOCX oder TXT hoch.");
   let text = "";
   try {
     text = (await extractText(file.buffer, mime)).replace(/\u0000/g, "").slice(0, 100_000);

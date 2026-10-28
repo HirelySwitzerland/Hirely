@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 export function JobTabs({ id, canManage }: { id: string; canManage: boolean }) {
   const p = usePathname();
   const tabs = [
-    { href: `/app/jobs/${id}`, label: "Overview" },
+    { href: `/app/jobs/${id}`, label: "Übersicht" },
     ...(canManage
       ? [
-          { href: `/app/jobs/${id}/ai`, label: "AI configuration" },
-          { href: `/app/jobs/${id}/interview`, label: "Interview builder" },
-          { href: `/app/jobs/${id}/edit`, label: "Job details" },
+          { href: `/app/jobs/${id}/ai`, label: "KI-Kriterien" },
+          { href: `/app/jobs/${id}/interview`, label: "Interview-Ablauf" },
+          { href: `/app/jobs/${id}/edit`, label: "Stellendetails" },
         ]
       : []),
   ];

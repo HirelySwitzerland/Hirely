@@ -6,7 +6,7 @@ import { Badge, Card, CardHeader, Checkbox, Field, Input, Select, Table, Td, Th 
 import { createDataRequest, handleDataRequest, runRetentionNow, updateSettingsSection } from "@/app/actions/settings";
 import { ago, fmtDate } from "@/lib/utils";
 
-export const metadata = { title: "Privacy & retention" };
+export const metadata = { title: "Datenschutz" };
 
 export default async function PrivacySettings() {
   const ctx = await pageContext("privacy.manage");
@@ -20,65 +20,65 @@ export default async function PrivacySettings() {
   return (
     <div className="space-y-5">
       <Card>
-        <CardHeader title={<span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-600" />Data protection (revDSG / GDPR)</span>} description={`Data location: ${String(p.dataLocation ?? "Switzerland")} · encrypted at rest (AES-256-GCM) and in transit (TLS 1.2+) · DPA ${p.dpaSignedAt ? `signed ${p.dpaSignedAt}` : "available on request"}`} />
+        <CardHeader title={<span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-600" />Datenschutz (revDSG / DSGVO)</span>} description={`Datenstandort: ${String(p.dataLocation ?? "Schweiz")} · verschlüsselt gespeichert (AES-256-GCM) und übertragen (TLS 1.2+) · AVV ${p.dpaSignedAt ? `unterzeichnet ${p.dpaSignedAt}` : "auf Anfrage"}`} />
         <ActionForm action={updateSettingsSection} className="space-y-4 p-5">
           <input type="hidden" name="section" value="privacy" />
           <input type="hidden" name="__booleans" value="requireRecordingConsent,anonymizeRejected,aiDisclosure" />
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Retention period for applicant data (days)" hint="Personal data is anonymized automatically after this period (nightly job)."><Input name="retentionDays" type="number" min={30} max={3650} defaultValue={String(s.retentionDays ?? 180)} /></Field>
-            <Field label="Talent pool retention (days, with consent)"><Input name="talentPoolRetentionDays" type="number" min={30} max={3650} defaultValue={String(s.talentPoolRetentionDays ?? 730)} /></Field>
+            <Field label="Aufbewahrung Bewerbungsdaten (Tage)" hint="Danach werden Personendaten automatisch anonymisiert (nächtlich)."><Input name="retentionDays" type="number" min={30} max={3650} defaultValue={String(s.retentionDays ?? 180)} /></Field>
+            <Field label="Aufbewahrung Talent-Pool (Tage, mit Einwilligung)"><Input name="talentPoolRetentionDays" type="number" min={30} max={3650} defaultValue={String(s.talentPoolRetentionDays ?? 730)} /></Field>
           </div>
-          <Checkbox name="requireRecordingConsent" defaultChecked={p.requireRecordingConsent !== false} label="Require explicit consent before recording and transcribing interviews" />
-          <Checkbox name="aiDisclosure" defaultChecked disabled label="Always disclose that candidates interact with an AI" description="Mandatory — cannot be disabled." />
-          <Checkbox name="anonymizeRejected" defaultChecked={Boolean(p.anonymizeRejected)} label="Anonymize rejected candidates 30 days after the decision (unless they joined the talent pool)" />
-          <SubmitButton>Save</SubmitButton>
+          <Checkbox name="requireRecordingConsent" defaultChecked={p.requireRecordingConsent !== false} label="Vor Aufnahme und Transkription ausdrückliche Einwilligung verlangen" />
+          <Checkbox name="aiDisclosure" defaultChecked disabled label="Immer offenlegen, dass Kandidierende mit einer KI sprechen" description="Pflicht – kann nicht ausgeschaltet werden." />
+          <Checkbox name="anonymizeRejected" defaultChecked={Boolean(p.anonymizeRejected)} label="Abgesagte Kandidierende 30 Tage nach dem Entscheid anonymisieren (ausser sie sind im Talent-Pool)" />
+          <SubmitButton>Speichern</SubmitButton>
         </ActionForm>
       </Card>
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="p-5 text-sm">
-          <p className="font-semibold text-ink">Consent overview</p>
+          <p className="font-semibold text-ink">Einwilligungen</p>
           <dl className="mt-3 space-y-1.5 text-slate-600">
-            <div className="flex justify-between"><dt>Candidates</dt><dd className="tabular-nums">{consentStats._count._all}</dd></div>
-            <div className="flex justify-between"><dt>Processing consent</dt><dd className="tabular-nums">{consentStats._count.consentProcessingAt}</dd></div>
-            <div className="flex justify-between"><dt>Recording consent</dt><dd className="tabular-nums">{consentStats._count.consentRecordingAt}</dd></div>
-            <div className="flex justify-between"><dt>Talent pool consent</dt><dd className="tabular-nums">{consentStats._count.consentTalentPoolAt}</dd></div>
+            <div className="flex justify-between"><dt>Kandidierende</dt><dd className="tabular-nums">{consentStats._count._all}</dd></div>
+            <div className="flex justify-between"><dt>Datenbearbeitung</dt><dd className="tabular-nums">{consentStats._count.consentProcessingAt}</dd></div>
+            <div className="flex justify-between"><dt>Aufnahme</dt><dd className="tabular-nums">{consentStats._count.consentRecordingAt}</dd></div>
+            <div className="flex justify-between"><dt>Talent-Pool</dt><dd className="tabular-nums">{consentStats._count.consentTalentPoolAt}</dd></div>
           </dl>
         </Card>
         <Card className="p-5 text-sm">
-          <p className="font-semibold text-ink">Retention</p>
-          <p className="mt-2 text-slate-600">{due} candidate record(s) are past their retention date.</p>
-          <div className="mt-3"><ActionButton action={runRetentionNow} confirm="Anonymize all candidates past their retention period now?">Run retention now</ActionButton></div>
+          <p className="font-semibold text-ink">Aufbewahrung</p>
+          <p className="mt-2 text-slate-600">{due} Datensätze haben die Aufbewahrungsfrist überschritten.</p>
+          <div className="mt-3"><ActionButton action={runRetentionNow} confirm="Alle Kandidierenden mit abgelaufener Frist jetzt anonymisieren?">Jetzt bereinigen</ActionButton></div>
         </Card>
         <Card className="p-5 text-sm">
-          <p className="font-semibold text-ink">Processing documentation</p>
+          <p className="font-semibold text-ink">Dokumentation</p>
           <ul className="mt-2 space-y-1 text-slate-600">
-            <li>• Record of processing activities (Art. 12 revDSG)</li>
-            <li>• Data processing agreement (DPA) & sub-processors</li>
-            <li>• AI transparency statement</li>
-            <li>• Technical & organizational measures (TOMs)</li>
+            <li>• Verzeichnis der Bearbeitungstätigkeiten (Art. 12 revDSG)</li>
+            <li>• Auftragsverarbeitungsvertrag (AVV) & Unterauftragnehmer</li>
+            <li>• KI-Transparenzerklärung</li>
+            <li>• Technische & organisatorische Massnahmen (TOM)</li>
           </ul>
-          <p className="mt-2 text-xs text-slate-500">Available from your Hirely contact; the applicant privacy notice is published on your career page.</p>
+          <p className="mt-2 text-xs text-slate-500">Erhältlich bei Ihrer Ansprechperson bei Hirely; die Datenschutzerklärung für Bewerbende steht auf Ihrer Karriereseite.</p>
         </Card>
       </div>
       <Card>
-        <CardHeader title="Data subject requests" description="Access, export and deletion requests — complete within 30 days" />
+        <CardHeader title="Anfragen betroffener Personen" description="Auskunft, Export und Löschung – innert 30 Tagen erledigen" />
         <ActionForm action={createDataRequest} resetOnSuccess className="flex flex-col gap-2 border-b border-slate-100 p-5 sm:flex-row">
-          <Input name="email" type="email" placeholder="candidate@email.ch" required />
-          <Select name="type" className="sm:w-40"><option value="EXPORT">Export / access</option><option value="DELETION">Deletion</option></Select>
-          <Input name="note" placeholder="Note (optional)" />
-          <SubmitButton variant="secondary">Log request</SubmitButton>
+          <Input name="email" type="email" placeholder="person@email.ch" required />
+          <Select name="type" className="sm:w-40"><option value="EXPORT">Auskunft / Export</option><option value="DELETION">Löschung</option></Select>
+          <Input name="note" placeholder="Notiz (optional)" />
+          <SubmitButton variant="secondary">Anfrage erfassen</SubmitButton>
         </ActionForm>
         <Table>
-          <thead><tr><Th>Requested</Th><Th>Candidate</Th><Th>Type</Th><Th>Status</Th><Th>Note</Th><Th></Th></tr></thead>
+          <thead><tr><Th>Eingegangen</Th><Th>Person</Th><Th>Art</Th><Th>Status</Th><Th>Notiz</Th><Th></Th></tr></thead>
           <tbody>
             {requests.map((r) => (
               <tr key={r.id}>
                 <Td className="text-xs text-slate-500">{fmtDate(r.requestedAt)} ({ago(r.requestedAt)})</Td>
                 <Td>{r.candidateEmail}</Td>
-                <Td><Badge tone={r.type === "DELETION" ? "red" : "brand"}>{r.type.toLowerCase()}</Badge></Td>
-                <Td><Badge tone={r.status === "COMPLETED" ? "green" : r.status === "OPEN" ? "amber" : "slate"}>{r.status.toLowerCase()}</Badge></Td>
+                <Td><Badge tone={r.type === "DELETION" ? "red" : "brand"}>{r.type === "DELETION" ? "Löschung" : "Export"}</Badge></Td>
+                <Td><Badge tone={r.status === "COMPLETED" ? "green" : r.status === "OPEN" ? "amber" : "slate"}>{r.status === "COMPLETED" ? "erledigt" : r.status === "OPEN" ? "offen" : "abgelehnt"}</Badge></Td>
                 <Td className="max-w-xs text-xs text-slate-600">{r.note}</Td>
-                <Td>{r.status === "OPEN" && <div className="flex gap-2"><ActionButton action={handleDataRequest} fields={{ id: r.id, op: "complete" }} confirm={r.type === "DELETION" ? "Permanently delete this candidate's data?" : undefined}>{r.type === "DELETION" ? "Delete data" : "Export"}</ActionButton><ActionButton action={handleDataRequest} fields={{ id: r.id, op: "reject", note: "No data held" }} variant="ghost">No data held</ActionButton></div>}</Td>
+                <Td>{r.status === "OPEN" && <div className="flex gap-2"><ActionButton action={handleDataRequest} fields={{ id: r.id, op: "complete" }} confirm={r.type === "DELETION" ? "Daten dieser Person endgültig löschen?" : undefined}>{r.type === "DELETION" ? "Daten löschen" : "Exportieren"}</ActionButton><ActionButton action={handleDataRequest} fields={{ id: r.id, op: "reject", note: "Keine Daten vorhanden" }} variant="ghost">Keine Daten vorhanden</ActionButton></div>}</Td>
               </tr>
             ))}
           </tbody>

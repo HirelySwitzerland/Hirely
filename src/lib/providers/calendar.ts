@@ -25,7 +25,7 @@ export interface CalendarProvider {
 class MockCalendar implements CalendarProvider {
   name = "mock" as const;
   async createEvent(_t: OAuthTokens | null, ev: CalendarEventInput): Promise<CalendarResult> {
-    if (ev.end <= ev.start) return { ok: false, error: "Event end must be after start." };
+    if (ev.end <= ev.start) return { ok: false, error: "Das Ende muss nach dem Beginn liegen." };
     return { ok: true, eventId: `mockcal_${Date.now().toString(36)}`, joinUrl: ev.location?.startsWith("http") ? ev.location : undefined };
   }
   async busy() {
@@ -36,7 +36,7 @@ class MockCalendar implements CalendarProvider {
 class GoogleCalendar implements CalendarProvider {
   name = "google" as const;
   async createEvent(t: OAuthTokens | null, ev: CalendarEventInput): Promise<CalendarResult> {
-    if (!t) return { ok: false, error: "Google Calendar is not connected." };
+    if (!t) return { ok: false, error: "Google Kalender ist nicht verbunden." };
     const res = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all", {
       method: "POST",
       headers: { authorization: `Bearer ${t.accessToken}`, "content-type": "application/json" },
@@ -69,7 +69,7 @@ class GoogleCalendar implements CalendarProvider {
 class MicrosoftCalendar implements CalendarProvider {
   name = "microsoft" as const;
   async createEvent(t: OAuthTokens | null, ev: CalendarEventInput): Promise<CalendarResult> {
-    if (!t) return { ok: false, error: "Microsoft Outlook is not connected." };
+    if (!t) return { ok: false, error: "Microsoft Outlook ist nicht verbunden." };
     const res = await fetch("https://graph.microsoft.com/v1.0/me/events", {
       method: "POST",
       headers: { authorization: `Bearer ${t.accessToken}`, "content-type": "application/json" },

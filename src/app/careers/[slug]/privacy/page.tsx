@@ -6,20 +6,20 @@ export default async function PrivacyNotice({ params }: { params: Promise<{ slug
   const days = Number(s.retentionDays ?? 180);
   return (
     <main className="prose-hirely mx-auto max-w-3xl px-4 py-12 text-[15px]">
-      <h2>Privacy notice for applicants</h2>
-      <p><strong>{org.name}</strong> is responsible for processing your application data. Hirely acts as a processor on behalf of {org.name} (data hosted in Switzerland).</p>
-      <h3>What we process</h3>
+      <h2>Datenschutzhinweis für Bewerbende</h2>
+      <p><strong>{org.name}</strong> ist verantwortlich für die Bearbeitung Ihrer Bewerbungsdaten. Hirely bearbeitet die Daten im Auftrag von {org.name} (Datenhaltung in der Schweiz).</p>
+      <h3>Welche Daten wir bearbeiten</h3>
       <ul>
-        <li>Your contact details, CV and the answers you provide.</li>
-        <li>If you take part in the AI pre-screening: the conversation transcript and, with your consent, the recording.</li>
-        <li>For video interviews: your recordings and their transcripts. Only the content of your answers is analyzed — never your appearance, voice characteristics, emotions or any protected characteristic.</li>
+        <li>Ihre Kontaktdaten, Ihren Lebenslauf und Ihre Antworten.</li>
+        <li>Wenn Sie am KI-Vorabgespräch teilnehmen: das Gesprächsprotokoll und – mit Ihrer Einwilligung – die Aufnahme.</li>
+        <li>Bei Video-Interviews: Ihre Aufnahmen und deren Transkripte. Ausgewertet wird nur der Inhalt Ihrer Antworten – nie Ihr Aussehen, Ihre Stimme, Emotionen oder geschützte Merkmale.</li>
       </ul>
-      <h3>How AI is used</h3>
-      <p>An AI assistant structures your CV, asks every applicant the same job-related questions and summarizes answers. It shows recruiters for each configured requirement whether there is evidence and where it comes from. It does not make decisions: every decision about your application is made by a person.</p>
-      <h3>Retention</h3>
-      <p>Your data is deleted {days} days after the process ends, unless you agree to join our talent pool. You can withdraw consent at any time.</p>
-      <h3>Your rights</h3>
-      <p>You can access, export or delete your data at any time via the link in your confirmation email (candidate portal), or by contacting {org.name}.</p>
+      <h3>Wie KI eingesetzt wird</h3>
+      <p>Ein KI-Assistent strukturiert Ihren Lebenslauf, stellt allen Bewerbenden dieselben stellenbezogenen Fragen und fasst die Antworten zusammen. Er zeigt dem HR-Team zu jeder Anforderung, ob es einen Beleg gibt und woher er stammt. Er trifft keine Entscheide: Über Ihre Bewerbung entscheidet immer ein Mensch.</p>
+      <h3>Aufbewahrung</h3>
+      <p>Ihre Daten werden {days} Tage nach Abschluss des Verfahrens gelöscht, ausser Sie stimmen der Aufnahme in unseren Talent-Pool zu. Sie können Ihre Einwilligung jederzeit widerrufen.</p>
+      <h3>Ihre Rechte</h3>
+      <p>Sie können Ihre Daten jederzeit über den Link in Ihrer Bestätigungs-E-Mail (Bewerbendenportal) einsehen, exportieren oder löschen – oder sich direkt an {org.name} wenden.</p>
     </main>
   );
 }

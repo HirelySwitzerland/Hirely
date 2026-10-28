@@ -4,9 +4,10 @@ import type { JobStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
 import { Badge, Card, EmptyState, LinkButton, PageHeader, Table, Td, Th, type Tone } from "@/components/ui";
-import { ago, cn, salaryRange } from "@/lib/utils";
+import { ago, cn } from "@/lib/utils";
 
-export const metadata = { title: "Jobs" };
+export const metadata = { title: "Stellen" };
+const STATUS_LABEL: Record<JobStatus, string> = { OPEN: "Offen", DRAFT: "Entwurf", PAUSED: "Pausiert", CLOSED: "Geschlossen" };
 const STATUS_TONE: Record<JobStatus, Tone> = { OPEN: "green", DRAFT: "slate", PAUSED: "amber", CLOSED: "stone" };
 
 export default async function JobsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
@@ -21,11 +22,11 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
   const stageCounts = await db.application.groupBy({ by: ["jobId", "stage"], where: { orgId: ctx.orgId, jobId: { in: jobs.map((j) => j.id) } }, _count: true });
   const c = (jobId: string, stages: string[]) => stageCounts.filter((s) => s.jobId === jobId && stages.includes(s.stage)).reduce((a, b) => a + b._count, 0);
   const total = counts.reduce((a, b) => a + b._count, 0);
-  const tabs = [{ id: "", label: "All", n: total }, ...(["OPEN", "DRAFT", "PAUSED", "CLOSED"] as const).map((s) => ({ id: s, label: s.charAt(0) + s.slice(1).toLowerCase(), n: counts.find((x) => x.status === s)?._count ?? 0 }))];
+  const tabs = [{ id: "", label: "Alle", n: total }, ...(["OPEN", "DRAFT", "PAUSED", "CLOSED"] as const).map((s) => ({ id: s, label: STATUS_LABEL[s], n: counts.find((x) => x.status === s)?._count ?? 0 }))];
 
   return (
     <div>
-      <PageHeader title="Jobs" description="Every position has its own AI screening criteria and interview flow." actions={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new"><Plus className="h-4 w-4" />New job</LinkButton>} />
+      <PageHeader title="Stellen" description="Jede Stelle hat eigene Prüfkriterien und einen eigenen KI-Interviewablauf." actions={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new"><Plus className="h-4 w-4" />Neue Stelle</LinkButton>} />
       <div className="mb-4 flex flex-wrap gap-1.5">
         {tabs.map((t) => (
           <Link key={t.id} href={t.id ? `/app/jobs?status=${t.id}` : "/app/jobs"} className={cn("rounded-full border px-3 py-1 text-[13px] font-medium", (status ?? "") === t.id ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")}>
@@ -35,11 +36,11 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       </div>
       <Card>
         {jobs.length === 0 ? (
-          <EmptyState icon={<Briefcase className="h-5 w-5" />} title="No jobs yet" description="Create your first position — Hirely writes the job ad and sets up the AI interview." action={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new" size="sm">Create job</LinkButton>} />
+          <EmptyState icon={<Briefcase className="h-5 w-5" />} title="Noch keine Stellen" description="Erstellen Sie Ihre erste Stelle – Hirely schreibt das Inserat und richtet das KI-Interview ein." action={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new" size="sm">Stelle erstellen</LinkButton>} />
         ) : (
           <Table>
             <thead>
-              <tr><Th>Position</Th><Th>Status</Th><Th>Candidates</Th><Th>AI pipeline</Th><Th>Ready for review</Th><Th>Salary</Th><Th>Updated</Th></tr>
+              <tr><Th>Stelle</Th><Th>Status</Th><Th>Kandidierende</Th><Th>Zu prüfen</Th><Th className="text-right">Aktualisiert</Th></tr>
             </thead>
             <tbody>
               {jobs.map((j) => (
@@ -48,12 +49,10 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
                     <Link href={`/app/jobs/${j.id}`} className="font-medium text-ink hover:text-brand-700">{j.title}{j.workload ? ` ${j.workload}` : ""}</Link>
                     <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500"><MapPin className="h-3 w-3" />{j.location ?? "—"} · {j.department ?? "—"}</p>
                   </Td>
-                  <Td><Badge tone={STATUS_TONE[j.status]} dot>{j.status.charAt(0) + j.status.slice(1).toLowerCase()}</Badge></Td>
-                  <Td><span className="inline-flex items-center gap-1.5 tabular-nums"><Users className="h-3.5 w-3.5 text-slate-400" />{j._count.applications}</span></Td>
-                  <Td className="text-xs text-slate-600 tabular-nums">{c(j.id, ["NEW", "AI_SCREENING"])} screening · {c(j.id, ["AI_INTERVIEW"])} interviewing</Td>
-                  <Td>{c(j.id, ["REVIEW"]) ? <Badge tone="amber">{c(j.id, ["REVIEW"])} waiting</Badge> : <span className="text-xs text-slate-400">—</span>}</Td>
-                  <Td className="text-xs text-slate-600">{salaryRange(j.salaryMin, j.salaryMax, j.currency) ?? "—"}</Td>
-                  <Td className="text-xs text-slate-500">{ago(j.updatedAt)}</Td>
+                  <Td><Badge tone={STATUS_TONE[j.status]} dot>{STATUS_LABEL[j.status]}</Badge></Td>
+                  <Td><span className="inline-flex items-center gap-1.5 tabular-nums"><Users className="h-3.5 w-3.5 text-slate-400" />{j._count.applications}</span>{c(j.id, ["NEW", "AI_SCREENING", "AI_INTERVIEW"]) > 0 && <span className="ml-2 text-xs text-slate-400">({c(j.id, ["NEW", "AI_SCREENING", "AI_INTERVIEW"])} in KI-Prüfung)</span>}</Td>
+                  <Td>{c(j.id, ["REVIEW"]) ? <Badge tone="amber">{c(j.id, ["REVIEW"])} warten</Badge> : <span className="text-xs text-slate-400">—</span>}</Td>
+                  <Td className="text-right text-[13px] text-slate-500">{ago(j.updatedAt)}</Td>
                 </tr>
               ))}
             </tbody>

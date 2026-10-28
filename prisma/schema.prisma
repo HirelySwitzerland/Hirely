@@ -30,7 +30,7 @@ model User {
   totpSecretEnc   String?
   totpEnabled     Boolean   @default(false)
   recoveryCodes   String[]  @default([])
-  locale          String    @default("en")
+  locale          String    @default("de")
   title           String?
   createdAt       DateTime  @default(now())
   lastLoginAt     DateTime?

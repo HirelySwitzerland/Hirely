@@ -8,27 +8,27 @@ import { register } from "@/app/actions/auth";
 export default function RegisterPage() {
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">Start your free trial</h1>
-      <p className="mt-1.5 text-sm text-slate-500">14 days, all features. No credit card required.</p>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">Kostenlos testen</h1>
+      <p className="mt-1.5 text-sm text-slate-500">14 Tage, alle Funktionen. Keine Kreditkarte nötig.</p>
       <ActionForm action={register} className="mt-6 space-y-4">
         {(s) => (
           <>
-            <Field label="Full name" error={s?.fieldErrors?.name}>
+            <Field label="Vor- und Nachname" error={s?.fieldErrors?.name}>
               <Input name="name" autoComplete="name" required autoFocus />
             </Field>
-            <Field label="Work email" error={s?.fieldErrors?.email}>
+            <Field label="Geschäftliche E-Mail" error={s?.fieldErrors?.email}>
               <Input name="email" type="email" autoComplete="email" required />
             </Field>
-            <Field label="Password" hint="At least 10 characters with letters and numbers." error={s?.fieldErrors?.password}>
+            <Field label="Passwort" hint="Mindestens 10 Zeichen mit Buchstaben und Zahlen." error={s?.fieldErrors?.password}>
               <Input name="password" type="password" autoComplete="new-password" required minLength={10} />
             </Field>
-            <Checkbox name="terms" label="I accept the terms of service and the data processing agreement (DPA)." required />
-            <SubmitButton className="w-full" size="lg" pendingText="Creating account…">Create account</SubmitButton>
+            <Checkbox name="terms" label="Ich akzeptiere die AGB und den Auftragsverarbeitungsvertrag (AVV)." required />
+            <SubmitButton className="w-full" size="lg" pendingText="Konto wird erstellt…">Konto erstellen</SubmitButton>
           </>
         )}
       </ActionForm>
       <p className="mt-6 text-center text-sm text-slate-500">
-        Already have an account? <Link href="/login" className="link">Sign in</Link>
+        Schon ein Konto? <Link href="/login" className="link">Anmelden</Link>
       </p>
     </div>
   );

@@ -4,18 +4,18 @@ import { slugify } from "@/lib/utils";
 import { defaultPipelineAutomation } from "./automation";
 
 export const IMPLEMENTATION_CHECKLIST = [
-  ["company", "Company setup", "Setup"],
-  ["ats", "ATS integration", "Integrations"],
-  ["email", "Email integration", "Integrations"],
-  ["calendar", "Calendar integration", "Integrations"],
-  ["phone", "Phone integration", "Integrations"],
-  ["job_templates", "Job templates", "Configuration"],
-  ["interview_templates", "Interview templates", "Configuration"],
-  ["ai_config", "AI configuration", "Configuration"],
-  ["privacy", "Privacy configuration", "Compliance"],
-  ["testing", "Testing", "Launch"],
-  ["training", "Training", "Launch"],
-  ["golive", "Go-live", "Launch"],
+  ["company", "Firma einrichten", "Einrichtung"],
+  ["ats", "ATS anbinden", "Integrationen"],
+  ["email", "E-Mail anbinden", "Integrationen"],
+  ["calendar", "Kalender anbinden", "Integrationen"],
+  ["phone", "Telefonie anbinden", "Integrationen"],
+  ["job_templates", "Stellenvorlagen", "Konfiguration"],
+  ["interview_templates", "Interviewvorlagen", "Konfiguration"],
+  ["ai_config", "KI-Konfiguration", "Konfiguration"],
+  ["privacy", "Datenschutz einrichten", "Datenschutz"],
+  ["testing", "Testen", "Start"],
+  ["training", "Schulung", "Start"],
+  ["golive", "Go-live", "Start"],
 ] as const;
 
 export async function uniqueOrgSlug(name: string) {
@@ -36,8 +36,8 @@ export async function bootstrapOrganization(orgId: string) {
     await db.automation.create({
       data: {
         orgId,
-        name: "Standard pre-screening pipeline",
-        description: "Analyze every application, invite qualified candidates to the AI interview, send reminders and notify the recruiter.",
+        name: "Standard-Vorprüfung",
+        description: "Jede Bewerbung prüfen, passende Personen zum KI-Interview einladen, Erinnerungen senden und das Team informieren.",
         trigger: "APPLICATION_RECEIVED",
         steps: defaultPipelineAutomation() as object,
       },

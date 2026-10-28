@@ -14,8 +14,8 @@ export default async function InterviewBuilderPage({ params }: { params: Promise
   return (
     <div>
       <p className="mb-5 max-w-3xl text-sm text-slate-500">
-        Design the AI phone & browser interview for this position. The assistant always introduces itself as an AI, asks for recording consent, follows your steps and branches, and hands the structured result to your team.
-        Supported languages: {VOICE_LANGUAGES.map((l) => l.label.split(" (")[0]).join(", ")}.
+        Gestalten Sie das KI-Interview (Telefon & Browser) für diese Stelle. Der Assistent stellt sich immer als KI vor, fragt nach der Einwilligung zur Aufnahme, folgt Ihren Schritten und übergibt das Ergebnis strukturiert an Ihr Team.
+        Sprachen: {VOICE_LANGUAGES.map((l) => l.label.split(" (")[0]).join(", ")}.
       </p>
       <FlowBuilder jobId={job.id} initial={nodes} language={job.language} vars={{ candidate: "Lara Muster", company: ctx.org.name, position: job.title }} />
     </div>

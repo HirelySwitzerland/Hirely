@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { format, startOfDay, subDays } from "date-fns";
 import { db } from "@/lib/db";
 import { planById } from "@/lib/billing";
+const SOURCE_NAMES: Record<string, string> = { CAREER_SITE: "Karriereseite", ATS: "ATS", CSV_IMPORT: "CSV-Import", API: "API", EMAIL: "E-Mail", MANUAL: "Manuell" };
 
 /** Minutes of manual HR work replaced per automated activity (conservative estimates, documented in the UI). */
 export const TIME_SAVED_MINUTES = {
@@ -60,14 +61,14 @@ export async function applicationsOverTime(appWhere: Prisma.ApplicationWhereInpu
 }
 
 const FUNNEL = [
-  { stage: "NEW", label: "Applied" },
-  { stage: "AI_SCREENING", label: "AI screened" },
-  { stage: "AI_INTERVIEW", label: "AI interview" },
-  { stage: "REVIEW", label: "Review" },
-  { stage: "SHORTLISTED", label: "Shortlisted" },
-  { stage: "PERSONAL_INTERVIEW", label: "Personal interview" },
-  { stage: "OFFER", label: "Offer" },
-  { stage: "HIRED", label: "Hired" },
+  { stage: "NEW", label: "Beworben" },
+  { stage: "AI_SCREENING", label: "KI-geprüft" },
+  { stage: "AI_INTERVIEW", label: "KI-Interview" },
+  { stage: "REVIEW", label: "Zu prüfen" },
+  { stage: "SHORTLISTED", label: "Engere Wahl" },
+  { stage: "PERSONAL_INTERVIEW", label: "Pers. Gespräch" },
+  { stage: "OFFER", label: "Angebot" },
+  { stage: "HIRED", label: "Eingestellt" },
 ] as const;
 
 /** Funnel = number of applications that ever reached each stage (from stage history). */
@@ -99,8 +100,8 @@ export async function sourcePerformance(appWhere: Prisma.ApplicationWhereInput) 
   const advanced = new Set(["SHORTLISTED", "PERSONAL_INTERVIEW", "OFFER", "HIRED"]);
   for (const a of apps) {
     const parts = (a.sourceDetail ?? "").split(" · ").filter((p) => p && !p.includes("@"));
-    const key = parts.pop() || a.source.replace("_", " ").toLowerCase();
-    const label = key.charAt(0).toUpperCase() + key.slice(1);
+    const key = parts.pop();
+    const label = key ? key.charAt(0).toUpperCase() + key.slice(1) : (SOURCE_NAMES[a.source] ?? a.source);
     const r = map.get(label) ?? { source: label, applications: 0, interviewed: 0, shortlisted: 0, hired: 0 };
     r.applications++;
     if (a.interviewStatus === "COMPLETED") r.interviewed++;
@@ -113,7 +114,7 @@ export async function sourcePerformance(appWhere: Prisma.ApplicationWhereInput) 
 
 export async function interviewCompletion(orgId: string, appWhere: Prisma.ApplicationWhereInput) {
   const rows = await db.application.groupBy({ by: ["interviewStatus"], where: { ...appWhere, interviewStatus: { not: "NOT_INVITED" } }, _count: true });
-  const label: Record<string, string> = { INVITED: "Invited", SCHEDULED: "Scheduled", IN_PROGRESS: "In progress", COMPLETED: "Completed", NO_ANSWER: "No answer", FAILED: "Failed", DECLINED: "Declined" };
+  const label: Record<string, string> = { INVITED: "Eingeladen", SCHEDULED: "Geplant", IN_PROGRESS: "Läuft", COMPLETED: "Abgeschlossen", NO_ANSWER: "Nicht erreicht", FAILED: "Fehlgeschlagen", DECLINED: "Abgelehnt" };
   return rows.map((r) => ({ name: label[r.interviewStatus] ?? r.interviewStatus, value: r._count, status: r.interviewStatus }));
 }
 
@@ -189,6 +190,6 @@ export async function fullAnalytics(orgId: string, appWhere: Prisma.ApplicationW
     },
     savedBreakdown: saved.breakdown,
     perJob,
-    workload: [...workload, { name: "Hirely AI", assigned: 0, actions: aiActions }],
+    workload: [...workload, { name: "Hirely KI", assigned: 0, actions: aiActions }],
   };
 }

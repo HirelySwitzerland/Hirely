@@ -7,11 +7,9 @@ import { Button, Checkbox, Field, Input, Select, Textarea } from "@/components/u
 import { callNowFromProfile, invitePersonal, inviteAi, inviteVideo, moveStage, sendCandidateMessage } from "@/app/actions/candidates";
 import type { Stage } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { STAGES } from "@/lib/stages";
 
-const STAGE_OPTIONS: [Stage, string][] = [
-  ["NEW", "New"], ["AI_SCREENING", "AI Screening"], ["AI_INTERVIEW", "AI Interview"], ["REVIEW", "Review"], ["SHORTLISTED", "Shortlisted"],
-  ["PERSONAL_INTERVIEW", "Personal Interview"], ["OFFER", "Offer"], ["HIRED", "Hired"], ["REJECTED", "Rejected"], ["TALENT_POOL", "Talent Pool"],
-];
+const STAGE_OPTIONS: [Stage, string][] = STAGES.map((s) => [s.id, s.label]);
 
 function Panel({ open, children }: { open: boolean; children: React.ReactNode }) {
   if (!open) return null;
@@ -31,31 +29,31 @@ export function ProfileActions({
     <div>
       <div className="flex flex-wrap gap-2">
         {canMessage && !["HIRED", "REJECTED"].includes(stage) && (
-          <Button onClick={() => toggle("invite")}><CalendarPlus className="h-4 w-4" />Invite to personal interview</Button>
+          <Button onClick={() => toggle("invite")}><CalendarPlus className="h-4 w-4" />Zum Gespräch einladen</Button>
         )}
-        {canStage && <Button variant="secondary" onClick={() => toggle("stage")}>Change stage <ChevronDown className="h-3.5 w-3.5" /></Button>}
-        {canMessage && <Button variant="secondary" onClick={() => toggle("message")}><Mail className="h-4 w-4" />Message</Button>}
-        {canInterview && <Button variant="secondary" onClick={() => toggle("ai")}><Phone className="h-4 w-4" />AI interview</Button>}
+        {canStage && <Button variant="secondary" onClick={() => toggle("stage")}>Stufe ändern <ChevronDown className="h-3.5 w-3.5" /></Button>}
+        {canMessage && <Button variant="secondary" onClick={() => toggle("message")}><Mail className="h-4 w-4" />Nachricht</Button>}
+        {canInterview && <Button variant="secondary" onClick={() => toggle("ai")}><Phone className="h-4 w-4" />KI-Interview</Button>}
       </div>
 
       <Panel open={open === "invite"}>
         <ActionForm action={invitePersonal} className="space-y-3" onSuccess={() => setOpen(null)}>
           <input type="hidden" name="applicationId" value={applicationId} />
-          <p className="text-sm text-slate-600">{firstName} receives a scheduling link showing your real availability. When they pick a time, the calendar event, confirmation and reminders are created automatically and the stage moves to <strong>Personal Interview</strong>.</p>
+          <p className="text-sm text-slate-600">{firstName} erhält einen Link mit Ihren freien Terminen. Sobald ein Termin gewählt ist, werden Kalendereintrag, Bestätigung und Erinnerungen automatisch erstellt und die Stufe wechselt zu <strong>Persönliches Gespräch</strong>.</p>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Interviewer">
+            <Field label="Gesprächsleitung">
               <Select name="interviewerId" defaultValue={interviewers[0]?.id}>
                 {interviewers.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
               </Select>
             </Field>
-            <Field label="Duration">
+            <Field label="Dauer">
               <Select name="durationMin" defaultValue="60">
-                <option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option><option value="90">90 min</option>
+                <option value="30">30 Min.</option><option value="45">45 Min.</option><option value="60">60 Min.</option><option value="90">90 Min.</option>
               </Select>
             </Field>
-            <Field label="Location / video link"><Input name="location" defaultValue={defaultLocation} /></Field>
+            <Field label="Ort / Videolink"><Input name="location" defaultValue={defaultLocation} /></Field>
           </div>
-          <SubmitButton pendingText="Sending…">Send scheduling link</SubmitButton>
+          <SubmitButton pendingText="Wird gesendet…">Terminlink senden</SubmitButton>
         </ActionForm>
       </Panel>
 
@@ -63,18 +61,18 @@ export function ProfileActions({
         <ActionForm action={moveStage} className="space-y-3" onSuccess={() => setOpen(null)}>
           <input type="hidden" name="applicationId" value={applicationId} />
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="New stage">
+            <Field label="Neue Stufe">
               <Select name="stage" value={target} onChange={(e) => setTarget(e.target.value as Stage)}>
                 {STAGE_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </Select>
             </Field>
-            <Field label="Reason (logged)"><Input name="reason" placeholder={target === "REJECTED" ? "Job-related reason" : "Optional"} required={target === "REJECTED"} /></Field>
+            <Field label="Grund (wird protokolliert)"><Input name="reason" placeholder={target === "REJECTED" ? "Stellenbezogener Grund" : "Optional"} required={target === "REJECTED"} /></Field>
           </div>
           {["REJECTED", "TALENT_POOL", "OFFER"].includes(target) && (
-            <Checkbox name="notify" defaultChecked label={target === "REJECTED" ? "Send the rejection email" : target === "OFFER" ? "Send the offer email" : "Ask for talent pool consent by email"} description="Uses your editable template." />
+            <Checkbox name="notify" defaultChecked label={target === "REJECTED" ? "Absage-E-Mail senden" : target === "OFFER" ? "Angebots-E-Mail senden" : "Per E-Mail um Talent-Pool-Einwilligung bitten"} description="Verwendet Ihre anpassbare Vorlage." />
           )}
-          {target === "REJECTED" && <p className="text-xs text-slate-500">Rejections are always human decisions. Please base the reason on job-related criteria only.</p>}
-          <SubmitButton>Update stage</SubmitButton>
+          {target === "REJECTED" && <p className="text-xs text-slate-500">Absagen sind immer menschliche Entscheide. Bitte nur stellenbezogene Gründe angeben.</p>}
+          <SubmitButton>Stufe ändern</SubmitButton>
         </ActionForm>
       </Panel>
 
@@ -82,38 +80,38 @@ export function ProfileActions({
         <ActionForm action={sendCandidateMessage} className="space-y-3" resetOnSuccess onSuccess={() => setOpen(null)}>
           <input type="hidden" name="applicationId" value={applicationId} />
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Channel">
+            <Field label="Kanal">
               <Select name="channel" defaultValue="EMAIL">
-                <option value="EMAIL">Email</option>
-                <option value="SMS" disabled={!hasPhone}>SMS{!hasPhone ? " (no number)" : ""}</option>
-                <option value="WHATSAPP" disabled={!hasPhone}>WhatsApp{!hasPhone ? " (no number)" : ""}</option>
+                <option value="EMAIL">E-Mail</option>
+                <option value="SMS" disabled={!hasPhone}>SMS{!hasPhone ? " (keine Nummer)" : ""}</option>
+                <option value="WHATSAPP" disabled={!hasPhone}>WhatsApp{!hasPhone ? " (keine Nummer)" : ""}</option>
               </Select>
             </Field>
-            <Field label="Template (optional)">
+            <Field label="Vorlage (optional)">
               <Select name="templateKey" defaultValue="">
-                <option value="">— Free text —</option>
-                <option value="interview_reminder">Interview reminder</option>
-                <option value="ai_interview_invitation">AI interview invitation</option>
-                <option value="rejection">Rejection</option>
-                <option value="talent_pool_invitation">Talent pool invitation</option>
-                <option value="offer">Offer</option>
+                <option value="">– Freier Text –</option>
+                <option value="interview_reminder">Gesprächserinnerung</option>
+                <option value="ai_interview_invitation">Einladung KI-Interview</option>
+                <option value="rejection">Absage</option>
+                <option value="talent_pool_invitation">Einladung Talent-Pool</option>
+                <option value="offer">Angebot</option>
               </Select>
             </Field>
           </div>
-          <Field label="Subject (email)"><Input name="subject" placeholder="Leave empty to use the template subject" /></Field>
-          <Field label="Message" hint="Variables like {{candidateName}}, {{jobTitle}}, {{portalLink}} are filled in automatically."><Textarea name="body" rows={5} /></Field>
-          <SubmitButton>Send</SubmitButton>
+          <Field label="Betreff (E-Mail)"><Input name="subject" placeholder="Leer lassen für Betreff der Vorlage" /></Field>
+          <Field label="Nachricht" hint="Platzhalter wie {{candidateName}}, {{jobTitle}}, {{portalLink}} werden automatisch ausgefüllt."><Textarea name="body" rows={5} /></Field>
+          <SubmitButton>Senden</SubmitButton>
         </ActionForm>
       </Panel>
 
       <Panel open={open === "ai"}>
         <div className="space-y-3 text-sm">
-          <p className="text-slate-600">Start or resend the AI pre-screening. The candidate is always told they're talking to an AI and asked for recording consent.</p>
+          <p className="text-slate-600">KI-Vorabgespräch starten oder erneut senden. Die Person erfährt immer, dass sie mit einer KI spricht, und wird um Einwilligung zur Aufnahme gebeten.</p>
           <div className={cn("flex flex-wrap gap-2")}>
-            <ActionButton action={inviteAi} fields={{ applicationId, channel: "EMAIL" }} variant="secondary" size="md"><Mail className="h-4 w-4" />Send invitation (email)</ActionButton>
-            {hasPhone && <ActionButton action={inviteAi} fields={{ applicationId, channel: "SMS" }} variant="secondary" size="md">Send invitation (SMS)</ActionButton>}
-            {hasPhone && <ActionButton action={callNowFromProfile} fields={{ applicationId }} variant="secondary" size="md" confirm={`Call ${firstName} now with the AI interview assistant?`}><Phone className="h-4 w-4" />Call now</ActionButton>}
-            <ActionButton action={inviteVideo} fields={{ applicationId }} variant="secondary" size="md"><Video className="h-4 w-4" />Invite to video interview</ActionButton>
+            <ActionButton action={inviteAi} fields={{ applicationId, channel: "EMAIL" }} variant="secondary" size="md"><Mail className="h-4 w-4" />Einladung per E-Mail</ActionButton>
+            {hasPhone && <ActionButton action={inviteAi} fields={{ applicationId, channel: "SMS" }} variant="secondary" size="md">Einladung per SMS</ActionButton>}
+            {hasPhone && <ActionButton action={callNowFromProfile} fields={{ applicationId }} variant="secondary" size="md" confirm={`${firstName} jetzt mit dem KI-Assistenten anrufen?`}><Phone className="h-4 w-4" />Jetzt anrufen</ActionButton>}
+            <ActionButton action={inviteVideo} fields={{ applicationId }} variant="secondary" size="md"><Video className="h-4 w-4" />Zum Video-Interview einladen</ActionButton>
           </div>
         </div>
       </Panel>

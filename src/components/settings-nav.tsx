@@ -15,7 +15,7 @@ export function SettingsNav({ links }: { links: SettingsLink[] }) {
         <div key={g} className="flex gap-1 lg:block lg:space-y-0.5">
           <p className="hidden px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:block">{g}</p>
           {links.filter((l) => l.group === g).map((l) => (
-            <Link key={l.href} href={l.href} className={cn("block shrink-0 rounded-lg px-3 py-1.5 text-sm", p === l.href ? "bg-white font-medium text-ink shadow-card ring-1 ring-slate-200" : "text-slate-600 hover:bg-white/70 hover:text-ink")}>
+            <Link key={l.href} href={l.href} className={cn("block shrink-0 rounded-lg px-3 py-1.5 text-sm", p === l.href ? "bg-brand-50 font-medium text-brand-800" : "text-slate-600 hover:bg-white hover:text-ink")}>
               {l.label}
             </Link>
           ))}

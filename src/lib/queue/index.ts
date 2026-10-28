@@ -58,7 +58,7 @@ async function runJob(job: Claimed) {
       const { notifyAdmins } = await import("@/lib/services/notifications");
       await notifyAdmins(job.orgId, {
         type: "system_error",
-        title: "Background task failed",
+        title: "Hintergrundaufgabe fehlgeschlagen",
         body: `${job.type}: ${message}`,
         link: "/app/settings/system",
         severity: "error",

@@ -1,6 +1,7 @@
 import type { Stage } from "@prisma/client";
 import { db } from "@/lib/db";
 import { enqueue, scaledDelayMs } from "@/lib/queue";
+import { STAGE_LABEL, TEMPLATE_LABELS } from "@/lib/stages";
 
 /**
  * Automation engine. An automation is a trigger + an ordered list of steps.
@@ -29,40 +30,40 @@ export type Step =
   | { id: string; type: "end" };
 
 export const TRIGGERS: Record<AutomationTrigger, string> = {
-  APPLICATION_RECEIVED: "Application received",
-  CV_ANALYZED: "CV analyzed",
-  INTERVIEW_COMPLETED: "AI interview completed",
-  STAGE_CHANGED: "Candidate stage changed",
+  APPLICATION_RECEIVED: "Bewerbung eingegangen",
+  CV_ANALYZED: "CV ausgewertet",
+  INTERVIEW_COMPLETED: "KI-Interview abgeschlossen",
+  STAGE_CHANGED: "Stufe geändert",
 };
 
 export const ACTIONS: Record<ActionType, string> = {
-  analyze_cv: "Analyze CV",
-  send_message: "Send message",
-  invite_ai_interview: "Send AI interview invitation",
-  invite_video_interview: "Send video interview invitation",
-  send_reminder: "Send reminder",
-  generate_report: "Generate candidate report",
-  notify_recruiter: "Notify recruiter",
-  move_stage: "Move to stage",
-  add_tag: "Add tag",
+  analyze_cv: "CV auswerten",
+  send_message: "Nachricht senden",
+  invite_ai_interview: "Zum KI-Interview einladen",
+  invite_video_interview: "Zum Video-Interview einladen",
+  send_reminder: "Erinnerung senden",
+  generate_report: "Bericht erstellen",
+  notify_recruiter: "Team benachrichtigen",
+  move_stage: "Stufe ändern",
+  add_tag: "Tag hinzufügen",
 };
 
 export const CONDITIONS: Record<ConditionCheck, string> = {
-  meets_minimum: "Candidate meets minimum criteria",
-  not_meets_minimum: "Candidate does not meet minimum criteria",
-  no_response: "No response from candidate",
-  interview_completed: "AI interview completed",
-  knockout_failed: "A knockout question was failed",
-  stage_is: "Candidate is in stage",
+  meets_minimum: "Mindestkriterien erfüllt",
+  not_meets_minimum: "Mindestkriterien nicht erfüllt",
+  no_response: "Keine Reaktion der Person",
+  interview_completed: "KI-Interview abgeschlossen",
+  knockout_failed: "Ausschlussfrage nicht bestanden",
+  stage_is: "Person ist in Stufe",
 };
 
 type LogEntry = { at: string; stepId?: string; message: string; level: "info" | "warn" | "error" };
 
 export function describeStep(s: Step): string {
-  if (s.type === "end") return "End automation";
-  if (s.type === "wait") return s.minutes >= 1440 ? `Wait ${s.minutes / 1440} day(s)` : s.minutes >= 60 ? `Wait ${s.minutes / 60} hour(s)` : `Wait ${s.minutes} minutes`;
-  if (s.type === "condition") return `If ${CONDITIONS[s.check].toLowerCase()}${s.value ? ` "${s.value}"` : ""}`;
-  return ACTIONS[s.action] + (s.templateKey ? ` · ${s.templateKey.replace(/_/g, " ")}` : "") + (s.stage ? ` · ${s.stage}` : "");
+  if (s.type === "end") return "Automation beenden";
+  if (s.type === "wait") return s.minutes >= 1440 ? `${s.minutes / 1440} Tag(e) warten` : s.minutes >= 60 ? `${s.minutes / 60} Std. warten` : `${s.minutes} Min. warten`;
+  if (s.type === "condition") return `Wenn: ${CONDITIONS[s.check]}${s.value ? ` "${STAGE_LABEL[s.value as Stage] ?? s.value}"` : ""}`;
+  return ACTIONS[s.action] + (s.templateKey ? ` · ${TEMPLATE_LABELS[s.templateKey] ?? s.templateKey}` : "") + (s.stage ? ` · ${STAGE_LABEL[s.stage] ?? s.stage}` : "");
 }
 
 export async function fireTrigger(orgId: string, trigger: AutomationTrigger, applicationId: string, meta: { stage?: Stage } = {}) {
@@ -76,7 +77,7 @@ export async function fireTrigger(orgId: string, trigger: AutomationTrigger, app
     const running = await db.automationRun.findFirst({ where: { automationId: a.id, applicationId, status: { in: ["RUNNING", "WAITING"] } } });
     if (running) continue;
     const run = await db.automationRun.create({
-      data: { orgId, automationId: a.id, applicationId, status: "RUNNING", log: [{ at: new Date().toISOString(), message: `Triggered: ${TRIGGERS[trigger]}`, level: "info" }] },
+      data: { orgId, automationId: a.id, applicationId, status: "RUNNING", log: [{ at: new Date().toISOString(), message: `Ausgelöst: ${TRIGGERS[trigger]}`, level: "info" }] },
     });
     await enqueue("automation.step", { runId: run.id }, { orgId });
   }
@@ -123,22 +124,22 @@ export async function executeRun(runId: string) {
     if (step.type === "end") break;
     if (step.type === "wait") {
       const at = new Date(Date.now() + scaledDelayMs(step.minutes));
-      push(`${describeStep(step)} (resumes ${at.toISOString()})`, step.id);
+      push(`${describeStep(step)} (weiter um ${at.toLocaleString("de-CH", { timeZone: "Europe/Zurich" })})`, step.id);
       await db.automationRun.update({ where: { id: run.id }, data: { status: "WAITING", stepIndex: i, nextRunAt: at, log: log as object } });
       await enqueue("automation.step", { runId: run.id }, { orgId: run.orgId, runAt: at });
       return;
     }
     if (step.type === "condition") {
       const ok = await evaluateCondition(step.check, step.value, run.applicationId, run.createdAt);
-      push(`${describeStep(step)} → ${ok ? "yes" : "no"}`, step.id);
+      push(`${describeStep(step)} → ${ok ? "ja" : "nein"}`, step.id);
       if (!ok) {
         if (step.onFalse === "stop") {
-          push("Condition not met — automation finished.");
+          push("Bedingung nicht erfüllt – Automation beendet.");
           break;
         }
         const target = steps.findIndex((s) => s.id === step.onFalse);
         if (target < 0 || target <= i) {
-          push("Invalid branch target — stopping.", step.id, "error");
+          push("Ungültiges Sprungziel – Abbruch.", step.id, "error");
           break;
         }
         i = target;
@@ -151,12 +152,12 @@ export async function executeRun(runId: string) {
       const result = await runAction(step, run.applicationId, run.orgId);
       push(`${describeStep(step)}: ${result}`, step.id);
     } catch (e) {
-      push(`${describeStep(step)} failed: ${(e as Error).message}`, step.id, "error");
+      push(`${describeStep(step)} fehlgeschlagen: ${(e as Error).message}`, step.id, "error");
       await db.automationRun.update({ where: { id: run.id }, data: { status: "FAILED", stepIndex: i, log: log as object } });
       const { notify } = await import("./notifications");
       await notify(run.orgId, {
         type: "system_error",
-        title: `Automation "${run.automation.name}" failed`,
+        title: `Automation "${run.automation.name}" fehlgeschlagen`,
         body: (e as Error).message,
         link: `/app/automations/${run.automationId}`,
         severity: "error",
@@ -165,7 +166,7 @@ export async function executeRun(runId: string) {
     }
     i++;
   }
-  push("Automation completed.");
+  push("Automation abgeschlossen.");
   await db.automationRun.update({ where: { id: run.id }, data: { status: "COMPLETED", stepIndex: steps.length, nextRunAt: null, log: log as object } });
 }
 
@@ -184,8 +185,8 @@ export function defaultPipelineAutomation(): Step[] {
     { id: "s10", type: "action", action: "send_reminder", templateKey: "interview_final_reminder", channel: "EMAIL" },
     { id: "s11", type: "condition", check: "interview_completed", onFalse: "stop" },
     { id: "s12", type: "action", action: "generate_report" },
-    { id: "s13", type: "action", action: "notify_recruiter", note: "New candidate ready for review." },
+    { id: "s13", type: "action", action: "notify_recruiter", note: "Neue Bewerbung bereit zur Prüfung." },
     { id: "s_end", type: "end" },
-    { id: "s_review", type: "action", action: "notify_recruiter", note: "Candidate does not meet all minimum criteria — please review manually." },
+    { id: "s_review", type: "action", action: "notify_recruiter", note: "Nicht alle Mindestkriterien erfüllt – bitte manuell prüfen." },
   ];
 }

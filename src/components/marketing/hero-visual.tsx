@@ -1,11 +1,11 @@
 import { CalendarCheck, CheckCircle2, Clock, FileSearch, Phone, Users } from "lucide-react";
 
 const rows = [
-  { n: "Lukas Meier", j: "Mechanical Engineer", s: "Ready for review", t: "amber", r: "7/7" },
-  { n: "Andrea Lüthi", j: "CNC Operator", s: "AI interview done", t: "violet", r: "7/8" },
-  { n: "Roman Egli", j: "Service Technician", s: "AI interview done", t: "violet", r: "6/6" },
-  { n: "Sarah Baumann", j: "Mechanical Engineer", s: "Interview Thu 10:00", t: "blue", r: "5/7" },
-  { n: "Simon Frei", j: "CNC Operator", s: "Invited to AI call", t: "slate", r: "6/8" },
+  { n: "Lukas Meier", j: "Maschinenbauingenieur", s: "Zu prüfen", t: "amber", r: "7/7" },
+  { n: "Andrea Lüthi", j: "CNC-Fachkraft", s: "KI-Interview erledigt", t: "violet", r: "7/8" },
+  { n: "Roman Egli", j: "Servicetechniker", s: "KI-Interview erledigt", t: "violet", r: "6/6" },
+  { n: "Sarah Baumann", j: "Maschinenbauingenieurin", s: "Gespräch Do 10:00", t: "blue", r: "5/7" },
+  { n: "Simon Frei", j: "CNC-Fachkraft", s: "Zum KI-Anruf eingeladen", t: "slate", r: "6/8" },
 ];
 const tone: Record<string, string> = {
   amber: "bg-amber-50 text-amber-800 ring-amber-200",
@@ -28,17 +28,17 @@ export function HeroVisual() {
         </div>
         <div className="grid grid-cols-12">
           <aside className="col-span-3 hidden border-r border-slate-100 p-4 md:block">
-            {["Dashboard", "Jobs", "Candidates", "Interviews", "Talent Pool", "Analytics", "Automations"].map((x, i) => (
+            {["Übersicht", "Stellen", "Kandidierende", "Gespräche", "Talent-Pool", "Auswertungen", "Automationen"].map((x, i) => (
               <div key={x} className={`mb-1 rounded-md px-2.5 py-1.5 text-[12px] ${i === 0 ? "bg-brand-50 font-medium text-brand-700" : "text-slate-500"}`}>{x}</div>
             ))}
           </aside>
           <div className="col-span-12 space-y-4 p-4 md:col-span-9 md:p-5">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
-                { l: "New applications", v: "126", i: <Users className="h-3.5 w-3.5" /> },
-                { l: "AI interviews", v: "42", i: <Phone className="h-3.5 w-3.5" /> },
-                { l: "Ready for review", v: "17", i: <FileSearch className="h-3.5 w-3.5" /> },
-                { l: "HR time saved", v: "31h", i: <Clock className="h-3.5 w-3.5" /> },
+                { l: "Neue Bewerbungen", v: "126", i: <Users className="h-3.5 w-3.5" /> },
+                { l: "KI-Interviews", v: "42", i: <Phone className="h-3.5 w-3.5" /> },
+                { l: "Zu prüfen", v: "17", i: <FileSearch className="h-3.5 w-3.5" /> },
+                { l: "Gesparte HR-Zeit", v: "31 Std.", i: <Clock className="h-3.5 w-3.5" /> },
               ].map((k) => (
                 <div key={k.l} className="rounded-lg border border-slate-100 p-3">
                   <div className="flex items-center justify-between text-[11px] text-slate-500">
@@ -51,7 +51,7 @@ export function HeroVisual() {
             </div>
             <div className="grid gap-3 lg:grid-cols-5">
               <div className="rounded-lg border border-slate-100 lg:col-span-3">
-                <div className="border-b border-slate-100 px-3 py-2 text-[12px] font-semibold text-ink">Candidates</div>
+                <div className="border-b border-slate-100 px-3 py-2 text-[12px] font-semibold text-ink">Kandidierende</div>
                 {rows.map((r) => (
                   <div key={r.n} className="flex items-center justify-between gap-2 border-b border-slate-50 px-3 py-2 last:border-0">
                     <div className="min-w-0">
@@ -59,7 +59,7 @@ export function HeroVisual() {
                       <div className="truncate text-[11px] text-slate-500">{r.j}</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="hidden text-[11px] tabular-nums text-slate-500 sm:inline">{r.r} req.</span>
+                      <span className="hidden text-[11px] tabular-nums text-slate-500 sm:inline">{r.r} Anf.</span>
                       <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ring-1 ring-inset ${tone[r.t]}`}>{r.s}</span>
                     </div>
                   </div>
@@ -67,19 +67,19 @@ export function HeroVisual() {
               </div>
               <div className="space-y-3 lg:col-span-2">
                 <div className="rounded-lg border border-slate-100 p-3">
-                  <div className="text-[12px] font-semibold text-ink">Interview summary</div>
-                  <div className="mt-1 text-[11px] text-slate-500">Lukas Meier · 9 min AI call</div>
+                  <div className="text-[12px] font-semibold text-ink">Interview-Zusammenfassung</div>
+                  <div className="mt-1 text-[11px] text-slate-500">Lukas Meier · 9 Min. KI-Anruf</div>
                   <ul className="mt-2 space-y-1.5 text-[11px] text-slate-600">
-                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />7 yrs mechanical design (SolidWorks)</li>
-                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />Available from 1 January</li>
-                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />Salary expectation CHF 112k</li>
+                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />7 Jahre Konstruktion (SolidWorks)</li>
+                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />Verfügbar ab 1. Januar</li>
+                    <li className="flex gap-1.5"><CheckCircle2 className="mt-px h-3 w-3 shrink-0 text-emerald-500" />Lohnvorstellung CHF 112k</li>
                   </ul>
                 </div>
                 <div className="rounded-lg border border-slate-100 p-3">
-                  <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink"><CalendarCheck className="h-3.5 w-3.5 text-brand-600" />Upcoming interviews</div>
+                  <div className="flex items-center gap-1.5 text-[12px] font-semibold text-ink"><CalendarCheck className="h-3.5 w-3.5 text-brand-600" />Nächste Gespräche</div>
                   <div className="mt-2 space-y-1.5 text-[11px] text-slate-600">
-                    <div className="flex justify-between"><span>Sarah Baumann</span><span className="text-slate-400">Thu 10:00</span></div>
-                    <div className="flex justify-between"><span>Beat Müller</span><span className="text-slate-400">Fri 14:00</span></div>
+                    <div className="flex justify-between"><span>Sarah Baumann</span><span className="text-slate-400">Do 10:00</span></div>
+                    <div className="flex justify-between"><span>Beat Müller</span><span className="text-slate-400">Fr 14:00</span></div>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@ export function HeroVisual() {
   );
 }
 
-const STEPS = ["Application", "CV Analysis", "AI Interview", "Evaluation", "HR Review", "Personal Interview"];
+const STEPS = ["Bewerbung", "CV-Prüfung", "KI-Interview", "Bewertung", "HR-Prüfung", "Persönliches Gespräch"];
 
 /** Subtle animated workflow: a highlight travels across the steps. Pure CSS. */
 export function WorkflowStrip() {

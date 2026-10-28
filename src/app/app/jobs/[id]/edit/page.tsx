@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ROLE_LABELS } from "@/lib/auth/rbac";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
 import { JobForm } from "@/components/jobs/job-form";
@@ -11,7 +12,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
   const managers = await db.membership.findMany({ where: { orgId: ctx.orgId, role: { in: ["HIRING_MANAGER", "ADMIN", "OWNER", "RECRUITER"] } }, include: { user: true } });
   return (
     <div className="max-w-4xl">
-      <JobForm job={job} managers={managers.map((m) => ({ id: m.userId, name: `${m.user.name} (${m.role.replace("_", " ").toLowerCase()})` }))} requirementsText={job.requirements.map((r) => r.label).join("\n")} />
+      <JobForm job={job} managers={managers.map((m) => ({ id: m.userId, name: `${m.user.name} (${ROLE_LABELS[m.role]})` }))} requirementsText={job.requirements.map((r) => r.label).join("\n")} />
     </div>
   );
 }

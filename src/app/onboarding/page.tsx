@@ -7,9 +7,9 @@ import { Field, Input, Logo, Select, Textarea } from "@/components/ui";
 import { onboardingBack, saveOnboardingStep } from "@/app/actions/onboarding";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Set up your workspace" };
+export const metadata = { title: "Einrichtung" };
 
-const STEPS = ["Company", "Recruiting volume", "Recruiting setup", "Company profile", "First job"];
+const STEPS = ["Firma", "Umfang", "Systeme", "Firmenprofil", "Erste Stelle"];
 
 export default async function OnboardingPage() {
   const session = await requireUser();
@@ -29,11 +29,11 @@ export default async function OnboardingPage() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
           <Logo />
-          <span className="text-sm text-slate-500">Setup takes about 3 minutes</span>
+          <span className="text-sm text-slate-500">Die Einrichtung dauert etwa 3 Minuten</span>
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-4 py-10">
-        <ol className="mb-10 flex items-center gap-2" aria-label="Progress">
+        <ol className="mb-10 flex items-center gap-2" aria-label="Fortschritt">
           {STEPS.map((s, i) => {
             const n = i + 1;
             const done = n < step;
@@ -55,25 +55,25 @@ export default async function OnboardingPage() {
             <input type="hidden" name="step" value={step} />
             {step === 1 && (
               <>
-                <Header title={`Welcome${session.user.name ? `, ${session.user.name.split(" ")[0]}` : ""}! Tell us about your company.`} sub="This creates your secure, isolated Hirely workspace." />
-                <Field label="Company name"><Input name="name" required defaultValue={org?.name ?? ""} placeholder="e.g. Muster AG" autoFocus /></Field>
+                <Header title={`Willkommen${session.user.name ? `, ${session.user.name.split(" ")[0]}` : ""}! Erzählen Sie uns von Ihrer Firma.`} sub="Damit wird Ihr sicherer, abgetrennter Hirely-Bereich erstellt." />
+                <Field label="Firmenname"><Input name="name" required defaultValue={org?.name ?? ""} placeholder="z. B. Muster AG" autoFocus /></Field>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Industry">
-                    <Select name="industry" defaultValue={org?.industry ?? "Mechanical & Plant Engineering"}>
-                      {["Mechanical & Plant Engineering", "Manufacturing", "Construction", "Healthcare", "Logistics", "Retail", "Hospitality", "IT & Software", "Financial Services", "Public Sector", "Other"].map((x) => <option key={x}>{x}</option>)}
+                  <Field label="Branche">
+                    <Select name="industry" defaultValue={org?.industry ?? "Maschinen- & Anlagenbau"}>
+                      {["Maschinen- & Anlagenbau", "Industrie & Produktion", "Bau", "Gesundheitswesen", "Logistik", "Detailhandel", "Gastronomie & Hotellerie", "IT & Software", "Finanzdienstleistungen", "Öffentliche Verwaltung", "Andere"].map((x) => <option key={x}>{x}</option>)}
                     </Select>
                   </Field>
-                  <Field label="Company size">
+                  <Field label="Anzahl Mitarbeitende">
                     <Select name="companySize" defaultValue={org?.companySize ?? "51–200"}>
                       {["1–50", "51–200", "201–500", "501–1000", "1000+"].map((x) => <option key={x}>{x}</option>)}
                     </Select>
                   </Field>
-                  <Field label="Country">
+                  <Field label="Land">
                     <Select name="country" defaultValue={org?.country ?? "CH"}>
-                      <option value="CH">Switzerland</option><option value="DE">Germany</option><option value="AT">Austria</option><option value="LI">Liechtenstein</option>
+                      <option value="CH">Schweiz</option><option value="DE">Deutschland</option><option value="AT">Österreich</option><option value="LI">Liechtenstein</option>
                     </Select>
                   </Field>
-                  <Field label="Main language" hint="Default language for job ads and candidate communication.">
+                  <Field label="Hauptsprache" hint="Standardsprache für Inserate und Nachrichten an Kandidierende.">
                     <Select name="language" defaultValue={org?.language ?? "de"}>
                       <option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option><option value="en">English</option>
                     </Select>
@@ -83,41 +83,41 @@ export default async function OnboardingPage() {
             )}
             {step === 2 && (
               <>
-                <Header title="How much do you recruit?" sub="We use this to recommend a plan and sensible automation defaults." />
-                <Field label="Recruiting pattern">
+                <Header title="Wie viel rekrutieren Sie?" sub="Damit schlagen wir einen passenden Plan und sinnvolle Automationen vor." />
+                <Field label="Rekrutierung">
                   <Select name="volume" defaultValue={String(rp.volume ?? "recurring")}>
-                    <option value="occasional">Occasional hires</option><option value="recurring">Recurring hiring throughout the year</option><option value="high">High volume (seasonal / blue-collar)</option>
+                    <option value="occasional">Gelegentlich</option><option value="recurring">Regelmässig über das Jahr verteilt</option><option value="high">Viele Einstellungen (saisonal / gewerblich)</option>
                   </Select>
                 </Field>
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <Field label="Number of employees"><Input name="employees" type="number" min={1} defaultValue={String(rp.employees ?? "")} placeholder="250" /></Field>
-                  <Field label="Applications / month"><Input name="applicationsPerMonth" type="number" min={0} defaultValue={String(rp.applicationsPerMonth ?? "")} placeholder="120" /></Field>
-                  <Field label="Open positions (avg.)"><Input name="openPositionsAvg" type="number" min={0} defaultValue={String(rp.openPositionsAvg ?? "")} placeholder="6" /></Field>
+                  <Field label="Anzahl Mitarbeitende"><Input name="employees" type="number" min={1} defaultValue={String(rp.employees ?? "")} placeholder="250" /></Field>
+                  <Field label="Bewerbungen pro Monat"><Input name="applicationsPerMonth" type="number" min={0} defaultValue={String(rp.applicationsPerMonth ?? "")} placeholder="120" /></Field>
+                  <Field label="Offene Stellen (Ø)"><Input name="openPositionsAvg" type="number" min={0} defaultValue={String(rp.openPositionsAvg ?? "")} placeholder="6" /></Field>
                 </div>
               </>
             )}
             {step === 3 && (
               <>
-                <Header title="Your current recruiting setup" sub="You can connect these later under Integrations. Hirely works without them from day one." />
+                <Header title="Ihre heutigen Systeme" sub="Sie können diese später unter Integrationen verbinden. Hirely funktioniert ab dem ersten Tag auch ohne." />
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Applicant tracking system (ATS)">
+                  <Field label="Bewerbermanagement-System (ATS)">
                     <Select name="ats" defaultValue={setup.ats ?? "none"}>
-                      <option value="none">No ATS — use Hirely</option><option value="personio">Personio</option><option value="workday">Workday</option><option value="successfactors">SAP SuccessFactors</option><option value="abacus">Abacus</option><option value="rexx">rexx systems</option><option value="recruitee">Recruitee</option><option value="other">Other</option>
+                      <option value="none">Kein ATS – nur Hirely</option><option value="personio">Personio</option><option value="workday">Workday</option><option value="successfactors">SAP SuccessFactors</option><option value="abacus">Abacus</option><option value="rexx">rexx systems</option><option value="recruitee">Recruitee</option><option value="other">Anderes</option>
                     </Select>
                   </Field>
-                  <Field label="Email provider">
+                  <Field label="E-Mail-Anbieter">
                     <Select name="email" defaultValue={setup.email ?? "microsoft365"}>
-                      <option value="microsoft365">Microsoft 365</option><option value="google">Google Workspace</option><option value="other">Other (SMTP)</option>
+                      <option value="microsoft365">Microsoft 365</option><option value="google">Google Workspace</option><option value="other">Anderer (SMTP)</option>
                     </Select>
                   </Field>
-                  <Field label="Calendar">
+                  <Field label="Kalender">
                     <Select name="calendar" defaultValue={setup.calendar ?? "microsoft"}>
-                      <option value="microsoft">Microsoft Outlook</option><option value="google">Google Calendar</option><option value="none">None</option>
+                      <option value="microsoft">Microsoft Outlook</option><option value="google">Google Kalender</option><option value="none">Keiner</option>
                     </Select>
                   </Field>
-                  <Field label="Phone provider for AI calls">
+                  <Field label="Telefonie für KI-Anrufe">
                     <Select name="phone" defaultValue={setup.phone ?? "hirely"}>
-                      <option value="hirely">Use Hirely's Swiss number</option><option value="twilio">Own Twilio account</option><option value="none">No phone interviews</option>
+                      <option value="hirely">Schweizer Nummer von Hirely</option><option value="twilio">Eigenes Twilio-Konto</option><option value="none">Keine Telefoninterviews</option>
                     </Select>
                   </Field>
                 </div>
@@ -125,13 +125,13 @@ export default async function OnboardingPage() {
             )}
             {step === 4 && (
               <>
-                <Header title="How should Hirely represent you?" sub="Hirely uses this in job ads, messages and when introducing itself on calls." />
-                <Field label="Company description"><Textarea name="description" rows={4} defaultValue={org?.description ?? ""} placeholder="What does your company do, where, how many people…" /></Field>
-                <Field label="Company values"><Textarea name="values" rows={3} defaultValue={org?.values ?? ""} placeholder="e.g. Precision, reliability and respect." /></Field>
+                <Header title="Wie soll Hirely Ihre Firma vorstellen?" sub="Hirely nutzt dies in Inseraten, Nachrichten und bei der Vorstellung am Telefon." />
+                <Field label="Firmenbeschreibung"><Textarea name="description" rows={4} defaultValue={org?.description ?? ""} placeholder="Was macht Ihre Firma, wo, wie viele Mitarbeitende…" /></Field>
+                <Field label="Werte"><Textarea name="values" rows={3} defaultValue={org?.values ?? ""} placeholder="z. B. Präzision, Verlässlichkeit und Respekt." /></Field>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Tone of communication">
+                  <Field label="Tonalität">
                     <Select name="tone" defaultValue={org?.tone ?? "professional-warm"}>
-                      <option value="professional-warm">Professional & warm (Sie)</option><option value="formal">Formal</option><option value="casual">Casual & modern (Du)</option>
+                      <option value="professional-warm">Professionell & herzlich (Sie)</option><option value="formal">Förmlich</option><option value="casual">Locker & modern (Du)</option>
                     </Select>
                   </Field>
                   <Field label="Website"><Input name="website" type="url" defaultValue={org?.website ?? ""} placeholder="https://" /></Field>
@@ -140,19 +140,19 @@ export default async function OnboardingPage() {
             )}
             {step === 5 && (
               <>
-                <Header title="Create your first job" sub="Write rough notes — Hirely turns them into a professional job ad and an AI interview. You can review everything before publishing." />
+                <Header title="Ihre erste Stelle" sub="Notieren Sie Stichworte – Hirely macht daraus ein professionelles Inserat und ein KI-Interview. Sie prüfen alles vor der Veröffentlichung." />
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Job title"><Input name="title" placeholder="Servicetechniker/in" autoFocus /></Field>
-                  <Field label="Workload"><Input name="workload" placeholder="80–100%" /></Field>
-                  <Field label="Department"><Input name="department" placeholder="Kundendienst" /></Field>
-                  <Field label="Location"><Input name="location" placeholder="Winterthur" /></Field>
+                  <Field label="Stellentitel"><Input name="title" placeholder="Servicetechniker/in" autoFocus /></Field>
+                  <Field label="Pensum"><Input name="workload" placeholder="80–100%" /></Field>
+                  <Field label="Abteilung"><Input name="department" placeholder="Kundendienst" /></Field>
+                  <Field label="Arbeitsort"><Input name="location" placeholder="Winterthur" /></Field>
                 </div>
-                <Field label="Rough notes" hint="Tasks, team, anything relevant. One per line is fine.">
+                <Field label="Stichworte" hint="Aufgaben, Team, alles Wichtige. Eine Zeile pro Punkt genügt.">
                   <Textarea name="notes" rows={4} placeholder={"Wartung und Reparatur unserer Anlagen beim Kunden\nFehlerdiagnose elektrisch/mechanisch\nPikettdienst"} />
                 </Field>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Must-have requirements" hint="One per line — used for transparent screening."><Textarea name="musts" rows={4} placeholder={"Deutsch B2\nFührerausweis Kat. B\n2 Jahre Erfahrung im Service"} /></Field>
-                  <Field label="Nice-to-have"><Textarea name="nices" rows={4} placeholder={"Englisch B1\nSPS-Kenntnisse"} /></Field>
+                  <Field label="Muss-Kriterien" hint="Eines pro Zeile – für die nachvollziehbare Prüfung."><Textarea name="musts" rows={4} placeholder={"Deutsch B2\nFührerausweis Kat. B\n2 Jahre Erfahrung im Service"} /></Field>
+                  <Field label="Wünschenswert"><Textarea name="nices" rows={4} placeholder={"Englisch B1\nSPS-Kenntnisse"} /></Field>
                 </div>
                 <input type="hidden" name="language" value={org?.language ?? "de"} />
               </>
@@ -160,14 +160,14 @@ export default async function OnboardingPage() {
             <div className="flex items-center justify-between border-t border-slate-100 pt-5">
               <div>{step > 1 && <span className="text-xs text-slate-500">Step {step} of 5</span>}</div>
               <div className="flex gap-2">
-                {step === 5 && <SubmitButton variant="ghost" name="skip" value="1">Skip for now</SubmitButton>}
-                <SubmitButton pendingText={step === 5 ? "Generating job ad…" : "Saving…"}>{step === 5 ? "Create job with AI" : "Continue"}</SubmitButton>
+                {step === 5 && <SubmitButton variant="ghost" name="skip" value="1">Später</SubmitButton>}
+                <SubmitButton pendingText={step === 5 ? "Inserat wird erstellt…" : "Wird gespeichert…"}>{step === 5 ? "Stelle mit KI erstellen" : "Weiter"}</SubmitButton>
               </div>
             </div>
           </ActionForm>
           {step > 1 && (
             <div className="-mt-12 w-fit">
-              <ActionButton action={onboardingBack} fields={{ step: String(step) }} variant="ghost">Back</ActionButton>
+              <ActionButton action={onboardingBack} fields={{ step: String(step) }} variant="ghost">Zurück</ActionButton>
             </div>
           )}
         </div>

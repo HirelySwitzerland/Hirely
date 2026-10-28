@@ -51,7 +51,7 @@ export function WebInterview({ token, locale, initialHistory, completed }: { tok
       say(d.say);
       if (d.done) setDone(true);
     } catch (e) {
-      setError((e as Error).message || "Connection problem — please try again.");
+      setError((e as Error).message || "Verbindungsproblem – bitte erneut versuchen.");
     } finally {
       setBusy(false);
     }
@@ -104,7 +104,7 @@ export function WebInterview({ token, locale, initialHistory, completed }: { tok
             </div>
           ))}
           {busy && <Loader2 className="ml-11 h-5 w-5 animate-spin text-slate-400" />}
-          {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error} <button onClick={() => send(lines.filter((x) => x.who === "me").length ? lines[lines.length - 1].text : null)} className="font-semibold underline">Retry</button></p>}
+          {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error} <button onClick={() => send(lines.filter((x) => x.who === "me").length ? lines[lines.length - 1].text : null)} className="font-semibold underline">Erneut</button></p>}
           {done && (
             <div className="card p-6 text-center">
               <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-500" />

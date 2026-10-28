@@ -12,7 +12,7 @@ import { createJobRecord, ensureFlow, regenerateFlow, uniqueJobSlug } from "@/li
 import { fail, ok, str, toActionError, type ActionState } from "@/lib/action-state";
 
 const jobSchema = z.object({
-  title: z.string().min(2, "Job title is required.").max(120),
+  title: z.string().min(2, "Bitte einen Stellentitel eingeben.").max(120),
   department: z.string().max(80).optional(),
   location: z.string().max(120).optional(),
   employmentType: z.string().max(40).optional(),
@@ -35,7 +35,7 @@ function parseJobForm(fd: FormData) {
     if (v !== "") raw[k] = v;
   }
   const d = jobSchema.parse(raw);
-  if (d.salaryMin && d.salaryMax && d.salaryMin > d.salaryMax) throw new Error("Salary minimum cannot exceed the maximum.");
+  if (d.salaryMin && d.salaryMax && d.salaryMin > d.salaryMax) throw new Error("Der Mindestlohn darf nicht höher sein als der Höchstlohn.");
   return { ...d, skills: d.skills ? d.skills.split(",").map((s) => s.trim()).filter(Boolean) : [] };
 }
 
@@ -45,7 +45,7 @@ export async function createJob(_: ActionState, fd: FormData): Promise<ActionSta
     const d = parseJobForm(fd);
     const job = await createJobRecord(ctx, { ...d, status: str(fd, "publish") === "1" ? "OPEN" : "DRAFT" });
     await ensureFlow(job.id);
-    return ok("Job created.", { redirect: `/app/jobs/${job.id}/ai` });
+    return ok("Stelle erstellt.", { redirect: `/app/jobs/${job.id}/ai` });
   } catch (e) {
     return toActionError(e);
   }
@@ -56,7 +56,7 @@ export async function updateJob(_: ActionState, fd: FormData): Promise<ActionSta
     const ctx = await requirePermission("jobs.manage");
     const id = str(fd, "id");
     const existing = await db.job.findFirst({ where: { id, orgId: ctx.orgId } });
-    if (!existing) return fail("Job not found.");
+    if (!existing) return fail("Stelle nicht gefunden.");
     const d = parseJobForm(fd);
     const hm = str(fd, "hiringManagerId");
     await db.job.update({
@@ -64,7 +64,7 @@ export async function updateJob(_: ActionState, fd: FormData): Promise<ActionSta
       data: { ...d, slug: d.title !== existing.title ? await uniqueJobSlug(ctx.orgId, d.title, id) : existing.slug, hiringManagerId: hm || null },
     });
     await audit(ctx.orgId, userActor(ctx.user), "job.updated", { type: "Job", id, label: d.title });
-    return ok("Job saved.");
+    return ok("Stelle gespeichert.");
   } catch (e) {
     return toActionError(e);
   }
@@ -76,14 +76,14 @@ export async function setJobStatus(_: ActionState, fd: FormData): Promise<Action
     const id = str(fd, "id");
     const status = z.enum(["DRAFT", "OPEN", "PAUSED", "CLOSED"]).parse(str(fd, "status"));
     const job = await db.job.findFirst({ where: { id, orgId: ctx.orgId }, include: { requirements: true } });
-    if (!job) return fail("Job not found.");
+    if (!job) return fail("Stelle nicht gefunden.");
     if (status === "OPEN") {
-      if (!job.description) return fail("Add a job description before publishing (you can generate one with AI).");
-      if (!job.requirements.some((r) => r.kind === "MUST")) return fail("Configure at least one must-have requirement before publishing, so screening is based on explicit criteria.");
+      if (!job.description) return fail("Bitte vor der Veröffentlichung eine Beschreibung erfassen (die KI kann sie schreiben).");
+      if (!job.requirements.some((r) => r.kind === "MUST")) return fail("Bitte vor der Veröffentlichung mindestens ein Muss-Kriterium festlegen, damit klar geprüft werden kann.");
     }
     await db.job.update({ where: { id }, data: { status, publishedAt: status === "OPEN" && !job.publishedAt ? new Date() : job.publishedAt } });
     await audit(ctx.orgId, userActor(ctx.user), "job.updated", { type: "Job", id, label: job.title }, { status });
-    return ok(status === "OPEN" ? "Job published on your career page." : `Job ${status.toLowerCase()}.`);
+    return ok(status === "OPEN" ? "Stelle auf der Karriereseite veröffentlicht." : `Stelle ${status === "PAUSED" ? "pausiert" : status === "CLOSED" ? "geschlossen" : "gespeichert"}.`);
   } catch (e) {
     return toActionError(e);
   }
@@ -94,7 +94,7 @@ export async function generateJobAd(_: ActionState, fd: FormData): Promise<Actio
   try {
     const ctx = await requirePermission("jobs.manage");
     const title = str(fd, "title");
-    if (!title) return fail("Enter a job title first.");
+    if (!title) return fail("Bitte zuerst einen Stellentitel eingeben.");
     const notes = str(fd, "roughNotes");
     const language = str(fd, "language") || "de";
     const reqs = str(fd, "requirementsText").split("\n").map((s) => s.trim()).filter(Boolean);
@@ -110,9 +110,9 @@ export async function generateJobAd(_: ActionState, fd: FormData): Promise<Actio
       prompt: `Language: ${language}\nJob: ${title}\nDepartment: ${input.department}\nLocation: ${input.location}\nWorkload: ${input.workload}\nSalary: ${salary ?? "not stated"}\nRequirements: ${reqs.join("; ")}\nCompany: ${ctx.org.description ?? ctx.org.name}\nValues: ${ctx.org.values ?? ""}\nRecruiter notes:\n${wrapUntrusted("recruiter_notes", notes)}`,
       input,
     });
-    return ok("Draft generated — review and edit before publishing.", { data: { description: res.text, provider: res.provider } });
+    return ok("Entwurf erstellt – bitte vor der Veröffentlichung prüfen.", { data: { description: res.text, provider: res.provider } });
   } catch (e) {
-    if (e instanceof AIUnavailableError) return fail(`${e.message} Your notes are unchanged — try again in a moment or write the ad manually.`);
+    if (e instanceof AIUnavailableError) return fail(`${e.message} Ihre Notizen sind unverändert – bitte gleich nochmals versuchen oder das Inserat selbst schreiben.`);
     return toActionError(e);
   }
 }
@@ -142,7 +142,7 @@ export async function saveAiConfig(_: ActionState, fd: FormData): Promise<Action
     const ctx = await requirePermission("jobs.manage");
     const jobId = str(fd, "jobId");
     const job = await db.job.findFirst({ where: { id: jobId, orgId: ctx.orgId } });
-    if (!job) return fail("Job not found.");
+    if (!job) return fail("Stelle nicht gefunden.");
     const reqs = z.array(reqItem).max(40).parse(JSON.parse(str(fd, "requirements") || "[]"));
     const qs = z.array(qItem).max(40).parse(JSON.parse(str(fd, "questions") || "[]"));
     const settings = JSON.parse(str(fd, "settings") || "{}");
@@ -168,7 +168,7 @@ export async function saveAiConfig(_: ActionState, fd: FormData): Promise<Action
     await db.job.update({ where: { id: jobId }, data: { aiSettings: { ...(job.aiSettings as object), ...settings } } });
     await audit(ctx.orgId, userActor(ctx.user), "job.ai_config_updated", { type: "Job", id: jobId, label: job.title }, { requirements: reqs.length, questions: qs.length });
     if (str(fd, "regenerateFlow") === "1") await regenerateFlow(jobId);
-    return ok("AI configuration saved. New screenings use these criteria immediately.");
+    return ok("KI-Kriterien gespeichert. Neue Prüfungen nutzen sie ab sofort.");
   } catch (e) {
     return toActionError(e);
   }
@@ -178,7 +178,7 @@ export async function suggestQuestions(_: ActionState, fd: FormData): Promise<Ac
   try {
     const ctx = await requirePermission("jobs.manage");
     const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId }, include: { requirements: true } });
-    if (!job) return fail("Job not found.");
+    if (!job) return fail("Stelle nicht gefunden.");
     const res = await generate({
       task: "generate_questions",
       orgId: ctx.orgId,
@@ -187,8 +187,8 @@ export async function suggestQuestions(_: ActionState, fd: FormData): Promise<Ac
       input: { title: job.title, language: job.language, requirements: job.requirements.map((r) => ({ label: r.label, category: r.category, kind: r.kind })) },
     });
     const parsed = parseJsonLoose<{ screening: string[]; phone: string[]; knockout: string[] }>(res.text);
-    if (!parsed) return fail("The AI response could not be read. Please try again.");
-    return ok("Suggestions ready — pick the ones you want to keep.", { data: parsed });
+    if (!parsed) return fail("Die KI-Antwort konnte nicht gelesen werden. Bitte erneut versuchen.");
+    return ok("Vorschläge bereit – wählen Sie aus, was Sie übernehmen möchten.", { data: parsed });
   } catch (e) {
     return toActionError(e);
   }
@@ -201,9 +201,9 @@ export async function saveInterviewFlow(_: ActionState, fd: FormData): Promise<A
     const ctx = await requirePermission("jobs.manage");
     const jobId = str(fd, "jobId");
     const job = await db.job.findFirst({ where: { id: jobId, orgId: ctx.orgId } });
-    if (!job) return fail("Job not found.");
+    if (!job) return fail("Stelle nicht gefunden.");
     const nodes = JSON.parse(str(fd, "nodes") || "[]") as FlowNode[];
-    if (!Array.isArray(nodes) || nodes.length > 80) return fail("Invalid flow.");
+    if (!Array.isArray(nodes) || nodes.length > 80) return fail("Ungültiger Ablauf.");
     const errors = validateFlow(nodes);
     if (errors.length) return fail(errors.join(" "));
     await db.interviewFlow.upsert({
@@ -212,7 +212,7 @@ export async function saveInterviewFlow(_: ActionState, fd: FormData): Promise<A
       update: { nodes: nodes as object, language: str(fd, "language") || job.language, version: { increment: 1 } },
     });
     await audit(ctx.orgId, userActor(ctx.user), "job.ai_config_updated", { type: "InterviewFlow", id: jobId, label: `${job.title} interview flow` }, { nodes: nodes.length });
-    return ok("Interview flow saved. It applies to all new interviews for this job.");
+    return ok("Ablauf gespeichert. Er gilt für alle neuen Interviews dieser Stelle.");
   } catch (e) {
     return toActionError(e);
   }
@@ -222,9 +222,9 @@ export async function resetInterviewFlow(_: ActionState, fd: FormData): Promise<
   try {
     const ctx = await requirePermission("jobs.manage");
     const job = await db.job.findFirst({ where: { id: str(fd, "jobId"), orgId: ctx.orgId } });
-    if (!job) return fail("Job not found.");
+    if (!job) return fail("Stelle nicht gefunden.");
     await regenerateFlow(job.id);
-    return ok("Flow rebuilt from the job's AI configuration.");
+    return ok("Ablauf aus den KI-Kriterien neu erstellt.");
   } catch (e) {
     return toActionError(e);
   }
@@ -234,7 +234,7 @@ export async function duplicateJob(_: ActionState, fd: FormData): Promise<Action
   try {
     const ctx = await requirePermission("jobs.manage");
     const src = await db.job.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId }, include: { requirements: true, questions: true, interviewFlow: true } });
-    if (!src) return fail("Job not found.");
+    if (!src) return fail("Stelle nicht gefunden.");
     const { id: _id, createdAt: _c, updatedAt: _u, publishedAt: _p, slug: _s, externalId: _e, aiSettings, ...rest } = src as typeof src & Record<string, unknown>;
     void _id; void _c; void _u; void _p; void _s; void _e;
     const copy = await db.job.create({
@@ -253,7 +253,7 @@ export async function duplicateJob(_: ActionState, fd: FormData): Promise<Action
     for (const q of src.questions) await db.jobQuestion.create({ data: { orgId: ctx.orgId, jobId: copy.id, type: q.type, text: q.text, expectedAnswer: q.expectedAnswer, requirementId: q.requirementId ? idMap.get(q.requirementId) : null, required: q.required, order: q.order } });
     await regenerateFlow(copy.id);
     await audit(ctx.orgId, userActor(ctx.user), "job.created", { type: "Job", id: copy.id, label: copy.title }, { duplicatedFrom: src.id });
-    return ok("Job duplicated.", { redirect: `/app/jobs/${copy.id}/edit` });
+    return ok("Stelle dupliziert.", { redirect: `/app/jobs/${copy.id}/edit` });
   } catch (e) {
     return toActionError(e);
   }

@@ -7,47 +7,47 @@ import { LinkButton } from "@/components/ui";
 import { PLANS, chf } from "@/lib/billing";
 
 const PROBLEMS = [
-  "Reading hundreds of CVs",
-  "Sending repetitive emails",
-  "Calling candidates",
-  "Asking the same questions",
-  "Taking interview notes",
-  "Coordinating appointments",
-  "Updating candidate records",
+  "Hunderte Lebensläufe lesen",
+  "Immer gleiche E-Mails schreiben",
+  "Kandidierende anrufen",
+  "Immer dieselben Fragen stellen",
+  "Gesprächsnotizen tippen",
+  "Termine koordinieren",
+  "Datensätze nachführen",
 ];
 
 const SOLUTION = [
-  { i: FileSearch, t: "Analyzes applications", d: "Every CV is parsed into a structured profile and checked against your requirements — with evidence." },
-  { i: MailCheck, t: "Contacts candidates", d: "Personal, on-brand messages by email, SMS or WhatsApp — within minutes, in the candidate's language." },
-  { i: PhoneCall, t: "Conducts phone interviews", d: "A transparent AI voice assistant runs your structured pre-screening call, 24/7." },
-  { i: Video, t: "Conducts digital interviews", d: "Asynchronous video or browser interviews for candidates who prefer to answer on their own time." },
-  { i: ClipboardList, t: "Summarizes interviews", d: "Transcripts, key answers, availability, notice period and salary expectations — structured." },
-  { i: Users, t: "Organizes candidates", d: "A clean pipeline with stages, comments and a searchable talent pool." },
-  { i: CalendarCheck, t: "Schedules interviews", d: "Candidates pick a slot from your real calendar availability. Invites and reminders go out automatically." },
-  { i: MessagesSquare, t: "Notifies HR", d: "“New candidate ready for review.” Your team only steps in when a decision is needed." },
+  { i: FileSearch, t: "Prüft Bewerbungen", d: "Jeder Lebenslauf wird strukturiert erfasst und mit Ihren Anforderungen abgeglichen – mit Belegen." },
+  { i: MailCheck, t: "Kontaktiert Kandidierende", d: "Persönliche Nachrichten per E-Mail, SMS oder WhatsApp – innert Minuten und in der Sprache der Person." },
+  { i: PhoneCall, t: "Führt Telefoninterviews", d: "Ein transparenter KI-Sprachassistent führt Ihr strukturiertes Vorabgespräch – rund um die Uhr." },
+  { i: Video, t: "Führt digitale Interviews", d: "Video- oder Browser-Interviews für alle, die lieber dann antworten, wenn es ihnen passt." },
+  { i: ClipboardList, t: "Fasst Gespräche zusammen", d: "Transkript, wichtigste Antworten, Verfügbarkeit, Kündigungsfrist und Lohnvorstellung – strukturiert." },
+  { i: Users, t: "Ordnet Kandidierende", d: "Ein klarer Prozess mit Stufen, Notizen und durchsuchbarem Talent-Pool." },
+  { i: CalendarCheck, t: "Vereinbart Termine", d: "Kandidierende wählen einen freien Termin aus Ihrem Kalender. Einladungen und Erinnerungen gehen automatisch raus." },
+  { i: MessagesSquare, t: "Informiert HR", d: "„Neue Bewerbung bereit zur Prüfung.“ Ihr Team kommt erst ins Spiel, wenn ein Entscheid nötig ist." },
 ];
 
 const STEPS = [
-  { t: "Create your position", d: "Describe the role in a few notes — Hirely writes a professional job ad and suggests requirements and questions." },
-  { t: "Applications arrive", d: "From your ATS, career page, email, CSV or API. jobs.ch, LinkedIn and Indeed flow in through your ATS." },
-  { t: "Hirely analyzes candidates", d: "CVs are parsed, confirmed facts are separated from inferences, and every requirement is checked with evidence." },
-  { t: "Hirely contacts candidates", d: "Qualified candidates receive a friendly invitation to a short pre-screening — reminders included." },
-  { t: "AI interview", d: "By phone, in the browser or on video. Your questions, your follow-ups, your knockout criteria." },
-  { t: "Structured candidate profile", d: "Transcript, summary, requirement evidence, availability and salary expectations in one place." },
-  { t: "Personal interview", d: "Click “Invite to personal interview” — the candidate books a slot, the calendar event is created." },
+  { t: "Stelle erfassen", d: "Ein paar Stichworte genügen – Hirely schreibt ein professionelles Inserat und schlägt Anforderungen und Fragen vor." },
+  { t: "Bewerbungen kommen rein", d: "Aus ATS, Karriereseite, E-Mail, CSV oder API. jobs.ch, LinkedIn und Indeed laufen über Ihr ATS." },
+  { t: "Hirely prüft", d: "Lebensläufe werden ausgewertet, Fakten von Ableitungen getrennt und jede Anforderung mit Belegen geprüft." },
+  { t: "Hirely meldet sich", d: "Passende Kandidierende erhalten eine freundliche Einladung zu einem kurzen Vorabgespräch – inklusive Erinnerungen." },
+  { t: "KI-Interview", d: "Per Telefon, im Browser oder per Video. Ihre Fragen, Ihre Nachfragen, Ihre Ausschlusskriterien." },
+  { t: "Klares Kandidatenprofil", d: "Transkript, Zusammenfassung, Belege, Verfügbarkeit und Lohnvorstellung an einem Ort." },
+  { t: "Persönliches Gespräch", d: "Klick auf „Zum Gespräch einladen“ – die Person bucht einen Termin, der Kalendereintrag entsteht automatisch." },
 ];
 
 const FEATURES = [
-  { i: FileSearch, t: "AI CV Screening", d: "Structured extraction of experience, skills, languages and certificates. Confirmed vs. inferred, never mixed up." },
-  { i: PhoneCall, t: "AI Phone Interviews", d: "Natural conversations with interruptions and follow-ups, in German, Swiss German, French, Italian and English." },
-  { i: Video, t: "AI Video Interviews", d: "Asynchronous, mobile-friendly. Only the content of answers is analyzed — never appearance." },
-  { i: MessagesSquare, t: "Candidate Communication", d: "Editable templates for every step, across email, SMS and WhatsApp." },
-  { i: CalendarCheck, t: "Automated Scheduling", d: "Google Calendar and Microsoft 365 integration, self-service booking, reminders." },
-  { i: FileText, t: "Candidate Reports", d: "Requirement-by-requirement evidence: “meets 8 of 10 configured requirements — here is why.”" },
-  { i: Plug, t: "ATS Integration", d: "Personio, Workday, SAP SuccessFactors, Abacus, rexx and Recruitee via API and signed webhooks." },
-  { i: BarChart3, t: "Recruiting Analytics", d: "Time to interview, time to hire, source performance, conversion rates and HR time saved." },
-  { i: Library, t: "Talent Pool", d: "Consent-based pool you can search in plain language: “electrical engineers in Eastern Switzerland”." },
-  { i: Workflow, t: "AI Recruiting Agent", d: "Visual automations: wait, analyze, invite, remind, report, notify — your process, on autopilot." },
+  { i: FileSearch, t: "KI-CV-Prüfung", d: "Erfahrung, Skills, Sprachen und Zertifikate strukturiert erfasst. Fakten und Ableitungen sauber getrennt." },
+  { i: PhoneCall, t: "KI-Telefoninterviews", d: "Natürliche Gespräche mit Nachfragen – auf Deutsch, Schweizerdeutsch, Französisch, Italienisch und Englisch." },
+  { i: Video, t: "KI-Video-Interviews", d: "Zeitversetzt und handytauglich. Ausgewertet wird nur der Inhalt – nie das Aussehen." },
+  { i: MessagesSquare, t: "Kommunikation", d: "Anpassbare Vorlagen für jeden Schritt – per E-Mail, SMS und WhatsApp." },
+  { i: CalendarCheck, t: "Terminbuchung", d: "Anbindung an Google Kalender und Microsoft 365, Selbstbuchung, Erinnerungen." },
+  { i: FileText, t: "Kandidatenberichte", d: "Belege pro Anforderung: „Erfüllt 8 von 10 Anforderungen – und zwar deshalb.“" },
+  { i: Plug, t: "ATS-Anbindung", d: "Personio, Workday, SAP SuccessFactors, Abacus, rexx und Recruitee über API und signierte Webhooks." },
+  { i: BarChart3, t: "Auswertungen", d: "Zeit bis zum Interview, Zeit bis zur Einstellung, beste Quellen, Quoten und gesparte HR-Zeit." },
+  { i: Library, t: "Talent-Pool", d: "Einwilligungsbasiert und in normaler Sprache durchsuchbar: „Elektroingenieure in der Ostschweiz“." },
+  { i: Workflow, t: "KI-Recruiting-Assistent", d: "Visuelle Abläufe: warten, prüfen, einladen, erinnern, berichten, informieren – Ihr Prozess auf Autopilot." },
 ];
 
 export default function LandingPage() {
@@ -58,23 +58,23 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Made for Swiss SMEs · Hosted in Switzerland
+            Für Schweizer KMU · Gehostet in der Schweiz
           </div>
           <h1 className="mx-auto max-w-4xl text-4xl font-semibold tracking-tight text-ink sm:text-6xl sm:leading-[1.05]">
-            Your AI Recruiting Employee.
+            Ihr KI-Mitarbeiter fürs Recruiting.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Hirely automates the repetitive parts of recruiting — from application screening to AI interviews and interview scheduling — so your HR team can focus on people, not paperwork.
+            Hirely übernimmt die Routinearbeit im Recruiting – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung. So kann sich Ihr HR-Team auf Menschen konzentrieren statt auf Papierkram.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href="/register" size="lg">
-              Start free <ArrowRight className="h-4 w-4" />
+              Kostenlos starten <ArrowRight className="h-4 w-4" />
             </LinkButton>
             <LinkButton href="/demo" size="lg" variant="secondary">
-              Book a demo
+              Demo vereinbaren
             </LinkButton>
           </div>
-          <p className="mt-4 text-xs text-slate-500">14-day trial · No credit card · Set up in under 10 minutes</p>
+          <p className="mt-4 text-xs text-slate-500">14 Tage gratis · Keine Kreditkarte · In 10 Minuten eingerichtet</p>
           <WorkflowStrip />
           <div className="mt-12">
             <HeroVisual />
@@ -86,10 +86,10 @@ export default function LandingPage() {
       <section className="border-t border-slate-100 bg-slate-50/70">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold text-brand-600">The problem</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Traditional recruiting creates unnecessary manual work.</h2>
+            <p className="text-sm font-semibold text-brand-600">Das Problem</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Klassisches Recruiting macht viel unnötige Handarbeit.</h2>
             <p className="mt-4 text-slate-600">
-              An HR generalist in a 300-person company spends most of a hiring cycle on administration, not on people. Every open position means hours of reading, calling, writing and coordinating — the same steps, over and over.
+              In einer Firma mit 300 Mitarbeitenden verbringt HR den Grossteil einer Rekrutierung mit Administration statt mit Menschen. Jede offene Stelle bedeutet Stunden mit Lesen, Telefonieren, Schreiben und Koordinieren – immer dieselben Schritte.
             </p>
           </div>
           <ul className="grid gap-2.5 sm:grid-cols-2">
@@ -106,9 +106,9 @@ export default function LandingPage() {
       {/* Solution */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-brand-600">The solution</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Hirely acts as a digital recruiting employee.</h2>
-          <p className="mt-4 text-slate-600">It works alongside your HR team, follows your process and hands over qualified candidates — with every step documented and every recommendation explained.</p>
+          <p className="text-sm font-semibold text-brand-600">Die Lösung</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Hirely arbeitet wie ein digitaler Recruiting-Mitarbeiter.</h2>
+          <p className="mt-4 text-slate-600">Hirely arbeitet mit Ihrem HR-Team, folgt Ihrem Prozess und übergibt passende Kandidierende – jeder Schritt dokumentiert, jede Empfehlung begründet.</p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SOLUTION.map(({ i: Icon, t, d }) => (
@@ -125,8 +125,8 @@ export default function LandingPage() {
       <section id="how" className="border-y border-slate-100 bg-slate-50/70">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold text-brand-600">How it works</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">From application to interview — automatically.</h2>
+            <p className="text-sm font-semibold text-brand-600">So funktioniert's</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Von der Bewerbung zum Gespräch – automatisch.</h2>
           </div>
           <ol className="mt-12 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s, i) => (
@@ -138,8 +138,8 @@ export default function LandingPage() {
             ))}
             <li className="rounded-xl border border-dashed border-brand-300 bg-brand-50/50 p-5">
               <UserCheck className="h-5 w-5 text-brand-600" />
-              <p className="mt-3 font-semibold text-ink">You decide.</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">Hirely never makes the hiring decision. It prepares it — transparently.</p>
+              <p className="mt-3 font-semibold text-ink">Sie entscheiden.</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">Hirely trifft nie den Anstellungsentscheid. Es bereitet ihn vor – nachvollziehbar.</p>
             </li>
           </ol>
         </div>
@@ -148,8 +148,8 @@ export default function LandingPage() {
       {/* Features */}
       <section id="features" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-brand-600">Product</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Everything your recruiting desk does — handled.</h2>
+          <p className="text-sm font-semibold text-brand-600">Produkt</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Alles, was im Recruiting anfällt – erledigt.</h2>
         </div>
         <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-5">
           {FEATURES.map(({ i: Icon, t, d }) => (
@@ -168,27 +168,27 @@ export default function LandingPage() {
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         <div className="grid items-center gap-10 rounded-2xl bg-ink p-8 text-white sm:p-12 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold text-brand-300">Explainable by design</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">No black box. No “AI says this is the best candidate.”</h2>
+            <p className="text-sm font-semibold text-brand-300">Nachvollziehbar von Grund auf</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Keine Blackbox. Kein „Die KI sagt, das ist die beste Person“.</h2>
             <p className="mt-4 text-slate-300">
-              Hirely reports what it found and where: <span className="text-white">“This candidate meets 8 of 10 configured job requirements. Here is the evidence.”</span> Every statement links to the CV line or the interview answer it comes from. Recruiters can override any evaluation.
+              Hirely zeigt, was es gefunden hat und wo: <span className="text-white">„Diese Person erfüllt 8 von 10 Anforderungen. Hier sind die Belege.“</span> Jede Aussage verweist auf die Stelle im CV oder die Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
             </p>
           </div>
           <div className="rounded-xl bg-white p-5 text-ink shadow-pop">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <p className="text-sm font-semibold">Requirements · Marco Rossi</p>
-              <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">7 of 8 met</span>
+              <p className="text-sm font-semibold">Anforderungen · Marco Rossi</p>
+              <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">7 von 8 erfüllt</span>
             </div>
             {[
-              ["German B2", "CV: “Deutsch (Muttersprache)”", "Confirmed"],
-              ["3 years CNC experience", "Interview: “I have been working on 5-axis machines for nine years.”", "Confirmed"],
-              ["Driver's license cat. B", "Interview: “Yes, I have a category B licence.”", "Confirmed"],
-              ["SAP experience", "No evidence found yet", "Missing info"],
+              ["Deutsch B2", "CV: „Deutsch (Muttersprache)“", "Erfüllt"],
+              ["3 Jahre CNC-Erfahrung", "Interview: „Ich arbeite seit neun Jahren an 5-Achs-Maschinen.“", "Erfüllt"],
+              ["Führerausweis Kat. B", "Interview: „Ja, ich habe den Ausweis Kategorie B.“", "Erfüllt"],
+              ["SAP-Erfahrung", "Noch kein Beleg gefunden", "Info fehlt"],
             ].map(([r, e, s]) => (
               <div key={r} className="grid grid-cols-12 gap-2 border-b border-slate-50 py-2.5 text-[13px] last:border-0">
                 <span className="col-span-4 font-medium">{r}</span>
                 <span className="col-span-5 text-slate-500">{e}</span>
-                <span className={`col-span-3 text-right text-xs font-medium ${s === "Confirmed" ? "text-emerald-600" : "text-amber-600"}`}>{s}</span>
+                <span className={`col-span-3 text-right text-xs font-medium ${s === "Erfüllt" ? "text-emerald-600" : "text-amber-600"}`}>{s}</span>
               </div>
             ))}
           </div>
@@ -199,14 +199,14 @@ export default function LandingPage() {
       <section id="trust" className="border-y border-slate-100 bg-slate-50/70">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-20 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-4">
-            <p className="text-sm font-semibold text-brand-600">Trust & privacy</p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-ink">Trustworthy enough for a Swiss HR department.</h2>
+            <p className="text-sm font-semibold text-brand-600">Vertrauen & Datenschutz</p>
+            <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-ink">Vertrauenswürdig genug für eine Schweizer HR-Abteilung.</h2>
           </div>
           {[
-            { i: Scale, t: "Humans decide", d: "AI prepares, people decide. Hirely cannot reject or hire anyone on its own." },
-            { i: ShieldCheck, t: "revDSG & GDPR", d: "Consent management, retention periods, deletion and export on request, full audit log." },
-            { i: Lock, t: "Security", d: "Encryption at rest and in transit, strict tenant isolation, RBAC, 2FA and signed webhooks." },
-            { i: CheckCircle2, t: "Fair & transparent", d: "Candidates always know they talk to an AI. No protected characteristics, no appearance analysis." },
+            { i: Scale, t: "Menschen entscheiden", d: "Die KI bereitet vor, Menschen entscheiden. Hirely kann niemandem selbst absagen oder jemanden einstellen." },
+            { i: ShieldCheck, t: "revDSG & DSGVO", d: "Einwilligungen, Aufbewahrungsfristen, Löschung und Export auf Anfrage, lückenloses Protokoll." },
+            { i: Lock, t: "Sicherheit", d: "Verschlüsselte Speicherung und Übertragung, strikte Mandantentrennung, Rollenrechte, 2FA und signierte Webhooks." },
+            { i: CheckCircle2, t: "Fair & transparent", d: "Kandidierende wissen immer, dass sie mit einer KI sprechen. Keine geschützten Merkmale, keine Analyse des Aussehens." },
           ].map(({ i: Icon, t, d }) => (
             <div key={t} className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
               <Icon className="h-5 w-5 text-brand-600" />
@@ -220,26 +220,26 @@ export default function LandingPage() {
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="text-center">
-          <p className="text-sm font-semibold text-brand-600">Pricing</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Simple plans. Usage that scales with your hiring.</h2>
-          <p className="mt-3 text-slate-600">Prices in CHF, excl. VAT. Annual billing saves ~17%.</p>
+          <p className="text-sm font-semibold text-brand-600">Preise</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Einfache Pläne. Der Verbrauch wächst mit Ihrem Recruiting.</h2>
+          <p className="mt-3 text-slate-600">Preise in CHF, exkl. MwSt. Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
         </div>
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {PLANS.map((p) => (
             <div key={p.id} className={`flex flex-col rounded-2xl border p-6 ${p.id === "GROWTH" ? "border-brand-500 shadow-pop ring-1 ring-brand-500" : "border-slate-200"}`}>
               <div className="flex items-center justify-between">
                 <p className="font-semibold text-ink">{p.name}</p>
-                {p.id === "GROWTH" && <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">Most popular</span>}
+                {p.id === "GROWTH" && <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">Am beliebtesten</span>}
               </div>
               <p className="mt-1 text-sm text-slate-500">{p.tagline}</p>
               <p className="mt-5 text-3xl font-semibold tracking-tight text-ink">
-                {p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Custom"}
-                {p.monthlyCents && <span className="text-sm font-normal text-slate-500"> / month</span>}
+                {p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Individuell"}
+                {p.monthlyCents && <span className="text-sm font-normal text-slate-500"> / Monat</span>}
               </p>
               <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-600">
-                <li>{p.positions ? `${p.positions} open positions` : "Unlimited positions"} · {p.seats ? `${p.seats} users` : "unlimited users"}</li>
-                <li>{p.included.VOICE_MINUTES.toLocaleString("de-CH")} AI phone minutes</li>
-                <li>{p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} video interviews</li>
+                <li>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
+                <li>{p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten</li>
+                <li>{p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews</li>
                 {p.features.map((f) => (
                   <li key={f} className="flex gap-2">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
@@ -248,21 +248,21 @@ export default function LandingPage() {
                 ))}
               </ul>
               <LinkButton href={p.id === "ENTERPRISE" ? "/demo" : "/register"} variant={p.id === "GROWTH" ? "primary" : "secondary"} className="mt-6 w-full">
-                {p.id === "ENTERPRISE" ? "Contact sales" : "Start free"}
+                {p.id === "ENTERPRISE" ? "Kontakt aufnehmen" : "Kostenlos starten"}
               </LinkButton>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-center text-xs text-slate-500">Usage beyond included quotas: AI phone minute CHF 0.45 · SMS CHF 0.12 · Video interview CHF 2.00 · CV analysis CHF 0.15 · Additional position CHF 29 / month.</p>
+        <p className="mt-6 text-center text-xs text-slate-500">Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · Zusätzliche Stelle CHF 29 / Monat.</p>
       </section>
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
         <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-brand-50 to-white px-8 py-14 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-ink">Hirely handles the repetitive recruiting work.<br className="hidden sm:block" /> Humans handle the important decisions.</h2>
+          <h2 className="text-3xl font-semibold tracking-tight text-ink">Hirely erledigt die Routinearbeit im Recruiting.<br className="hidden sm:block" /> Die wichtigen Entscheide treffen Menschen.</h2>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <LinkButton href="/register" size="lg">Start free</LinkButton>
-            <LinkButton href="/demo" size="lg" variant="secondary">Book a demo</LinkButton>
+            <LinkButton href="/register" size="lg">Kostenlos starten</LinkButton>
+            <LinkButton href="/demo" size="lg" variant="secondary">Demo vereinbaren</LinkButton>
           </div>
         </div>
       </section>

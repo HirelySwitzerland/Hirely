@@ -36,7 +36,7 @@ export async function saveOnboardingStep(_: ActionState, fd: FormData): Promise<
       return ok(undefined, { redirect: "/onboarding" });
     }
     const ctx = await getContext({ allowIncompleteOnboarding: true });
-    if (ctx.role !== "OWNER" && ctx.role !== "ADMIN") return fail("Only owners and admins can complete onboarding.");
+    if (ctx.role !== "OWNER" && ctx.role !== "ADMIN") return fail("Nur Inhaber/innen und Admins können die Einrichtung abschliessen.");
     const org = ctx.org;
     if (step === 2) {
       await db.organization.update({
@@ -59,7 +59,7 @@ export async function saveOnboardingStep(_: ActionState, fd: FormData): Promise<
         return ok(undefined, { redirect: "/app" });
       }
       const title = str(fd, "title");
-      if (title.length < 2) return fail("Please enter a job title (or skip this step).");
+      if (title.length < 2) return fail("Bitte geben Sie einen Stellentitel ein (oder überspringen Sie den Schritt).");
       const musts = str(fd, "musts").split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 15);
       const nices = str(fd, "nices").split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 15);
       const language = (["de", "en", "fr", "it"].includes(str(fd, "language")) ? str(fd, "language") : org.language) as "de";

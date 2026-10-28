@@ -8,7 +8,7 @@ import { ActionForm, SubmitButton } from "@/components/forms";
 import { UsageBars } from "@/components/charts";
 import { setUsageLimit } from "@/app/actions/settings";
 
-export const metadata = { title: "AI usage & costs" };
+export const metadata = { title: "Verbrauch & Kosten" };
 
 export default async function UsagePage() {
   const ctx = await pageContext("usage.view");
@@ -30,19 +30,19 @@ export default async function UsagePage() {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="AI & telecom cost (period)" value={chf(totalCost)} sub={`since ${format(since, "dd.MM.yyyy")}`} />
-        <StatCard label="Projected monthly AI cost" value={chf(projected)} sub="at current run rate" />
-        <StatCard label="Voice minutes" value={Math.round(usage.VOICE_MINUTES ?? 0)} sub={`of ${plan.included.VOICE_MINUTES} included`} />
-        <StatCard label="LLM tokens" value={`${Math.round((usage.LLM_TOKENS ?? 0) / 1000)}k`} sub={`${Math.round(usage.AI_CALLS ?? 0)} AI calls`} />
+        <StatCard label="KI- & Telefoniekosten (Periode)" value={chf(totalCost)} sub={`seit ${format(since, "dd.MM.yyyy")}`} />
+        <StatCard label="Hochgerechnet pro Monat" value={chf(projected)} sub="beim aktuellen Verbrauch" />
+        <StatCard label="Telefonminuten" value={Math.round(usage.VOICE_MINUTES ?? 0)} sub={`von ${plan.included.VOICE_MINUTES} inklusive`} />
+        <StatCard label="KI-Tokens" value={`${Math.round((usage.LLM_TOKENS ?? 0) / 1000)}k`} sub={`${Math.round(usage.AI_CALLS ?? 0)} KI-Aufrufe`} />
       </div>
       <div className="grid gap-5 lg:grid-cols-2">
-        <Card><CardHeader title="Voice minutes per day" description="AI phone interviews, last 30 days" /><div className="p-5"><UsageBars data={daily("VOICE_MINUTES")} /></div></Card>
-        <Card><CardHeader title="LLM tokens per day" description="CV analysis, summaries, drafting, assistant" /><div className="p-5"><UsageBars data={daily("LLM_TOKENS")} color="#eb6834" /></div></Card>
+        <Card><CardHeader title="Telefonminuten pro Tag" description="KI-Telefoninterviews, letzte 30 Tage" /><div className="p-5"><UsageBars data={daily("VOICE_MINUTES")} /></div></Card>
+        <Card><CardHeader title="KI-Tokens pro Tag" description="CV-Auswertung, Zusammenfassungen, Entwürfe, Assistent" /><div className="p-5"><UsageBars data={daily("LLM_TOKENS")} color="#eb6834" /></div></Card>
       </div>
       <Card>
-        <CardHeader title="Usage by component" description="Current billing period · estimated provider cost (what Hirely pays upstream) is shown for transparency" />
+        <CardHeader title="Verbrauch nach Leistung" description="Aktuelle Abrechnungsperiode · geschätzte Anbieterkosten zur Transparenz" />
         <Table>
-          <thead><tr><Th>Component</Th><Th>Used</Th><Th>Included / limit</Th><Th className="w-48">Consumption</Th><Th>Est. cost</Th></tr></thead>
+          <thead><tr><Th>Leistung</Th><Th>Verbraucht</Th><Th>Inklusive / Limit</Th><Th className="w-48">Auslastung</Th><Th>Gesch. Kosten</Th></tr></thead>
           <tbody>
             {Object.entries(USAGE_METRICS).map(([k, m]) => {
               const used = usage[k] ?? 0;
@@ -51,8 +51,8 @@ export default async function UsagePage() {
                 <tr key={k}>
                   <Td className="font-medium">{m.label}</Td>
                   <Td className="tabular-nums">{Math.round(used).toLocaleString("de-CH")} {m.unit}</Td>
-                  <Td className="text-xs text-slate-600">{cap ? `${cap.toLocaleString("de-CH")}${limits[k]?.enforce ? " (hard limit)" : ""}` : "—"}</Td>
-                  <Td>{cap ? <Progress value={used} max={cap} tone={used / cap > 1 ? "red" : used / cap > 0.8 ? "amber" : "brand"} /> : <span className="text-xs text-slate-400">no limit</span>}</Td>
+                  <Td className="text-xs text-slate-600">{cap ? `${cap.toLocaleString("de-CH")}${limits[k]?.enforce ? " (feste Grenze)" : ""}` : "—"}</Td>
+                  <Td>{cap ? <Progress value={used} max={cap} tone={used / cap > 1 ? "red" : used / cap > 0.8 ? "amber" : "brand"} /> : <span className="text-xs text-slate-400">kein Limit</span>}</Td>
                   <Td className="tabular-nums">{chf(cost[k] ?? 0)}</Td>
                 </tr>
               );
@@ -62,15 +62,15 @@ export default async function UsagePage() {
       </Card>
       {canEdit && (
         <Card>
-          <CardHeader title="Usage limits" description="Get notified at 100%. Hard limits pause that usage type (e.g. AI calls) until raised — candidates see a friendly fallback." />
+          <CardHeader title="Verbrauchsgrenzen" description="Benachrichtigung bei 100 %. Feste Grenzen pausieren die Leistung (z. B. KI-Anrufe), bis sie erhöht werden – Kandidierende sehen eine freundliche Alternative." />
           <div className="grid gap-4 p-5 md:grid-cols-2">
             {(["VOICE_MINUTES", "SMS", "VIDEO_INTERVIEWS", "CV_ANALYSES"] as const).map((k) => (
               <ActionForm key={k} action={setUsageLimit} className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 p-3">
                 <input type="hidden" name="metric" value={k} />
                 <span className="w-36 text-sm font-medium text-ink">{USAGE_METRICS[k].label}</span>
                 <Input name="limit" type="number" min={0} defaultValue={limits[k]?.limit ?? plan.included[k]} className="w-28" />
-                <Checkbox name="enforce" defaultChecked={limits[k]?.enforce} label="Hard limit" />
-                <SubmitButton size="sm" variant="secondary">Save</SubmitButton>
+                <Checkbox name="enforce" defaultChecked={limits[k]?.enforce} label="Feste Grenze" />
+                <SubmitButton size="sm" variant="secondary">Speichern</SubmitButton>
               </ActionForm>
             ))}
           </div>

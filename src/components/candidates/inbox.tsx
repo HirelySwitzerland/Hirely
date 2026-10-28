@@ -44,9 +44,9 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
     <div>
       {sel.length > 0 && (
         <div className="sticky top-16 z-10 flex flex-wrap items-center gap-2 border-b border-brand-200 bg-brand-50 px-4 py-2.5 text-sm">
-          <span className="font-medium text-brand-900">{sel.length} selected</span>
+          <span className="font-medium text-brand-900">{sel.length} ausgewählt</span>
           <Link href={`/app/candidates/compare?ids=${sel.join(",")}`} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-white px-3 text-[13px] font-medium text-ink shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
-            <GitCompareArrows className="h-3.5 w-3.5" />Compare
+            <GitCompareArrows className="h-3.5 w-3.5" />Vergleichen
           </Link>
           {canStage && (
             <>
@@ -62,43 +62,40 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                 setSel([]);
                 router.refresh();
               })}>
-                {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Move
+                {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Verschieben
               </Button>
             </>
           )}
-          <button onClick={() => setSel([])} className="ml-auto rounded p-1 text-brand-700 hover:bg-brand-100" aria-label="Clear selection"><X className="h-4 w-4" /></button>
+          <button onClick={() => setSel([])} className="ml-auto rounded p-1 text-brand-700 hover:bg-brand-100" aria-label="Auswahl aufheben"><X className="h-4 w-4" /></button>
         </div>
       )}
       {msg && <p className="border-b border-slate-100 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">{msg}</p>}
       {/* Desktop table */}
       <div className="scrollbar-thin hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[980px] text-left text-sm">
+        <table className="w-full min-w-[760px] text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-100 bg-slate-50/60 text-xs font-medium uppercase tracking-wide text-slate-500">
-              <th className="w-10 px-4 py-2.5"><input type="checkbox" checked={all} onChange={() => setSel(all ? [] : rows.map((r) => r.id))} className="rounded border-slate-300 text-brand-600" aria-label="Select all" /></th>
-              <th className="px-3 py-2.5">Candidate</th><th className="px-3 py-2.5">Position</th><th className="px-3 py-2.5">Stage</th><th className="px-3 py-2.5">AI screening</th><th className="px-3 py-2.5">Requirements</th><th className="px-3 py-2.5">AI interview</th><th className="px-3 py-2.5">Source</th><th className="px-3 py-2.5">Applied</th>
+            <tr className="border-b border-slate-100 bg-slate-50/60 text-xs font-medium text-slate-500">
+              <th className="w-10 px-4 py-3"><input type="checkbox" checked={all} onChange={() => setSel(all ? [] : rows.map((r) => r.id))} className="rounded border-slate-300 text-brand-600" aria-label="Alle auswählen" /></th>
+              <th className="px-3 py-3">Kandidat/in</th><th className="px-3 py-3">Stufe</th><th className="px-3 py-3">Anforderungen</th><th className="px-3 py-3">KI-Interview</th><th className="px-3 py-3 text-right">Eingegangen</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className={cn("border-b border-slate-100 hover:bg-slate-50/70", sel.includes(r.id) && "bg-brand-50/40")}>
-                <td className="px-4 py-3"><input type="checkbox" checked={sel.includes(r.id)} onChange={() => toggle(r.id)} className="rounded border-slate-300 text-brand-600" aria-label={`Select ${r.name}`} /></td>
+                <td className="px-4 py-3"><input type="checkbox" checked={sel.includes(r.id)} onChange={() => toggle(r.id)} className="rounded border-slate-300 text-brand-600" aria-label={`${r.name} auswählen`} /></td>
                 <td className="px-3 py-3">
-                  <Link href={`/app/candidates/${r.id}`} className="flex items-center gap-2.5">
-                    <Avatar name={r.name} size={32} />
+                  <Link href={`/app/candidates/${r.id}`} className="flex items-center gap-3">
+                    <Avatar name={r.name} size={36} />
                     <span className="min-w-0">
-                      <span className="block truncate font-medium text-ink hover:text-brand-700">{r.name}</span>
-                      <span className="block truncate text-xs text-slate-500">{r.location ?? r.email}</span>
+                      <span className="block truncate text-[15px] font-medium text-ink hover:text-brand-700">{r.name}</span>
+                      <span className="block max-w-[340px] truncate text-[13px] text-slate-500">{r.jobTitle}{r.location ? ` · ${r.location}` : ""}</span>
                     </span>
                   </Link>
                 </td>
-                <td className="max-w-[200px] truncate px-3 py-3 text-slate-700">{r.jobTitle}</td>
                 <td className="px-3 py-3"><StageBadge stage={r.stage} /></td>
-                <td className="px-3 py-3"><ScreeningBadge status={r.screeningStatus} meetsMinimum={r.meetsMinimum} /></td>
-                <td className="px-3 py-3"><RequirementsMeter met={r.met} total={r.total} mustMet={r.mustMet} mustTotal={r.mustTotal} /></td>
+                <td className="px-3 py-3">{r.screeningStatus === "COMPLETED" || r.total > 0 ? <RequirementsMeter met={r.met} total={r.total} mustMet={r.mustMet} mustTotal={r.mustTotal} /> : <ScreeningBadge status={r.screeningStatus} meetsMinimum={r.meetsMinimum} />}</td>
                 <td className="px-3 py-3"><InterviewBadge status={r.interviewStatus} /></td>
-                <td className="px-3 py-3 text-xs text-slate-600" title={r.sourceDetail ?? undefined}>{SOURCE_LABEL[r.source] ?? r.source}</td>
-                <td className="px-3 py-3 text-xs text-slate-500" title={r.appliedAt}>{r.appliedAgo}</td>
+                <td className="px-3 py-3 text-right text-[13px] text-slate-500" title={`${r.appliedAt} · ${SOURCE_LABEL[r.source] ?? r.source}${r.sourceDetail ? ` (${r.sourceDetail})` : ""}`}>{r.appliedAgo}</td>
               </tr>
             ))}
           </tbody>
@@ -119,7 +116,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <StageBadge stage={r.stage} />
                   <InterviewBadge status={r.interviewStatus} />
-                  {r.total > 0 && <span className="text-xs tabular-nums text-slate-600">{r.met}/{r.total} req.</span>}
+                  {r.total > 0 && <span className="text-xs tabular-nums text-slate-600">{r.met}/{r.total} Anf.</span>}
                 </div>
               </div>
             </Link>
@@ -199,7 +196,7 @@ export function PipelineBoard({ rows, canStage }: { rows: InboxRow[]; canStage: 
           );
         })}
       </div>
-      <p className="flex items-center gap-1.5 text-xs text-slate-500"><Columns3 className="h-3.5 w-3.5" />{canStage ? "Drag cards between columns to change the stage. Every change is logged." : "Read-only view."} Rejected and talent-pool candidates are available via filters.</p>
+      <p className="flex items-center gap-1.5 text-xs text-slate-500"><Columns3 className="h-3.5 w-3.5" />{canStage ? "Karten zwischen den Spalten ziehen, um die Stufe zu ändern. Jede Änderung wird protokolliert." : "Nur Ansicht."} Abgesagte und Talent-Pool-Kandidierende finden Sie über die Filter.</p>
     </div>
   );
 }

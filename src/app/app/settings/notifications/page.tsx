@@ -4,7 +4,7 @@ import { ActionForm, SubmitButton } from "@/components/forms";
 import { Card, CardHeader, Checkbox } from "@/components/ui";
 import { saveNotificationPrefs } from "@/app/actions/settings";
 
-export const metadata = { title: "Notification settings" };
+export const metadata = { title: "Mitteilungen" };
 
 export default async function NotificationSettings() {
   const ctx = await getContext();
@@ -12,11 +12,11 @@ export default async function NotificationSettings() {
   const types = Object.entries(NOTIFICATION_TYPES).filter(([, d]) => ctx.can(d.permission));
   return (
     <Card>
-      <CardHeader title="Notifications" description="Choose which in-app notifications you receive in this organization." />
+      <CardHeader title="Mitteilungen" description="Wählen Sie, welche Mitteilungen Sie in dieser Firma erhalten." />
       <ActionForm action={saveNotificationPrefs} className="space-y-3 p-5">
         <input type="hidden" name="types" value={types.map(([k]) => k).join(",")} />
         {types.map(([k, d]) => <Checkbox key={k} name={k} defaultChecked={prefs[k] !== false} label={d.label} />)}
-        <SubmitButton>Save preferences</SubmitButton>
+        <SubmitButton>Speichern</SubmitButton>
       </ActionForm>
     </Card>
   );

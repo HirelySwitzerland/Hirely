@@ -29,11 +29,11 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
   let provider = "heuristic";
 
   if (!cvText.trim()) {
-    warnings.push(cvDoc ? "The CV could not be read (scanned image or protected PDF). Ask the candidate for a text-based PDF or enter details manually." : "No CV was provided.");
+    warnings.push(cvDoc ? "Der Lebenslauf konnte nicht gelesen werden (gescanntes Bild oder geschütztes PDF). Bitten Sie um ein textbasiertes PDF oder erfassen Sie die Angaben selbst." : "Es wurde kein Lebenslauf eingereicht.");
   } else {
     parsed = parseCvHeuristic(cvText);
     const injection = detectInjection(cvText);
-    if (injection.length) warnings.push(`Possible prompt-injection text found in CV ("${injection[0]}"). It was ignored and treated as plain data.`);
+    if (injection.length) warnings.push(`Möglicher Manipulationsversuch im CV gefunden („${injection[0]}“). Der Text wurde ignoriert und nur als Daten behandelt.`);
     // A real LLM may enrich skills; anything not grounded in the CV text is discarded.
     if (getLLM().name !== "mock") {
       try {
@@ -50,7 +50,7 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
         for (const s of llm?.skills ?? []) if (quoteIsGrounded(s, cvText) && !parsed.skills.some((x) => x.value.toLowerCase() === s.toLowerCase())) parsed.skills.push({ value: s, status: "confirmed", source: "ai-extracted" });
         for (const s of llm?.certifications ?? []) if (quoteIsGrounded(s, cvText) && !parsed.certifications.some((x) => x.value === s)) parsed.certifications.push({ value: s, status: "confirmed" });
       } catch (e) {
-        warnings.push(`AI enrichment unavailable (${(e as Error).message}); structured data extracted with the rule-based parser.`);
+        warnings.push(`KI-Ergänzung nicht verfügbar (${(e as Error).message}); Angaben wurden regelbasiert ausgelesen.`);
       }
     }
     warnings.push(...parsed.warnings);
@@ -83,13 +83,13 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
   if (app.stage === "NEW") {
     await db.application.update({
       where: { id: app.id },
-      data: { stage: "AI_SCREENING", stageChangedAt: new Date(), stageHistory: { create: { orgId: app.orgId, fromStage: "NEW", toStage: "AI_SCREENING", actorType: "AI", reason: "CV analyzed" } } },
+      data: { stage: "AI_SCREENING", stageChangedAt: new Date(), stageHistory: { create: { orgId: app.orgId, fromStage: "NEW", toStage: "AI_SCREENING", actorType: "AI", reason: "CV ausgewertet" } } },
     });
   }
   await recordUsage(app.orgId, "CV_ANALYSES", 1, 0, { type: "application", id: app.id });
   await audit(app.orgId, { type: "AI" }, cvText ? "cv.analyzed" : "cv.analysis_failed", { type: "Application", id: app.id, label: `${app.candidate.firstName} ${app.candidate.lastName}` }, { warnings });
   if (!cvText)
-    await notify(app.orgId, { type: "new_application", title: `CV could not be analyzed: ${app.candidate.firstName} ${app.candidate.lastName}`, body: warnings[0], link: `/app/candidates/${app.id}`, severity: "warning" });
+    await notify(app.orgId, { type: "new_application", title: `CV konnte nicht ausgewertet werden: ${app.candidate.firstName} ${app.candidate.lastName}`, body: warnings[0], link: `/app/candidates/${app.id}`, severity: "warning" });
   await fireTrigger(app.orgId, "CV_ANALYZED", app.id);
 }
 
@@ -146,15 +146,17 @@ export async function reevaluate(applicationId: string) {
     });
   }
   const agg = aggregate(results, knockoutFailed);
+  const orgSettings = (await db.organization.findUnique({ where: { id: app.orgId }, select: { settings: true } }))?.settings as { ai?: { summaryLanguage?: string } } | undefined;
+  const summaryLang = orgSettings?.ai?.summaryLanguage ?? "de";
   const summaryRes = await generate(
     {
       task: "candidate_summary",
       orgId: app.orgId,
       prompt:
-        `Write a 2–3 sentence factual summary for a recruiter. Only use these facts.\n` +
+        `Schreibe eine sachliche Zusammenfassung in 2–3 Sätzen für das HR-Team, auf ${summaryLang === "de" ? "Deutsch (Schweizer Schreibweise, ss statt ß)" : summaryLang}. Verwende nur diese Fakten.\n` +
         JSON.stringify({ title: app.candidate.currentTitle, years: app.candidate.yearsExperience, location: app.candidate.location, ...agg, highlights }),
       input: {
-        language: "en",
+        language: summaryLang,
         name: `${app.candidate.firstName} ${app.candidate.lastName}`,
         currentTitle: app.candidate.currentTitle,
         years: app.candidate.yearsExperience,

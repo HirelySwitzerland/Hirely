@@ -8,9 +8,10 @@ import {
 } from "lucide-react";
 import { Avatar, Logo } from "./ui";
 import { cn, ago } from "@/lib/utils";
+import { ROLE_LABELS } from "@/lib/auth/rbac";
 
-export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number };
-const ICONS = { dashboard: LayoutDashboard, jobs: Briefcase, candidates: Users, interviews: CalendarClock, pool: Library, analytics: BarChart3, automations: Workflow, integrations: Plug, settings: Settings };
+export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number; section?: string };
+const ICONS = { dashboard: LayoutDashboard, jobs: Briefcase, candidates: Users, interviews: CalendarClock, pool: Library, analytics: BarChart3, automations: Workflow, integrations: Plug, settings: Settings, assistant: Sparkles };
 
 function isActive(pathname: string, href: string) {
   return href === "/app" ? pathname === "/app" : pathname === href || pathname.startsWith(href + "/");
@@ -23,45 +24,48 @@ export function Sidebar({ items, orgName, orgs, currentOrgId, switchAction, foot
   const nav = (
     <nav className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-4">
-        <Link href="/app"><Logo /></Link>
-        <button className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
+        <Link href="/app"><Logo className="text-white" /></Link>
+        <button className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 lg:hidden" onClick={() => setOpen(false)} aria-label="Menü schliessen">
           <X className="h-5 w-5" />
         </button>
       </div>
       <OrgSwitcher orgName={orgName} orgs={orgs} currentOrgId={currentOrgId} switchAction={switchAction} />
-      <div className="scrollbar-thin flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
-        {items.map((it) => {
+      <div className="scrollbar-thin flex-1 overflow-y-auto px-3 pb-3 pt-2">
+        {items.map((it, idx) => {
           const Icon = ICONS[it.icon];
           const active = isActive(pathname, it.href);
+          const heading = it.section && it.section !== items[idx - 1]?.section ? it.section : null;
           return (
-            <Link
-              key={it.href}
-              href={it.href}
-              className={cn(
-                "group flex items-center gap-3 rounded-lg px-2.5 py-2 text-[14px] font-medium transition",
-                active ? "bg-white text-ink shadow-card ring-1 ring-slate-200" : "text-slate-600 hover:bg-white/70 hover:text-ink",
-              )}
-            >
-              <Icon className={cn("h-[18px] w-[18px]", active ? "text-brand-600" : "text-slate-400 group-hover:text-slate-600")} />
-              <span className="flex-1">{it.label}</span>
-              {it.badge ? <span className="rounded-full bg-brand-600 px-1.5 py-px text-[11px] font-semibold text-white">{it.badge}</span> : null}
-            </Link>
+            <div key={it.href}>
+              {heading && <p className="mb-1.5 mt-5 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{heading}</p>}
+              <Link
+                href={it.href}
+                className={cn(
+                  "group mb-0.5 flex items-center gap-3 rounded-lg px-2.5 py-2 text-[14px] font-medium transition",
+                  active ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white",
+                )}
+              >
+                <Icon className={cn("h-[18px] w-[18px]", active ? "text-brand-300" : "text-slate-500 group-hover:text-slate-300")} />
+                <span className="flex-1">{it.label}</span>
+                {it.badge ? <span className="rounded-full bg-amber-400 px-1.5 py-px text-[11px] font-semibold text-night">{it.badge}</span> : null}
+              </Link>
+            </div>
           );
         })}
       </div>
-      {footer && <div className="border-t border-slate-200/80 p-3">{footer}</div>}
+      {footer && <div className="border-t border-night-line p-3">{footer}</div>}
     </nav>
   );
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-slate-200/80 bg-slate-50 lg:block">{nav}</aside>
-      <button className="fixed left-3 top-3 z-40 rounded-lg border border-slate-200 bg-white p-2 text-slate-600 shadow-sm lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 bg-night lg:block">{nav}</aside>
+      <button className="fixed left-3 top-3 z-40 rounded-lg border border-slate-200 bg-white p-2 text-slate-600 shadow-sm lg:hidden" onClick={() => setOpen(true)} aria-label="Menü öffnen">
         <Menu className="h-5 w-5" />
       </button>
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px]" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-slate-50 shadow-pop">{nav}</aside>
+          <aside className="absolute inset-y-0 left-0 w-72 bg-night shadow-pop">{nav}</aside>
         </div>
       )}
     </>
@@ -72,10 +76,10 @@ function OrgSwitcher({ orgName, orgs, currentOrgId, switchAction }: { orgName: s
   const [open, setOpen] = useState(false);
   return (
     <div className="relative px-3">
-      <button onClick={() => orgs.length > 1 && setOpen((o) => !o)} className="flex w-full items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-left shadow-sm">
+      <button onClick={() => orgs.length > 1 && setOpen((o) => !o)} className="flex w-full items-center gap-2.5 rounded-lg bg-white/5 px-2.5 py-2 text-left ring-1 ring-white/10 hover:bg-white/10">
         <Avatar name={orgName} size={24} className="rounded-md" />
-        <span className="flex-1 truncate text-[13px] font-semibold text-ink">{orgName}</span>
-        {orgs.length > 1 && <ChevronsUpDown className="h-4 w-4 text-slate-400" />}
+        <span className="flex-1 truncate text-[13px] font-semibold text-white">{orgName}</span>
+        {orgs.length > 1 && <ChevronsUpDown className="h-4 w-4 text-slate-500" />}
       </button>
       {open && (
         <div className="absolute left-3 right-3 top-full z-10 mt-1 rounded-lg border border-slate-200 bg-white p-1 shadow-pop">
@@ -133,7 +137,7 @@ export function GlobalSearch() {
       }}
     >
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      <input ref={ref} className="input h-9 pl-9 pr-14" placeholder="Search candidates, skills, jobs…" aria-label="Search" />
+      <input ref={ref} className="input h-9 pl-9 pr-14" placeholder="Kandidierende, Skills oder Stellen suchen…" aria-label="Suche" />
       <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-slate-400">⌘K</span>
     </form>
   );
@@ -168,7 +172,7 @@ export function NotificationBell() {
   const dot: Record<string, string> = { error: "bg-rose-500", warning: "bg-amber-500", success: "bg-emerald-500", info: "bg-brand-500" };
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-ink" aria-label={`Notifications (${unread} unread)`}>
+      <button onClick={() => setOpen((o) => !o)} className="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-ink" aria-label={`Mitteilungen (${unread} ungelesen)`}>
         <Bell className="h-5 w-5" />
         {unread > 0 && <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white">{unread > 9 ? "9+" : unread}</span>}
       </button>
@@ -177,11 +181,11 @@ export function NotificationBell() {
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute right-0 z-50 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-pop">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-              <p className="text-sm font-semibold text-ink">Notifications</p>
-              <button onClick={markAll} className="text-xs font-medium text-brand-600 hover:underline">Mark all read</button>
+              <p className="text-sm font-semibold text-ink">Mitteilungen</p>
+              <button onClick={markAll} className="text-xs font-medium text-brand-600 hover:underline">Alle als gelesen markieren</button>
             </div>
             <div className="scrollbar-thin max-h-[420px] overflow-y-auto">
-              {items.length === 0 && <p className="px-4 py-10 text-center text-sm text-slate-500">You're all caught up.</p>}
+              {items.length === 0 && <p className="px-4 py-10 text-center text-sm text-slate-500">Keine neuen Mitteilungen.</p>}
               {items.map((n) => (
                 <Link
                   key={n.id}
@@ -203,7 +207,7 @@ export function NotificationBell() {
               ))}
             </div>
             <Link href="/app/notifications" onClick={() => setOpen(false)} className="block border-t border-slate-100 px-4 py-2.5 text-center text-xs font-medium text-slate-600 hover:bg-slate-50">
-              View all notifications
+              Alle Mitteilungen anzeigen
             </Link>
           </div>
         </>
@@ -216,7 +220,7 @@ export function UserMenu({ name, email, role, logoutAction }: { name: string; em
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-lg p-1 hover:bg-slate-100" aria-label="Account menu">
+      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-lg p-1 hover:bg-slate-100" aria-label="Konto-Menü">
         <Avatar name={name} size={30} />
       </button>
       {open && (
@@ -226,14 +230,14 @@ export function UserMenu({ name, email, role, logoutAction }: { name: string; em
             <div className="px-3 py-2">
               <p className="truncate text-sm font-semibold text-ink">{name}</p>
               <p className="truncate text-xs text-slate-500">{email}</p>
-              <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-brand-600">{role.replace("_", " ")}</p>
+              <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-brand-600">{(ROLE_LABELS as Record<string, string>)[role] ?? role}</p>
             </div>
             <div className="my-1 h-px bg-slate-100" />
-            <Link href="/app/settings/profile" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Profile & security</Link>
-            <Link href="/app/notifications" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Notifications</Link>
+            <Link href="/app/settings/profile" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Profil & Sicherheit</Link>
+            <Link href="/app/notifications" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Mitteilungen</Link>
             <form action={logoutAction}>
               <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
-                <LogOut className="h-4 w-4" /> Sign out
+                <LogOut className="h-4 w-4" /> Abmelden
               </button>
             </form>
           </div>
@@ -265,7 +269,7 @@ export function AssistantButton({ suggestions }: { suggestions: string[] }) {
     <>
       <button onClick={() => setOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
         <Sparkles className="h-4 w-4 text-brand-600" />
-        <span className="hidden sm:inline">Ask Hirely</span>
+        <span className="hidden sm:inline">Hirely fragen</span>
       </button>
       {open && (
         <div className="fixed inset-0 z-50">
@@ -273,10 +277,10 @@ export function AssistantButton({ suggestions }: { suggestions: string[] }) {
           <div className="absolute inset-y-0 right-0 flex w-full max-w-lg flex-col bg-white shadow-pop">
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
               <div>
-                <p className="flex items-center gap-2 font-semibold text-ink"><Sparkles className="h-4 w-4 text-brand-600" />Recruiter assistant</p>
-                <p className="text-xs text-slate-500">Answers use only data you have access to. It suggests — you decide.</p>
+                <p className="flex items-center gap-2 font-semibold text-ink"><Sparkles className="h-4 w-4 text-brand-600" />KI-Assistent</p>
+                <p className="text-xs text-slate-500">Nutzt nur Daten, auf die Sie Zugriff haben. Der Assistent schlägt vor – Sie entscheiden.</p>
               </div>
-              <button onClick={() => setOpen(false)} className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100" aria-label="Close assistant"><X className="h-5 w-5" /></button>
+              <button onClick={() => setOpen(false)} className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100" aria-label="Assistent schliessen"><X className="h-5 w-5" /></button>
             </div>
             <AssistantChat suggestions={suggestions} onNavigate={() => setOpen(false)} />
           </div>
@@ -302,7 +306,7 @@ export function AssistantChat({ suggestions, onNavigate }: { suggestions: string
       const d = (await r.json()) as Reply & { error?: string };
       setMsgs((m) => [...m, { role: "assistant", text: d.error ?? d.text, reply: d.error ? undefined : d }]);
     } catch {
-      setMsgs((m) => [...m, { role: "assistant", text: "The assistant is unreachable right now. Please try again." }]);
+      setMsgs((m) => [...m, { role: "assistant", text: "Der Assistent ist gerade nicht erreichbar. Bitte versuchen Sie es erneut." }]);
     } finally {
       setBusy(false);
     }
@@ -312,7 +316,7 @@ export function AssistantChat({ suggestions, onNavigate }: { suggestions: string
       <div className="scrollbar-thin flex-1 space-y-4 overflow-y-auto px-5 py-5">
         {msgs.length === 0 && (
           <div>
-            <p className="text-sm text-slate-600">Try asking:</p>
+            <p className="text-sm text-slate-600">Zum Beispiel:</p>
             <div className="mt-3 flex flex-col gap-2">
               {suggestions.map((s) => (
                 <button key={s} onClick={() => ask(s)} className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-700 hover:border-brand-300 hover:bg-brand-50/50">
@@ -354,8 +358,8 @@ export function AssistantChat({ suggestions, onNavigate }: { suggestions: string
               {m.reply?.draft && (
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                   <div className="mb-2 flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Draft</p>
-                    <button onClick={() => navigator.clipboard.writeText(`${m.reply?.draft?.subject ? `Subject: ${m.reply.draft.subject}\n\n` : ""}${m.reply?.draft?.body}`)} className="inline-flex items-center gap-1 text-xs font-medium text-brand-600"><Copy className="h-3 w-3" />Copy</button>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Entwurf</p>
+                    <button onClick={() => navigator.clipboard.writeText(`${m.reply?.draft?.subject ? `Betreff: ${m.reply.draft.subject}\n\n` : ""}${m.reply?.draft?.body}`)} className="inline-flex items-center gap-1 text-xs font-medium text-brand-600"><Copy className="h-3 w-3" />Kopieren</button>
                   </div>
                   {m.reply.draft.subject && <p className="mb-2 text-sm font-medium text-ink">{m.reply.draft.subject}</p>}
                   <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-slate-700">{m.reply.draft.body}</pre>
@@ -381,8 +385,8 @@ export function AssistantChat({ suggestions, onNavigate }: { suggestions: string
           ask(input);
         }}
       >
-        <input value={input} onChange={(e) => setInput(e.target.value)} className="input" placeholder="Ask about candidates, interviews, jobs…" aria-label="Ask the assistant" />
-        <button className="inline-flex h-9 w-10 items-center justify-center rounded-lg bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50" disabled={busy || !input.trim()} aria-label="Send">
+        <input value={input} onChange={(e) => setInput(e.target.value)} className="input" placeholder="Frage zu Kandidierenden, Gesprächen, Stellen…" aria-label="Assistent fragen" />
+        <button className="inline-flex h-9 w-10 items-center justify-center rounded-lg bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50" disabled={busy || !input.trim()} aria-label="Senden">
           <Send className="h-4 w-4" />
         </button>
       </form>

@@ -17,7 +17,7 @@ class MockEmail implements MessageProvider {
   channel = "EMAIL" as const;
   async send(msg: OutboundMessage): Promise<SendResult> {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(msg.to)) return { ok: false, error: `Invalid recipient address "${msg.to}"`, retryable: false };
-    if (msg.to.endsWith("@bounce.test")) return { ok: false, error: "Mailbox does not exist (550 5.1.1)", retryable: false };
+    if (msg.to.endsWith("@bounce.test")) return { ok: false, error: "Postfach existiert nicht (550 5.1.1)", retryable: false };
     if (process.env.NODE_ENV !== "test") console.log(`[mock-email] → ${msg.to} | ${msg.subject}`);
     return { ok: true, providerMessageId: `mock_${Date.now().toString(36)}` };
   }

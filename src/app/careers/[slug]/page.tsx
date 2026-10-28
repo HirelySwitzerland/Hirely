@@ -1,3 +1,4 @@
+import { EMPLOYMENT_LABEL } from "@/lib/stages";
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import { db } from "@/lib/db";
@@ -5,7 +6,7 @@ import { getT } from "@/lib/i18n";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const org = await db.organization.findUnique({ where: { slug: (await params).slug } });
-  return { title: org ? `Jobs at ${org.name}` : "Careers" };
+  return { title: org ? `Jobs bei ${org.name}` : "Karriere" };
 }
 
 export default async function CareersPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ lang?: string }> }) {
@@ -34,7 +35,7 @@ export default async function CareersPage({ params, searchParams }: { params: Pr
                   <Link href={`/careers/${org.slug}/${j.slug}`} className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-slate-50">
                     <div>
                       <p className="font-medium text-ink">{j.title}{j.workload ? ` ${j.workload}` : ""}</p>
-                      <p className="mt-1 flex flex-wrap gap-x-3 text-sm text-slate-500"><span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{j.location}</span><span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{j.employmentType}</span></p>
+                      <p className="mt-1 flex flex-wrap gap-x-3 text-sm text-slate-500"><span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{j.location}</span><span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{(j.language === "de" ? EMPLOYMENT_LABEL[j.employmentType] : null) ?? j.employmentType}</span></p>
                     </div>
                     <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-ink" />
                   </Link>

@@ -5,22 +5,9 @@ import { CHANNEL_COST_CENTS, getMessageProvider } from "@/lib/providers/messagin
 import { enqueue } from "@/lib/queue";
 import { notify } from "./notifications";
 import { recordUsage } from "./usage";
+import { TEMPLATE_LABELS } from "@/lib/stages";
 
-export const TEMPLATE_KEYS: Record<string, string> = {
-  application_received: "Application received",
-  ai_interview_invitation: "AI interview invitation",
-  interview_reminder: "Interview reminder",
-  interview_final_reminder: "Final interview reminder",
-  interview_completed: "Interview completed",
-  call_missed: "Missed call",
-  video_interview_invitation: "Video interview invitation",
-  personal_interview_invitation: "Personal interview invitation",
-  interview_confirmation: "Interview confirmation",
-  personal_interview_reminder: "Personal interview reminder",
-  rejection: "Rejection",
-  talent_pool_invitation: "Talent pool invitation",
-  offer: "Offer communication",
-};
+export const TEMPLATE_KEYS: Record<string, string> = TEMPLATE_LABELS;
 
 type T = { subject?: string; body: string };
 type Defaults = Record<string, Partial<Record<"de" | "en" | "fr" | "it", { EMAIL: T; SMS?: T }>>>;
@@ -200,8 +187,8 @@ export async function deliver(messageId: string, actor: Actor = { type: "SYSTEM"
     const { checkLimit } = await import("./usage");
     const lim = await checkLimit(msg.orgId, "SMS");
     if (!lim.allowed) {
-      await db.message.update({ where: { id: msg.id }, data: { status: "FAILED", error: "SMS hard usage limit reached for this billing period." } });
-      return { ok: false, messageId, error: "SMS hard usage limit reached — raise it under Settings → AI usage & costs." };
+      await db.message.update({ where: { id: msg.id }, data: { status: "FAILED", error: "Feste SMS-Grenze in dieser Periode erreicht." } });
+      return { ok: false, messageId, error: "Feste SMS-Grenze erreicht – erhöhen Sie sie unter Einstellungen → Verbrauch & Kosten." };
     }
   }
   const provider = getMessageProvider(msg.channel as "EMAIL" | "SMS" | "WHATSAPP");
@@ -210,16 +197,16 @@ export async function deliver(messageId: string, actor: Actor = { type: "SYSTEM"
   if (res.ok) {
     await db.message.update({ where: { id: msg.id }, data: { status: "SENT", sentAt: new Date(), provider: provider.name, providerMessageId: res.providerMessageId, error: null } });
     await recordUsage(msg.orgId, msg.channel, 1, CHANNEL_COST_CENTS[msg.channel as "EMAIL"] ?? 0, { type: "message", id: msg.id });
-    await audit(msg.orgId, actor, "message.sent", { type: "Message", id: msg.id, label: `${msg.channel} → ${msg.to}` }, { template: msg.templateKey, subject: msg.subject });
+    await audit(msg.orgId, actor, "message.sent", { type: "Message", id: msg.id, label: `${msg.channel === "EMAIL" ? "E-Mail" : msg.channel} → ${msg.to}` }, { template: msg.templateKey, subject: msg.subject });
     return { ok: true, messageId };
   }
   await db.message.update({ where: { id: msg.id }, data: { status: "FAILED", provider: provider.name, error: res.error } });
-  await audit(msg.orgId, actor, "message.failed", { type: "Message", id: msg.id, label: `${msg.channel} → ${msg.to}` }, { error: res.error });
+  await audit(msg.orgId, actor, "message.failed", { type: "Message", id: msg.id, label: `${msg.channel === "EMAIL" ? "E-Mail" : msg.channel} → ${msg.to}` }, { error: res.error });
   if (res.retryable) await enqueue("message.retry", { messageId: msg.id }, { orgId: msg.orgId, runAt: new Date(Date.now() + 5 * 60_000) });
   await notify(msg.orgId, {
     type: "message_failed",
-    title: `${msg.channel === "EMAIL" ? "Email" : msg.channel} to ${msg.to} failed`,
-    body: `${res.error}${res.retryable ? " — Hirely will retry automatically." : " — please check the recipient and resend."}`,
+    title: `${msg.channel === "EMAIL" ? "E-Mail" : msg.channel} an ${msg.to} fehlgeschlagen`,
+    body: `${res.error}${res.retryable ? " – Hirely versucht es automatisch erneut." : " – bitte Empfänger prüfen und erneut senden."}`,
     link: msg.applicationId ? `/app/candidates/${msg.applicationId}?tab=messages` : "/app/communication",
     severity: "error",
   });

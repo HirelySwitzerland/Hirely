@@ -56,19 +56,19 @@ export function permissionsFor(role: Role): Permission[] {
 }
 
 export const ROLE_LABELS: Record<Role, string> = {
-  OWNER: "Owner",
+  OWNER: "Inhaber/in",
   ADMIN: "Admin",
-  RECRUITER: "Recruiter",
-  HIRING_MANAGER: "Hiring Manager",
-  VIEWER: "Viewer",
+  RECRUITER: "Recruiter/in",
+  HIRING_MANAGER: "Linienvorgesetzte/r",
+  VIEWER: "Nur lesen",
 };
 
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
-  OWNER: "Full access including billing and organization ownership.",
-  ADMIN: "Manage users, settings, integrations and privacy. No billing.",
-  RECRUITER: "Run recruiting: jobs, candidates, interviews, automations.",
-  HIRING_MANAGER: "Review candidates for their positions and move stages.",
-  VIEWER: "Read-only access to jobs, candidates and analytics.",
+  OWNER: "Vollzugriff inkl. Abrechnung und Firmenverwaltung.",
+  ADMIN: "Verwaltet Benutzer, Einstellungen, Integrationen und Datenschutz. Keine Abrechnung.",
+  RECRUITER: "Führt das Recruiting: Stellen, Kandidierende, Gespräche, Automationen.",
+  HIRING_MANAGER: "Prüft Kandidierende für die eigenen Stellen und verschiebt sie im Prozess.",
+  VIEWER: "Nur Lesezugriff auf Stellen, Kandidierende und Auswertungen.",
 };
 
 /** Roles an actor is allowed to assign. Nobody but an owner can create owners. */
@@ -77,3 +77,27 @@ export function assignableRoles(actor: Role): Role[] {
   if (actor === "ADMIN") return ["ADMIN", "RECRUITER", "HIRING_MANAGER", "VIEWER"];
   return [];
 }
+
+export const PERMISSION_LABELS: Record<Permission, string> = {
+  "jobs.view": "Stellen ansehen",
+  "jobs.manage": "Stellen bearbeiten",
+  "candidates.view": "Kandidierende ansehen",
+  "candidates.manage": "Kandidierende erfassen & bearbeiten",
+  "candidates.stage": "Stufe ändern & entscheiden",
+  "candidates.delete": "Daten löschen",
+  "candidates.export": "Daten exportieren",
+  "interviews.view": "Gespräche ansehen",
+  "interviews.manage": "KI-Interviews starten",
+  "communication.send": "Nachrichten senden",
+  "templates.manage": "Vorlagen bearbeiten",
+  "automations.manage": "Automationen bearbeiten",
+  "integrations.manage": "Integrationen verwalten",
+  "analytics.view": "Auswertungen ansehen",
+  "settings.manage": "Einstellungen verwalten",
+  "users.manage": "Benutzer verwalten",
+  "billing.manage": "Abrechnung verwalten",
+  "privacy.manage": "Datenschutz verwalten",
+  "audit.view": "Protokoll ansehen",
+  "usage.view": "Verbrauch ansehen",
+  "assistant.use": "KI-Assistent nutzen",
+};

@@ -92,7 +92,7 @@ async function seedVideo(appId: string, orgId: string, lang: string, answers: st
   });
   for (const [i, q] of qs.entries())
     await db.videoResponse.create({
-      data: { orgId, interviewId: iv.id, questionIndex: i, questionText: q, durationSec: 70 + i * 15, transcript: answers[i], transcriptStatus: "COMPLETED", analysis: { keyPoints: answers[i].split(/(?<=\.)\s+/).slice(0, 2), note: "Analysis is based solely on the spoken content of the answer.", transcriptionProvider: "demo data" } },
+      data: { orgId, interviewId: iv.id, questionIndex: i, questionText: q, durationSec: 70 + i * 15, transcript: answers[i], transcriptStatus: "COMPLETED", analysis: { keyPoints: answers[i].split(/(?<=\.)\s+/).slice(0, 2), note: "Ausgewertet wird nur der gesprochene Inhalt der Antwort.", transcriptionProvider: "demo data" } },
     });
   await db.application.update({ where: { id: appId }, data: { videoStatus: "COMPLETED" } });
   await reevaluate(appId);
@@ -104,17 +104,17 @@ async function main() {
   const pw = await hashPassword(PASSWORD);
   const mk = (email: string, name: string, title: string, locale = "de") =>
     db.user.create({ data: { email, name, title, passwordHash: pw, emailVerifiedAt: subDays(now, 90), locale, lastLoginAt: subDays(now, 1) } });
-  const sandra = await mk("demo@hirely.app", "Sandra Keller", "Head of HR", "en");
-  const thomas = await mk("thomas.brunner@helvetic-engineering.ch", "Thomas Brunner", "IT & HR Systems");
+  const sandra = await mk("demo@hirely.app", "Sandra Keller", "Leiterin HR");
+  const thomas = await mk("thomas.brunner@helvetic-engineering.ch", "Thomas Brunner", "IT & HR-Systeme");
   const laura = await mk("laura.frei@helvetic-engineering.ch", "Laura Frei", "Senior Recruiter");
-  const daniel = await mk("daniel.huber@helvetic-engineering.ch", "Daniel Huber", "Head of Production");
+  const daniel = await mk("daniel.huber@helvetic-engineering.ch", "Daniel Huber", "Leiter Produktion");
   const martin = await mk("martin.roth@helvetic-engineering.ch", "Martin Roth", "CFO");
 
   const org = await db.organization.create({
     data: {
       name: "Helvetic Engineering AG",
       slug: "helvetic-engineering",
-      industry: "Mechanical & Plant Engineering",
+      industry: "Maschinen- & Anlagenbau",
       companySize: "201–500",
       country: "CH",
       language: "de",
@@ -130,9 +130,9 @@ async function main() {
         officeAddress: "Helvetic Engineering AG, Industriestrasse 12, 8404 Winterthur",
         retentionDays: 180,
         talentPoolRetentionDays: 730,
-        ai: { autoInvite: true, minimumCriteria: "must_have_not_failed", followUps: true, summaryLanguage: "en", humanReviewRequired: true },
+        ai: { autoInvite: true, minimumCriteria: "must_have_not_failed", followUps: true, summaryLanguage: "de", humanReviewRequired: true },
         voice: { voice: "alloy-de-ch", language: "de-CH", callWindowStart: "08:00", callWindowEnd: "19:30", maxAttempts: 3, recordCalls: true },
-        privacy: { requireRecordingConsent: true, anonymizeAfterDays: 180, dpaSignedAt: "2026-03-02", dataLocation: "Switzerland (Zurich region)" },
+        privacy: { requireRecordingConsent: true, anonymizeAfterDays: 180, dpaSignedAt: "2026-03-02", dataLocation: "Schweiz (Region Zürich)" },
       },
       onboardingStep: 6,
       onboardingCompleted: true,
@@ -171,7 +171,7 @@ async function main() {
     await db.invoice.create({
       data: {
         orgId: O, number: `HRL-${ps.getFullYear()}${String(ps.getMonth() + 1).padStart(2, "0")}-0142`, periodStart: ps, periodEnd: pe, status: "PAID", subtotalCents: sub, taxCents: tax, totalCents: sub + tax, issuedAt: pe, paidAt: addDays(pe, 2),
-        lines: [{ label: "Hirely Growth — monthly", cents: 69000 }, ...(over ? [{ label: "AI phone minutes overage", cents: over }] : [])],
+        lines: [{ label: "Hirely Growth – monatlich", cents: 69000 }, ...(over ? [{ label: "Mehrverbrauch KI-Telefonminuten", cents: over }] : [])],
       },
     });
   }
@@ -184,9 +184,9 @@ async function main() {
   const personio = await db.integration.findFirstOrThrow({ where: { orgId: O, provider: "personio" } });
   await db.syncLog.createMany({
     data: [
-      { orgId: O, integrationId: personio.id, status: "SUCCESS", message: "Fetched 3 application(s), created 3.", items: 3, createdAt: subDays(now, 2) },
-      { orgId: O, integrationId: personio.id, status: "FAILED", message: "ATS returned HTTP 503.", createdAt: subDays(now, 1.2) },
-      { orgId: O, integrationId: personio.id, status: "SUCCESS", message: "Fetched 1 application(s), created 1.", items: 1, createdAt: subDays(now, 1.19) },
+      { orgId: O, integrationId: personio.id, status: "SUCCESS", message: "3 Bewerbung(en) abgerufen, 3 neu angelegt.", items: 3, createdAt: subDays(now, 2) },
+      { orgId: O, integrationId: personio.id, status: "FAILED", message: "Das ATS meldete HTTP 503.", createdAt: subDays(now, 1.2) },
+      { orgId: O, integrationId: personio.id, status: "SUCCESS", message: "1 Bewerbung(en) abgerufen, 1 neu angelegt.", items: 1, createdAt: subDays(now, 1.19) },
     ],
   });
 
@@ -240,7 +240,7 @@ async function main() {
       data: {
         orgId: O, candidateId: cand.id, jobId: jobIds[cs.job], source: cs.source, sourceDetail: cs.sourceDetail, appliedAt, stageChangedAt: appliedAt, createdAt: appliedAt,
         assignedToId: job.hiringManager ? daniel.id : laura.id, screeningStatus: "PENDING",
-        stageHistory: { create: { orgId: O, toStage: "NEW", actorType: cs.source === "ATS" ? "INTEGRATION" : "CANDIDATE", reason: `Application received via ${cs.sourceDetail}`, createdAt: appliedAt } },
+        stageHistory: { create: { orgId: O, toStage: "NEW", actorType: cs.source === "ATS" ? "INTEGRATION" : "CANDIDATE", reason: `Bewerbung eingegangen über ${cs.sourceDetail}`, createdAt: appliedAt } },
       },
     });
     const jobQs = await db.jobQuestion.findMany({ where: { jobId: jobIds[cs.job], type: "KNOCKOUT" } });
@@ -275,14 +275,14 @@ async function main() {
     }
     if (cs.target === "SHORTLISTED") await changeStage(O, app.id, "SHORTLISTED", D, "Strong CNC profile — invite personally");
     if (cs.target === "PERSONAL_INTERVIEW") {
-      await changeStage(O, app.id, "SHORTLISTED", L, "Meets all must-have requirements");
+      await changeStage(O, app.id, "SHORTLISTED", L, "Erfüllt alle Muss-Kriterien");
       const organizer = job.hiringManager ? daniel : laura;
       const start = setMinutes(setHours(addDays(now, cs.persona.first === "Sarah" ? 2 : 3), cs.persona.first === "Sarah" ? 10 : 14), 0);
       await db.schedulingLink.create({ data: { orgId: O, applicationId: app.id, token: randomToken(20), status: "BOOKED", durationMin: 60, interviewerId: organizer.id, location: "Helvetic Engineering AG, Industriestrasse 12, 8404 Winterthur", expiresAt: addDays(now, 10) } });
       await db.calendarEvent.create({
         data: { orgId: O, applicationId: app.id, title: `Interview: ${p.first} ${p.last} – ${job.title}`, startsAt: start, endsAt: addMinutes(start, 60), location: "Helvetic Engineering AG, Industriestrasse 12, 8404 Winterthur", organizerId: organizer.id, attendees: [{ email, name: `${p.first} ${p.last}` }, { email: organizer.email, name: organizer.name }], provider: "microsoft", providerEventId: `AAMkAG${randomToken(8)}`, status: "CONFIRMED" },
       });
-      await changeStage(O, app.id, "PERSONAL_INTERVIEW", { type: "CANDIDATE", name: p.first }, "Booked via scheduling page");
+      await changeStage(O, app.id, "PERSONAL_INTERVIEW", { type: "CANDIDATE", name: p.first }, "Über die Terminseite gebucht");
     }
     if (cs.target === "OFFER") {
       await changeStage(O, app.id, "SHORTLISTED", L, "Excellent match");
@@ -295,14 +295,14 @@ async function main() {
       await changeStage(O, app.id, "SHORTLISTED", L);
       await changeStage(O, app.id, "PERSONAL_INTERVIEW", L);
       await changeStage(O, app.id, "OFFER", L);
-      await changeStage(O, app.id, "HIRED", { type: "USER", id: sandra.id, name: sandra.name }, "Contract signed");
+      await changeStage(O, app.id, "HIRED", { type: "USER", id: sandra.id, name: sandra.name }, "Vertrag unterschrieben");
     }
     if (cs.target === "REJECTED") {
-      await changeStage(O, app.id, "REJECTED", L, "Profile does not match the required CNC experience");
+      await changeStage(O, app.id, "REJECTED", L, "Profil entspricht nicht der verlangten CNC-Erfahrung");
       await sendMessage({ orgId: O, applicationId: app.id, channel: "EMAIL", templateKey: "rejection", actor: L });
     }
     if (cs.target === "TALENT_POOL") {
-      await changeStage(O, app.id, "TALENT_POOL", L, "Good profile, position filled — consent for talent pool given");
+      await changeStage(O, app.id, "TALENT_POOL", L, "Gutes Profil, Stelle bereits besetzt – Einwilligung für Talent-Pool erteilt");
       await db.candidate.update({ where: { id: cand.id }, data: { tags: ["future-lead", "strong-technical"] } });
     }
     if (cs.comment)
@@ -321,22 +321,22 @@ async function main() {
   }
 
   // Automations
-  await db.automation.create({ data: { orgId: O, name: "Standard pre-screening pipeline", description: "Analyze every application, invite qualified candidates to the AI interview, send reminders and notify the recruiter when the candidate is ready for review.", trigger: "APPLICATION_RECEIVED", steps: defaultPipelineAutomation() as object, enabled: true } });
+  await db.automation.create({ data: { orgId: O, name: "Standard-Vorprüfung", description: "Jede Bewerbung prüfen, passende Personen zum KI-Interview einladen, Erinnerungen senden und das Team informieren, sobald jemand bereit zur Prüfung ist.", trigger: "APPLICATION_RECEIVED", steps: defaultPipelineAutomation() as object, enabled: true } });
   const talentSteps: Step[] = [
     { id: "t1", type: "condition", check: "stage_is", value: "REJECTED", onFalse: "stop" },
     { id: "t2", type: "wait", minutes: 60 * 24 },
     { id: "t3", type: "condition", check: "meets_minimum", onFalse: "stop" },
     { id: "t4", type: "action", action: "send_message", templateKey: "talent_pool_invitation", channel: "EMAIL" },
   ];
-  await db.automation.create({ data: { orgId: O, name: "Talent pool invitation after rejection", description: "Invite rejected candidates who met the minimum criteria to join the talent pool (consent-based).", trigger: "STAGE_CHANGED", steps: talentSteps as object, enabled: true } });
-  await db.automation.create({ data: { orgId: O, name: "Video interview for engineering roles", description: "After the AI phone interview, invite engineering candidates to a short asynchronous video interview.", trigger: "INTERVIEW_COMPLETED", jobId: jobIds.mech, steps: [{ id: "v1", type: "condition", check: "meets_minimum", onFalse: "stop" }, { id: "v2", type: "action", action: "invite_video_interview" }] as object, enabled: false } });
+  await db.automation.create({ data: { orgId: O, name: "Talent-Pool-Einladung nach Absage", description: "Abgesagte Personen, welche die Mindestkriterien erfüllt haben, in den Talent-Pool einladen (mit Einwilligung).", trigger: "STAGE_CHANGED", steps: talentSteps as object, enabled: true } });
+  await db.automation.create({ data: { orgId: O, name: "Video-Interview für Ingenieurstellen", description: "Nach dem KI-Telefoninterview Ingenieur-Kandidierende zu einem kurzen Video-Interview einladen.", trigger: "INTERVIEW_COMPLETED", jobId: jobIds.mech, steps: [{ id: "v1", type: "condition", check: "meets_minimum", onFalse: "stop" }, { id: "v2", type: "action", action: "invite_video_interview" }] as object, enabled: false } });
 
   // Implementation checklist
   const impl = [
-    ["company", "Company setup", "Setup", "DONE"], ["ats", "ATS integration (Personio)", "Integrations", "DONE"], ["email", "Email integration", "Integrations", "DONE"],
-    ["calendar", "Calendar integration (Microsoft 365)", "Integrations", "DONE"], ["phone", "Phone integration (Twilio, CH number)", "Integrations", "IN_PROGRESS"],
-    ["job_templates", "Job templates", "Configuration", "DONE"], ["interview_templates", "Interview templates", "Configuration", "DONE"], ["ai_config", "AI configuration per role family", "Configuration", "IN_PROGRESS"],
-    ["privacy", "Privacy configuration & DPA", "Compliance", "DONE"], ["testing", "End-to-end testing", "Launch", "TODO"], ["training", "Recruiter & hiring manager training", "Launch", "TODO"], ["golive", "Go-live", "Launch", "TODO"],
+    ["company", "Firma einrichten", "Einrichtung", "DONE"], ["ats", "ATS anbinden (Personio)", "Integrationen", "DONE"], ["email", "E-Mail anbinden", "Integrationen", "DONE"],
+    ["calendar", "Kalender anbinden (Microsoft 365)", "Integrationen", "DONE"], ["phone", "Telefonie anbinden (Twilio, CH-Nummer)", "Integrationen", "IN_PROGRESS"],
+    ["job_templates", "Stellenvorlagen", "Konfiguration", "DONE"], ["interview_templates", "Interviewvorlagen", "Konfiguration", "DONE"], ["ai_config", "KI-Konfiguration pro Berufsgruppe", "Konfiguration", "IN_PROGRESS"],
+    ["privacy", "Datenschutz & AVV", "Datenschutz", "DONE"], ["testing", "Gesamttest", "Start", "TODO"], ["training", "Schulung HR & Linienvorgesetzte", "Start", "TODO"], ["golive", "Go-live", "Start", "TODO"],
   ];
   await db.implementationTask.createMany({ data: impl.map(([key, title, category, status], i) => ({ orgId: O, key, title, category, status, order: i, owner: i < 5 ? "Thomas Brunner" : i < 9 ? "Laura Frei" : "Sandra Keller" })) });
 
@@ -352,7 +352,7 @@ async function main() {
   }
 
   // Privacy request
-  await db.dataRequest.create({ data: { orgId: O, candidateEmail: "m.keller@example.ch", type: "EXPORT", status: "OPEN", note: "Candidate requested a copy of their data via email.", requestedAt: subDays(now, 1) } });
+  await db.dataRequest.create({ data: { orgId: O, candidateEmail: "m.keller@example.ch", type: "EXPORT", status: "OPEN", note: "Die Person hat per E-Mail eine Kopie ihrer Daten verlangt.", requestedAt: subDays(now, 1) } });
 
   // Mark older notifications as read, keep the latest ones unread
   const notifs = await db.notification.findMany({ where: { orgId: O }, orderBy: { createdAt: "desc" } });
@@ -363,12 +363,12 @@ async function main() {
     if (c > 7) await db.notification.update({ where: { id: n.id }, data: { readAt: now } });
   }
   await db.notification.createMany({
-    data: [sandra, laura, thomas].map((u) => ({ orgId: O, userId: u.id, type: "ats_sync_failed", title: "Personio synchronization failed", body: "ATS returned HTTP 503. Hirely retried automatically and the next sync succeeded — no applications were lost.", link: "/app/integrations", severity: "warning", createdAt: subDays(now, 1.2), readAt: now })),
+    data: [sandra, laura, thomas].map((u) => ({ orgId: O, userId: u.id, type: "ats_sync_failed", title: "Personio: Synchronisation fehlgeschlagen", body: "Das ATS meldete HTTP 503. Hirely hat es automatisch erneut versucht und die nächste Synchronisation war erfolgreich – keine Bewerbung ging verloren.", link: "/app/integrations", severity: "warning", createdAt: subDays(now, 1.2), readAt: now })),
   });
 
   // Second tenant (isolation demo)
   const anna = await mk("anna.weber@alpine-logistik.ch", "Anna Weber", "HR Manager");
-  const org2 = await db.organization.create({ data: { name: "Alpine Logistik GmbH", slug: "alpine-logistik", industry: "Logistics", companySize: "51–200", onboardingCompleted: true, onboardingStep: 6, brandColor: "#0F766E", description: "Kontraktlogistik in der Zentralschweiz.", settings: { retentionDays: 180 } } });
+  const org2 = await db.organization.create({ data: { name: "Alpine Logistik GmbH", slug: "alpine-logistik", industry: "Logistik", companySize: "51–200", onboardingCompleted: true, onboardingStep: 6, brandColor: "#0F766E", description: "Kontraktlogistik in der Zentralschweiz.", settings: { retentionDays: 180 } } });
   await db.membership.create({ data: { userId: anna.id, orgId: org2.id, role: "OWNER" } });
   await db.subscription.create({ data: { orgId: org2.id, plan: "STARTER", status: "TRIALING", currentPeriodEnd: addDays(now, 14), trialEndsAt: addDays(now, 14) } });
   const j2 = await db.job.create({ data: { orgId: org2.id, title: "Lagerlogistiker/in EFZ", slug: "lagerlogistiker-in-efz", location: "Luzern", status: "OPEN", language: "de", publishedAt: subDays(now, 5), description: "## Lagerlogistiker/in EFZ\n\nWir suchen Verstärkung für unser Lager in Luzern." } });

@@ -1,6 +1,7 @@
 import { quoteIsGrounded } from "@/lib/ai-safety";
 import { CEFR_ORDER, type ParsedCv } from "./cv-heuristics";
 import { extractNumber, interpretYesNo } from "./interview-flow";
+import { langLabel } from "@/lib/stages";
 
 /**
  * Evidence-based requirement evaluation.
@@ -78,28 +79,28 @@ function evalLanguage(req: RequirementInput, ctx: EvalContext): EvalResult {
   const evidence: Evidence[] = [];
   const entry = ctx.cv?.languages.find((l) => l.language === target || (target === "German" && l.language === "Swiss German"));
   let status: EvalStatus = "UNKNOWN";
-  let explanation = `No statement about ${target ?? req.label} found yet.`;
+  let explanation = `Noch keine Angabe zu ${target ? langLabel(target) : req.label} gefunden.`;
   if (entry) {
     const line = ctx.cvText.split("\n").find((l) => l.includes(entry.raw.split("(")[0].trim())) ?? entry.raw;
-    evidence.push({ source: "CV", quote: clip(line.trim()), note: entry.cefr ? `Level ${entry.level}${entry.status === "inferred" ? ` (≈ ${entry.cefr})` : ""}` : undefined });
+    evidence.push({ source: "CV", quote: clip(line.trim()), note: entry.cefr ? `Niveau ${entry.level}${entry.status === "inferred" ? ` (≈ ${entry.cefr})` : ""}` : undefined });
     const have = cefrIndex(entry.cefr);
     const need = cefrIndex(min);
     if (need < 0 || have >= need) {
       status = entry.status === "confirmed" || /mutter|native|langue maternelle|madrelingua/i.test(entry.level) ? "CONFIRMED" : "PARTIAL";
       explanation =
         status === "CONFIRMED"
-          ? `CV states ${entry.language}: ${entry.level}${min ? ` (required: ${min})` : ""}.`
-          : `CV describes ${entry.language} as "${entry.level}", interpreted as ≈ ${entry.cefr}. Level should be verified.`;
+          ? `Im CV: ${langLabel(entry.language)} ${entry.level}${min ? ` (verlangt: ${min})` : ""}.`
+          : `Im CV steht ${langLabel(entry.language)} „${entry.level}“, gedeutet als ≈ ${entry.cefr}. Niveau bitte prüfen.`;
     } else if (have >= 0) {
       status = "NOT_MET";
-      explanation = `CV states ${entry.language} level ${entry.cefr}, below the required ${min}.`;
+      explanation = `Im CV: ${langLabel(entry.language)} Niveau ${entry.cefr}, unter dem verlangten ${min}.`;
     }
   }
   for (const a of answerHits(ctx.answers, req, [...kws, ...(target ? LANG_SYNONYMS[target] : [])])) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Antwort auf: „${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}“` });
     if (status === "UNKNOWN" || status === "PARTIAL") {
       status = interpretYesNo(a.answer) === "no" ? "NOT_MET" : "CONFIRMED";
-      explanation = status === "CONFIRMED" ? `Candidate stated relevant ${target ?? "language"} experience during the ${a.source === "INTERVIEW" ? "AI interview" : "screening"}.` : `Candidate indicated insufficient ${target ?? "language"} skills.`;
+      explanation = status === "CONFIRMED" ? `Die Person bestätigte ${target ? langLabel(target) + "-Kenntnisse" : "die Sprachkenntnisse"} im ${a.source === "INTERVIEW" ? "KI-Interview" : "Bewerbungsformular"}.` : `Die Person gab ungenügende ${target ? langLabel(target) + "-Kenntnisse" : "Sprachkenntnisse"} an.`;
     }
   }
   return { status, evidence, explanation };
@@ -108,17 +109,17 @@ function evalLanguage(req: RequirementInput, ctx: EvalContext): EvalResult {
 function evalYesNoStyle(req: RequirementInput, ctx: EvalContext, cvLines: string[], what: string): EvalResult {
   const evidence: Evidence[] = cvLines.slice(0, 2).map((q) => ({ source: "CV" as const, quote: clip(q) }));
   let status: EvalStatus = cvLines.length ? "CONFIRMED" : "UNKNOWN";
-  let explanation = cvLines.length ? `${what} is stated in the CV.` : `No information about ${what} yet.`;
+  let explanation = cvLines.length ? `${what} steht im CV.` : `Noch keine Angabe zu ${what}.`;
   const kws = deriveKeywords(req.label, req.keywords);
   for (const a of answerHits(ctx.answers, req, kws)) {
     const yn = interpretYesNo(a.answer);
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Antwort auf: „${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}“` });
     if (yn === "yes") {
       status = "CONFIRMED";
-      explanation = `Candidate confirmed ${what} (${a.source === "INTERVIEW" ? "AI interview" : "application form"}).`;
+      explanation = `Die Person bestätigte: ${what} (${a.source === "INTERVIEW" ? "KI-Interview" : "Bewerbungsformular"}).`;
     } else if (yn === "no") {
       status = "NOT_MET";
-      explanation = `Candidate stated they do not meet: ${what}.`;
+      explanation = `Die Person gab an, dies nicht zu erfüllen: ${what}.`;
     }
   }
   return { status, evidence, explanation };
@@ -141,30 +142,30 @@ function evalExperience(req: RequirementInput, ctx: EvalContext): EvalResult {
   }
   const years = Math.round((months / 12) * 10) / 10;
   let status: EvalStatus = "UNKNOWN";
-  let explanation = `No dated experience matching "${req.label}" found in the CV.`;
+  let explanation = `Im CV keine datierte Erfahrung zu „${req.label}“ gefunden.`;
   if (months > 0) {
     if (years >= min) {
       status = titleMatch ? "CONFIRMED" : "PARTIAL";
-      explanation = `${years} years of relevant experience computed from dated CV entries (required: ${min}).${titleMatch ? "" : " Relevance inferred from role descriptions — verify."}`;
+      explanation = `${years} Jahre passende Erfahrung, berechnet aus den CV-Daten (verlangt: ${min}).${titleMatch ? "" : " Bezug aus den Tätigkeitsbeschreibungen abgeleitet – bitte prüfen."}`;
     } else {
       status = "PARTIAL";
-      explanation = `Only ~${years} years of matching experience found in the CV (required: ${min}).`;
+      explanation = `Im CV nur ca. ${years} Jahre passende Erfahrung (verlangt: ${min}).`;
     }
   }
   for (const a of answerHits(ctx.answers, req, kws)) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Antwort auf: „${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}“` });
     const n = extractNumber(a.answer);
     if (n != null && min) {
       if (n >= min) {
         status = "CONFIRMED";
-        explanation = `Candidate stated ${n} years of experience (required: ${min})${months ? `; CV shows ~${years} years` : ""}.`;
+        explanation = `Die Person nannte ${n} Jahre Erfahrung (verlangt: ${min})${months ? `; laut CV ca. ${years} Jahre` : ""}.`;
       } else if (status !== "CONFIRMED") {
         status = "NOT_MET";
-        explanation = `Candidate stated ${n} years of experience (required: ${min}).`;
+        explanation = `Die Person nannte ${n} Jahre Erfahrung (verlangt: ${min}).`;
       }
     } else if (status === "UNKNOWN" && interpretYesNo(a.answer) !== "no") {
       status = "PARTIAL";
-      explanation = `Candidate described related experience, but the duration is not stated.`;
+      explanation = `Die Person beschrieb passende Erfahrung, nannte aber keine Dauer.`;
     }
   }
   return { status, evidence, explanation };
@@ -181,28 +182,28 @@ function evalKeyword(req: RequirementInput, ctx: EvalContext): EvalResult {
   if (req.category === "CERTIFICATION" && certHit) skillHit = undefined;
   const lines = linesContaining(ctx.cvText, kws);
   let status: EvalStatus = "UNKNOWN";
-  let explanation = `"${req.label}" is not mentioned in the CV.`;
+  let explanation = `„${req.label}“ wird im CV nicht erwähnt.`;
   if (skillHit || certHit || eduHit) {
     const needle = skillHit?.value ?? certHit?.value ?? eduHit!.degree;
     const line = ctx.cvText.split("\n").find((l) => l.includes(needle)) ?? needle;
     evidence.push({ source: "CV", quote: clip(line.trim()) });
     status = "CONFIRMED";
-    explanation = `Listed in the CV ${skillHit ? "skills" : certHit ? "certifications" : "education"} section.`;
+    explanation = `Im CV unter ${skillHit ? "Kenntnissen" : certHit ? "Zertifikaten" : "Ausbildung"} aufgeführt.`;
   }
   for (const l of lines.slice(0, 2)) if (!evidence.some((e) => e.quote === clip(l))) evidence.push({ source: "CV", quote: clip(l) });
   if (status === "UNKNOWN" && lines.length) {
     status = "PARTIAL";
-    explanation = `Mentioned in the context of the candidate's work history; depth not stated.`;
+    explanation = `Im Zusammenhang mit der Berufserfahrung erwähnt; Tiefe nicht angegeben.`;
   }
   for (const a of answerHits(ctx.answers, req, kws)) {
-    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Answer to: "${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}"` });
+    evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Antwort auf: „${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}“` });
     const yn = interpretYesNo(a.answer);
     if (yn === "no" && status !== "CONFIRMED") {
       status = "NOT_MET";
-      explanation = `Candidate stated they lack "${req.label}".`;
+      explanation = `Die Person gab an, „${req.label}“ nicht zu haben.`;
     } else if (yn !== "no" && status !== "CONFIRMED") {
       status = "CONFIRMED";
-      explanation = `Candidate described "${req.label}" during the ${a.source === "INTERVIEW" ? "AI interview" : "screening"}.`;
+      explanation = `Die Person beschrieb „${req.label}“ im ${a.source === "INTERVIEW" ? "KI-Interview" : "Bewerbungsformular"}.`;
     }
   }
   return { status, evidence, explanation };
@@ -244,7 +245,7 @@ export function evaluateRequirement(req: RequirementInput, ctx: EvalContext): Ev
     .slice(0, 5);
   if (r.evidence.length === 0 && r.status !== "UNKNOWN") {
     r.status = "UNKNOWN";
-    r.explanation = "Evidence could not be verified against the source; marked as missing information.";
+    r.explanation = "Beleg konnte in der Quelle nicht bestätigt werden – als „Info fehlt“ markiert.";
   }
   return r;
 }

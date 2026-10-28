@@ -3,13 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --bg: 248 249 251;
+  --bg: 246 246 250;
 }
 
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Grid children may shrink below their content width (prevents horizontal page scroll on phones). */
+.grid > * {
+  min-width: 0;
 }
 
 body {
@@ -19,7 +24,7 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200/80 bg-white shadow-card;
+    @apply rounded-2xl border border-slate-200/70 bg-white shadow-card;
   }
   .input {
     @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-ink shadow-sm placeholder:text-slate-400 transition focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:bg-slate-50 disabled:text-slate-500;

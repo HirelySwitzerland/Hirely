@@ -19,7 +19,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 }
 
 export function passwordIssues(pw: string): string | null {
-  if (pw.length < 10) return "Password must be at least 10 characters.";
-  if (!/[A-Za-z]/.test(pw) || !/[0-9]/.test(pw)) return "Password must contain letters and numbers.";
+  if (pw.length < 10) return "Das Passwort muss mindestens 10 Zeichen lang sein.";
+  if (!/[A-Za-z]/.test(pw) || !/[0-9]/.test(pw)) return "Das Passwort muss Buchstaben und Zahlen enthalten.";
   return null;
 }

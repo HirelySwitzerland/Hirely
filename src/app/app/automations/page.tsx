@@ -9,7 +9,7 @@ import { AutomationTabs } from "@/components/automations/tabs";
 import { toggleAutomation } from "@/app/actions/automations";
 import { ago } from "@/lib/utils";
 
-export const metadata = { title: "Automations" };
+export const metadata = { title: "Automationen" };
 
 export default async function AutomationsPage() {
   const ctx = await pageContext("automations.manage");
@@ -19,10 +19,10 @@ export default async function AutomationsPage() {
   const stat = (id: string, s: string) => runStats.find((r) => r.automationId === id && r.status === s)?._count ?? 0;
   return (
     <div>
-      <PageHeader title="Automations" description="Your AI recruiting agent follows these workflows for every candidate — step by step, fully logged." actions={<LinkButton href="/app/automations/new"><Plus className="h-4 w-4" />New automation</LinkButton>} />
+      <PageHeader title="Automationen" description="Diese Abläufe führt Hirely für jede Bewerbung aus – Schritt für Schritt und vollständig protokolliert." actions={<LinkButton href="/app/automations/new"><Plus className="h-4 w-4" />Neue Automation</LinkButton>} />
       <AutomationTabs active="flows" />
       {autos.length === 0 ? (
-        <Card><EmptyState icon={<Workflow className="h-5 w-5" />} title="No automations yet" action={<LinkButton href="/app/automations/new" size="sm">Create automation</LinkButton>} /></Card>
+        <Card><EmptyState icon={<Workflow className="h-5 w-5" />} title="Noch keine Automationen" action={<LinkButton href="/app/automations/new" size="sm">Automation erstellen</LinkButton>} /></Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {autos.map((a) => {
@@ -34,16 +34,16 @@ export default async function AutomationsPage() {
                     <Link href={`/app/automations/${a.id}`} className="font-semibold text-ink hover:text-brand-700">{a.name}</Link>
                     <p className="mt-0.5 text-[13px] text-slate-500">{a.description}</p>
                   </div>
-                  <Badge tone={a.enabled ? "green" : "slate"} dot>{a.enabled ? "Active" : "Paused"}</Badge>
+                  <Badge tone={a.enabled ? "green" : "slate"} dot>{a.enabled ? "Aktiv" : "Pausiert"}</Badge>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-1.5 text-xs">
                   <span className="inline-flex items-center gap-1 rounded-md bg-ink px-2 py-1 font-medium text-white"><Zap className="h-3 w-3" />{TRIGGERS[a.trigger as AutomationTrigger]}</span>
                   {steps.slice(0, 6).map((s) => <span key={s.id} className="rounded-md bg-slate-100 px-2 py-1 text-slate-600">→ {describeStep(s)}</span>)}
-                  {steps.length > 6 && <span className="text-slate-400">+{steps.length - 6} more</span>}
+                  {steps.length > 6 && <span className="text-slate-400">+{steps.length - 6} weitere</span>}
                 </div>
                 <div className="mt-auto flex items-center justify-between pt-4 text-xs text-slate-500">
-                  <span>{a.jobId ? jobs.find((j) => j.id === a.jobId)?.title : "All positions"} · {stat(a.id, "COMPLETED")} completed · {stat(a.id, "WAITING") + stat(a.id, "RUNNING")} active{stat(a.id, "FAILED") ? ` · ${stat(a.id, "FAILED")} failed` : ""} · updated {ago(a.updatedAt)}</span>
-                  <ActionButton action={toggleAutomation} fields={{ id: a.id }} variant="ghost">{a.enabled ? "Pause" : "Enable"}</ActionButton>
+                  <span>{a.jobId ? jobs.find((j) => j.id === a.jobId)?.title : "Alle Stellen"} · {stat(a.id, "COMPLETED")} erledigt · {stat(a.id, "WAITING") + stat(a.id, "RUNNING")} laufend{stat(a.id, "FAILED") ? ` · ${stat(a.id, "FAILED")} fehlgeschlagen` : ""} · geändert {ago(a.updatedAt)}</span>
+                  <ActionButton action={toggleAutomation} fields={{ id: a.id }} variant="ghost">{a.enabled ? "Pausieren" : "Aktivieren"}</ActionButton>
                 </div>
               </Card>
             );

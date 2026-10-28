@@ -8,6 +8,7 @@ import { Button, Field, Input, Select, Textarea } from "@/components/ui";
 import { Markdown } from "@/components/markdown";
 import { createJob, generateJobAd, updateJob } from "@/app/actions/jobs";
 import type { ActionState } from "@/lib/action-state";
+import { EMPLOYMENT_LABEL } from "@/lib/stages";
 
 type JobValues = {
   id?: string; title?: string; department?: string | null; location?: string | null; employmentType?: string | null; workload?: string | null;
@@ -47,32 +48,32 @@ export function JobForm({ job, managers, requirementsText }: { job?: JobValues; 
       {job?.id && <input type="hidden" name="id" value={job.id} />}
       <FormMessage state={state} />
       <div className="card p-5 sm:p-6">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink">Position</h2>
+        <h2 className="mb-4 text-[15px] font-semibold text-ink">Stelle</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Job title" className="md:col-span-2"><Input name="title" required defaultValue={job?.title ?? ""} placeholder="Servicetechniker/in" /></Field>
-          <Field label="Department"><Input name="department" defaultValue={job?.department ?? ""} /></Field>
-          <Field label="Location"><Input name="location" defaultValue={job?.location ?? ""} placeholder="Winterthur" /></Field>
-          <Field label="Employment type">
+          <Field label="Stellentitel" className="md:col-span-2"><Input name="title" required defaultValue={job?.title ?? ""} placeholder="Servicetechniker/in" /></Field>
+          <Field label="Abteilung"><Input name="department" defaultValue={job?.department ?? ""} /></Field>
+          <Field label="Arbeitsort"><Input name="location" defaultValue={job?.location ?? ""} placeholder="Winterthur" /></Field>
+          <Field label="Anstellungsart">
             <Select name="employmentType" defaultValue={job?.employmentType ?? "Full-time"}>
-              {["Full-time", "Part-time", "Temporary", "Apprenticeship", "Internship"].map((x) => <option key={x}>{x}</option>)}
+              {Object.entries(EMPLOYMENT_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </Select>
           </Field>
-          <Field label="Workload"><Input name="workload" defaultValue={job?.workload ?? ""} placeholder="80–100%" /></Field>
-          <Field label="Salary from (CHF / year)"><Input name="salaryMin" type="number" min={0} step={1000} defaultValue={job?.salaryMin ?? ""} /></Field>
-          <Field label="Salary to (CHF / year)"><Input name="salaryMax" type="number" min={0} step={1000} defaultValue={job?.salaryMax ?? ""} /></Field>
-          <Field label="Working hours"><Input name="workingHours" defaultValue={job?.workingHours ?? ""} placeholder="42h/week, flexitime" /></Field>
-          <Field label="Language of the ad & interview">
+          <Field label="Pensum"><Input name="workload" defaultValue={job?.workload ?? ""} placeholder="80–100%" /></Field>
+          <Field label="Lohn von (CHF / Jahr)"><Input name="salaryMin" type="number" min={0} step={1000} defaultValue={job?.salaryMin ?? ""} /></Field>
+          <Field label="Lohn bis (CHF / Jahr)"><Input name="salaryMax" type="number" min={0} step={1000} defaultValue={job?.salaryMax ?? ""} /></Field>
+          <Field label="Arbeitszeit"><Input name="workingHours" defaultValue={job?.workingHours ?? ""} placeholder="42 Std./Woche, Gleitzeit" /></Field>
+          <Field label="Sprache von Inserat & Interview">
             <Select name="language" defaultValue={job?.language ?? "de"}>
               <option value="de">Deutsch</option><option value="fr">Français</option><option value="it">Italiano</option><option value="en">English</option>
             </Select>
           </Field>
-          <Field label="Experience"><Input name="experience" defaultValue={job?.experience ?? ""} placeholder="3+ years" /></Field>
-          <Field label="Education"><Input name="education" defaultValue={job?.education ?? ""} placeholder="EFZ / HF / FH" /></Field>
-          <Field label="Skills" hint="Comma-separated" className="md:col-span-2"><Input name="skills" defaultValue={job?.skills?.join(", ") ?? ""} /></Field>
+          <Field label="Erfahrung"><Input name="experience" defaultValue={job?.experience ?? ""} placeholder="3+ Jahre" /></Field>
+          <Field label="Ausbildung"><Input name="education" defaultValue={job?.education ?? ""} placeholder="EFZ / HF / FH" /></Field>
+          <Field label="Skills" hint="Mit Komma getrennt" className="md:col-span-2"><Input name="skills" defaultValue={job?.skills?.join(", ") ?? ""} /></Field>
           {job?.id && (
-            <Field label="Hiring manager" hint="Hiring managers only see candidates for their own positions.">
+            <Field label="Linienvorgesetzte/r" hint="Sieht nur Kandidierende der eigenen Stellen.">
               <Select name="hiringManagerId" defaultValue={job.hiringManagerId ?? ""}>
-                <option value="">— None —</option>
+                <option value="">– Keine –</option>
                 {managers.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
               </Select>
             </Field>
@@ -83,23 +84,23 @@ export function JobForm({ job, managers, requirementsText }: { job?: JobValues; 
       <div className="card p-5 sm:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold text-ink">Job advertisement</h2>
-            <p className="text-[13px] text-slate-500">Write rough notes and let Hirely draft a professional ad. You always review before publishing.</p>
+            <h2 className="text-[15px] font-semibold text-ink">Stelleninserat</h2>
+            <p className="text-[13px] text-slate-500">Stichworte notieren – Hirely schreibt daraus ein professionelles Inserat. Sie prüfen es vor der Veröffentlichung.</p>
           </div>
           <Button type="button" variant="subtle" onClick={generate} disabled={pending}>
             {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Generate with AI
+            Mit KI schreiben
           </Button>
         </div>
-        <Field label="Rough notes" hint="Tasks, team, what makes the role special — bullet points are fine.">
+        <Field label="Stichworte" hint="Aufgaben, Team, Besonderheiten – Stichpunkte genügen.">
           <Textarea name="roughNotes" rows={4} defaultValue={job?.roughNotes ?? ""} placeholder={"Wartung und Reparatur beim Kunden\nFehlerdiagnose\nPikettdienst"} />
         </Field>
         <FormMessage state={genState} className="mt-4" />
         <div className="mt-4">
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="label mb-0">Description (Markdown)</span>
+            <span className="label mb-0">Beschreibung (Markdown)</span>
             <button type="button" onClick={() => setPreview((p) => !p)} className="inline-flex items-center gap-1 text-xs font-medium text-brand-600">
-              {preview ? <><Pencil className="h-3 w-3" />Edit</> : <><Eye className="h-3 w-3" />Preview</>}
+              {preview ? <><Pencil className="h-3 w-3" />Bearbeiten</> : <><Eye className="h-3 w-3" />Vorschau</>}
             </button>
           </div>
           <input type="hidden" name="description" value={description} />
@@ -112,8 +113,8 @@ export function JobForm({ job, managers, requirementsText }: { job?: JobValues; 
       </div>
 
       <div className="flex flex-wrap justify-end gap-2">
-        {!job?.id && <SubmitButton variant="secondary" name="publish" value="0">Save as draft</SubmitButton>}
-        <SubmitButton name="publish" value={job?.id ? undefined : "0"}>{job?.id ? "Save changes" : "Continue to AI configuration"}</SubmitButton>
+        {!job?.id && <SubmitButton variant="secondary" name="publish" value="0">Als Entwurf speichern</SubmitButton>}
+        <SubmitButton name="publish" value={job?.id ? undefined : "0"}>{job?.id ? "Änderungen speichern" : "Weiter zu den KI-Kriterien"}</SubmitButton>
       </div>
     </form>
   );

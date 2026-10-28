@@ -14,11 +14,11 @@ export function InviteForm({ roles }: { roles: { id: string; label: string }[] }
   return (
     <form action={action} className="space-y-3">
       <FormMessage state={state} />
-      {devLink && <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-xs text-slate-600">Mock email provider — invitation link: <a className="link break-all" href={devLink}>{devLink}</a></p>}
+      {devLink && <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-xs text-slate-600">Test-E-Mail-Modus – Einladungslink: <a className="link break-all" href={devLink}>{devLink}</a></p>}
       <div className="flex flex-col gap-2 sm:flex-row">
-        <Input name="email" type="email" placeholder="colleague@company.ch" required />
+        <Input name="email" type="email" placeholder="kollegin@firma.ch" required />
         <Select name="role" defaultValue="RECRUITER" className="sm:w-48">{roles.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}</Select>
-        <SubmitButton>Send invitation</SubmitButton>
+        <SubmitButton>Einladung senden</SubmitButton>
       </div>
     </form>
   );

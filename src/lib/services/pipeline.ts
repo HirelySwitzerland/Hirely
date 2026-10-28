@@ -29,7 +29,7 @@ export type IngestInput = {
 
 export async function ingestApplication(input: IngestInput) {
   const job = await db.job.findFirst({ where: { id: input.jobId, orgId: input.orgId } });
-  if (!job) throw new Error("Job not found for this organization.");
+  if (!job) throw new Error("Stelle in dieser Firma nicht gefunden.");
   const email = input.candidate.email.trim().toLowerCase();
   const now = new Date();
   const org = await db.organization.findUniqueOrThrow({ where: { id: input.orgId } });
@@ -89,7 +89,7 @@ export async function ingestApplication(input: IngestInput) {
       coverLetter: input.coverLetter,
       appliedAt: input.appliedAt ?? now,
       screeningStatus: "PENDING",
-      stageHistory: { create: { orgId: input.orgId, toStage: "NEW", actorType: input.actor.type, actorId: input.actor.id, reason: `Application received via ${input.source.replace("_", " ").toLowerCase()}` } },
+      stageHistory: { create: { orgId: input.orgId, toStage: "NEW", actorType: input.actor.type, actorId: input.actor.id, reason: `Bewerbung eingegangen über ${input.source.replace("_", " ").toLowerCase()}` } },
       screeningAnswers: input.screeningAnswers?.length
         ? { create: input.screeningAnswers.map((a) => ({ orgId: input.orgId, questionId: a.questionId, question: a.question, answer: a.answer.slice(0, 2000) })) }
         : undefined,
@@ -98,8 +98,8 @@ export async function ingestApplication(input: IngestInput) {
 
   await notify(input.orgId, {
     type: "new_application",
-    title: `New application: ${candidate.firstName} ${candidate.lastName}`,
-    body: `${job.title} · via ${input.sourceDetail ?? input.source.replace("_", " ").toLowerCase()}`,
+    title: `Neue Bewerbung: ${candidate.firstName} ${candidate.lastName}`,
+    body: `${job.title} · über ${input.sourceDetail ?? input.source.replace("_", " ").toLowerCase()}`,
     link: `/app/candidates/${application.id}`,
   });
   if (input.sendConfirmation !== false) {
@@ -114,9 +114,9 @@ export async function ingestApplication(input: IngestInput) {
 
 export async function changeStage(orgId: string, applicationId: string, toStage: Stage, actor: Actor, reason?: string) {
   const app = await db.application.findFirst({ where: { id: applicationId, orgId }, include: { candidate: true, job: true } });
-  if (!app) throw new Error("Application not found.");
+  if (!app) throw new Error("Bewerbung nicht gefunden.");
   if (app.stage === toStage) return app;
-  if (actor.type !== "USER" && HUMAN_ONLY_STAGES.includes(toStage)) throw new Error(`Only a human recruiter can move a candidate to ${STAGE_LABEL[toStage]}.`);
+  if (actor.type !== "USER" && HUMAN_ONLY_STAGES.includes(toStage)) throw new Error(`Nur ein Mensch kann eine Person in die Stufe „${STAGE_LABEL[toStage]}“ verschieben.`);
   const updated = await db.application.update({
     where: { id: app.id },
     data: {

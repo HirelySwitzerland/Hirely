@@ -5,7 +5,7 @@ import { getContext } from "@/lib/auth/session";
 import { Card, EmptyState, LinkButton, PageHeader } from "@/components/ui";
 import { ago, cn } from "@/lib/utils";
 
-export const metadata = { title: "Notifications" };
+export const metadata = { title: "Mitteilungen" };
 
 export default async function NotificationsPage() {
   const ctx = await getContext();
@@ -13,9 +13,9 @@ export default async function NotificationsPage() {
   const dot: Record<string, string> = { error: "bg-rose-500", warning: "bg-amber-500", success: "bg-emerald-500", info: "bg-brand-500" };
   return (
     <div className="mx-auto max-w-3xl">
-      <PageHeader title="Notifications" description="Everything Hirely wants you to know — new applications, candidates ready for review, scheduled interviews and anything that needs attention." actions={<LinkButton href="/app/settings/notifications" variant="secondary">Preferences</LinkButton>} />
+      <PageHeader title="Mitteilungen" description="Neue Bewerbungen, Kandidierende zur Prüfung, gebuchte Gespräche und alles, was Ihre Aufmerksamkeit braucht." actions={<LinkButton href="/app/settings/notifications" variant="secondary">Einstellungen</LinkButton>} />
       <Card>
-        {items.length === 0 ? <EmptyState icon={<Bell className="h-5 w-5" />} title="No notifications" /> : (
+        {items.length === 0 ? <EmptyState icon={<Bell className="h-5 w-5" />} title="Keine Mitteilungen" /> : (
           <ul className="divide-y divide-slate-100">
             {items.map((n) => (
               <li key={n.id}>

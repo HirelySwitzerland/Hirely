@@ -11,17 +11,17 @@ export type NotificationInput = {
 };
 
 export const NOTIFICATION_TYPES: Record<string, { label: string; permission: Permission }> = {
-  new_application: { label: "New application", permission: "candidates.view" },
-  interview_completed: { label: "AI interview completed", permission: "candidates.view" },
-  candidate_ready: { label: "Candidate ready for review", permission: "candidates.view" },
-  interview_scheduled: { label: "Interview scheduled", permission: "candidates.view" },
-  candidate_cancelled: { label: "Candidate cancelled / declined", permission: "candidates.view" },
-  ats_sync_failed: { label: "ATS synchronization failure", permission: "integrations.manage" },
-  ai_call_failed: { label: "AI call failure", permission: "interviews.manage" },
-  integration_error: { label: "Integration error", permission: "integrations.manage" },
-  usage_limit: { label: "Usage limit reached", permission: "usage.view" },
-  message_failed: { label: "Message delivery failure", permission: "communication.send" },
-  system_error: { label: "System errors", permission: "settings.manage" },
+  new_application: { label: "Neue Bewerbung", permission: "candidates.view" },
+  interview_completed: { label: "KI-Interview abgeschlossen", permission: "candidates.view" },
+  candidate_ready: { label: "Bereit zur Prüfung", permission: "candidates.view" },
+  interview_scheduled: { label: "Gespräch gebucht", permission: "candidates.view" },
+  candidate_cancelled: { label: "Abgesagt / abgelehnt durch Person", permission: "candidates.view" },
+  ats_sync_failed: { label: "ATS-Synchronisation fehlgeschlagen", permission: "integrations.manage" },
+  ai_call_failed: { label: "KI-Anruf fehlgeschlagen", permission: "interviews.manage" },
+  integration_error: { label: "Integrationsfehler", permission: "integrations.manage" },
+  usage_limit: { label: "Verbrauchsgrenze erreicht", permission: "usage.view" },
+  message_failed: { label: "Nachricht nicht zugestellt", permission: "communication.send" },
+  system_error: { label: "Systemfehler", permission: "settings.manage" },
 };
 
 /** Creates in-app notifications for every member allowed to see this type and who hasn't muted it. */

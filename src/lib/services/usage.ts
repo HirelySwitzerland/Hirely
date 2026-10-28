@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { planById } from "@/lib/billing";
+import { planById, USAGE_METRICS } from "@/lib/billing";
 import { notifyAdmins } from "./notifications";
 
 export async function recordUsage(orgId: string, metric: string, quantity: number, costCents = 0, ref?: { type: string; id: string }) {
@@ -34,8 +34,8 @@ export async function checkLimit(orgId: string, metric: string): Promise<{ allow
   if (pct >= 100 && !alreadyNotified) {
     await notifyAdmins(orgId, {
       type: "usage_limit",
-      title: `Usage limit reached: ${metric.replace(/_/g, " ").toLowerCase()}`,
-      body: cfg?.enforce ? "New usage of this type is paused until the limit is raised." : "Additional usage is billed at overage rates.",
+      title: `Verbrauchsgrenze erreicht: ${USAGE_METRICS[metric]?.label ?? metric}`,
+      body: cfg?.enforce ? "Diese Leistung ist pausiert, bis die Grenze erhöht wird." : "Mehrverbrauch wird zu den Zusatzpreisen verrechnet.",
       link: "/app/settings/usage",
       severity: "warning",
     });

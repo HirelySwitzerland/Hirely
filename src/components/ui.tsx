@@ -130,7 +130,7 @@ export function PageHeader({ title, description, actions, breadcrumb }: { title:
 }
 
 export function Avatar({ name, size = 32, className, color }: { name: string; size?: number; className?: string; color?: string }) {
-  const palette = ["#2B4ACB", "#0F766E", "#7C3AED", "#B45309", "#BE123C", "#0369A1", "#4D7C0F", "#9333EA"];
+  const palette = ["#5B4AD8", "#0F766E", "#B45309", "#BE123C", "#0369A1", "#4D7C0F", "#7E22CE", "#475569"];
   const bg = color ?? palette[[...name].reduce((s, c) => s + c.charCodeAt(0), 0) % palette.length];
   return (
     <span
@@ -237,9 +237,9 @@ export function Logo({ className, mono }: { className?: string; mono?: boolean }
   return (
     <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
-        <rect width="32" height="32" rx="8" fill={mono ? "currentColor" : "#2B4ACB"} />
+        <rect width="32" height="32" rx="8" fill={mono ? "currentColor" : "#5B4AD8"} />
         <path d="M10 8v16M22 8v16M10 16h12" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" />
-        <circle cx="22" cy="8" r="2.6" fill="#9BAEF1" />
+        <circle cx="22" cy="8" r="2.6" fill="#FDBA74" />
       </svg>
       <span className="text-[17px]">Hirely</span>
     </span>

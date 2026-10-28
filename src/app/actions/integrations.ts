@@ -17,28 +17,28 @@ export async function connectIntegration(_: ActionState, fd: FormData): Promise<
     const ctx = await requirePermission("integrations.manage");
     const kind = str(fd, "kind") as (typeof KINDS)[number];
     const provider = str(fd, "provider");
-    if (!KINDS.includes(kind)) return fail("Unknown integration type.");
+    if (!KINDS.includes(kind)) return fail("Unbekannte Integrationsart.");
     const demo = str(fd, "mode") === "demo";
     let secrets: Record<string, string> = {};
     if (kind === "ATS") {
       const adapter = ATS_ADAPTERS[provider];
-      if (!adapter) return fail("Unknown ATS.");
+      if (!adapter) return fail("Unbekanntes ATS.");
       if (!demo) {
         for (const f of adapter.authFields) {
           const v = str(fd, f.key);
-          if (!v) return fail(`${f.label} is required.`);
-          if (f.type === "url" && !/^https:\/\//.test(v)) return fail(`${f.label} must be an https:// URL.`);
+          if (!v) return fail(`${f.label} fehlt.`);
+          if (f.type === "url" && !/^https:\/\//.test(v)) return fail(`${f.label} muss eine https://-Adresse sein.`);
           secrets[f.key] = v;
         }
       } else secrets = { mode: "demo" };
     } else if (kind === "PHONE" && provider === "twilio" && !demo) {
       secrets = { accountSid: str(fd, "accountSid"), authToken: str(fd, "authToken"), fromNumber: str(fd, "fromNumber") };
-      if (!/^AC[0-9a-f]{32}$/i.test(secrets.accountSid)) return fail("Account SID must look like AC… (34 characters).");
-      if (!/^\+\d{8,15}$/.test(secrets.fromNumber)) return fail("From number must be in E.164 format, e.g. +41445551234.");
-      if (secrets.authToken.length < 16) return fail("Auth token looks too short.");
+      if (!/^AC[0-9a-f]{32}$/i.test(secrets.accountSid)) return fail("Die Account SID muss wie AC… aussehen (34 Zeichen).");
+      if (!/^\+\d{8,15}$/.test(secrets.fromNumber)) return fail("Die Absendernummer muss im Format E.164 sein, z. B. +41445551234.");
+      if (secrets.authToken.length < 16) return fail("Der Auth Token ist zu kurz.");
     } else if (kind === "CALENDAR" && !demo) {
       const cfg = OAUTH_CONFIG[provider as "google" | "microsoft"];
-      if (!cfg?.clientId()) return fail(`${provider === "google" ? "Google" : "Microsoft"} OAuth is not configured on this server (missing client ID). Use demo mode or add credentials to the environment.`);
+      if (!cfg?.clientId()) return fail(`${provider === "google" ? "Google" : "Microsoft"} OAuth ist auf diesem Server nicht eingerichtet (Client-ID fehlt). Nutzen Sie den Demo-Modus oder hinterlegen Sie die Zugangsdaten.`);
       return ok(undefined, { redirect: `/api/integrations/oauth/${provider}/start` });
     } else secrets = { mode: "demo" };
 
@@ -52,9 +52,9 @@ export async function connectIntegration(_: ActionState, fd: FormData): Promise<
     await audit(ctx.orgId, userActor(ctx.user), "integration.connected", { type: "Integration", id: integ.id, label: `${kind} · ${provider}` }, { demo });
     if (kind === "ATS") {
       const r = await syncIntegration(integ.id, userActor(ctx.user));
-      return r.ok ? ok(`Connected. ${r.message}`) : fail(`Connected, but the first sync failed: ${r.error}`);
+      return r.ok ? ok(`Verbunden. ${r.message}`) : fail(`Verbunden, aber die erste Synchronisation ist fehlgeschlagen: ${r.error}`);
     }
-    return ok("Connected.");
+    return ok("Verbunden.");
   } catch (e) {
     return toActionError(e);
   }
@@ -64,10 +64,10 @@ export async function disconnectIntegration(_: ActionState, fd: FormData): Promi
   try {
     const ctx = await requirePermission("integrations.manage");
     const integ = await db.integration.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId } });
-    if (!integ) return fail("Not found.");
+    if (!integ) return fail("Nicht gefunden.");
     await db.integration.update({ where: { id: integ.id }, data: { status: "DISCONNECTED", secretsEnc: null } });
     await audit(ctx.orgId, userActor(ctx.user), "integration.disconnected", { type: "Integration", id: integ.id, label: `${integ.kind} · ${integ.provider}` });
-    return ok("Disconnected. Stored credentials were deleted.");
+    return ok("Getrennt. Gespeicherte Zugangsdaten wurden gelöscht.");
   } catch (e) {
     return toActionError(e);
   }
@@ -77,9 +77,9 @@ export async function syncNow(_: ActionState, fd: FormData): Promise<ActionState
   try {
     const ctx = await requirePermission("integrations.manage");
     const integ = await db.integration.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId, kind: "ATS" } });
-    if (!integ) return fail("Not found.");
+    if (!integ) return fail("Nicht gefunden.");
     const r = await syncIntegration(integ.id, userActor(ctx.user));
-    return r.ok ? ok(r.message) : fail(`${r.error} ${r.retryable ? "Hirely will retry automatically." : "Check the credentials."}`);
+    return r.ok ? ok(r.message) : fail(`${r.error} ${r.retryable ? "Hirely versucht es automatisch erneut." : "Bitte Zugangsdaten prüfen."}`);
   } catch (e) {
     return toActionError(e);
   }
@@ -89,8 +89,8 @@ export async function sendTestEmail(): Promise<ActionState> {
   try {
     const ctx = await requirePermission("integrations.manage");
     const p = getMessageProvider("EMAIL");
-    const r = await p.send({ to: ctx.user.email, subject: "Hirely test email", body: `This is a test email from Hirely (${p.name}).` });
-    return r.ok ? ok(`Test email sent to ${ctx.user.email} via ${p.name}.`) : fail(`Email failed: ${r.error}`);
+    const r = await p.send({ to: ctx.user.email, subject: "Hirely Test-E-Mail", body: `Dies ist eine Test-E-Mail von Hirely (${p.name}).` });
+    return r.ok ? ok(`Test-E-Mail an ${ctx.user.email} gesendet (über ${p.name}).`) : fail(`E-Mail fehlgeschlagen: ${r.error}`);
   } catch (e) {
     return toActionError(e);
   }
@@ -101,11 +101,11 @@ export async function createApiKey(_: ActionState, fd: FormData): Promise<Action
     const ctx = await requirePermission("integrations.manage");
     const name = str(fd, "name") || "API key";
     const scopes = ["applications:write", "jobs:read"].filter((s) => fd.get(s) === "on");
-    if (!scopes.length) return fail("Select at least one scope.");
+    if (!scopes.length) return fail("Bitte mindestens eine Berechtigung wählen.");
     const secret = `hly_${randomToken(24)}`;
     await db.apiKey.create({ data: { orgId: ctx.orgId, name, prefix: secret.slice(0, 10), keyHash: sha256(secret), scopes, createdById: ctx.user.id } });
     await audit(ctx.orgId, userActor(ctx.user), "apikey.created", { type: "ApiKey", label: name }, { scopes });
-    return ok("API key created. Copy it now — it won't be shown again.", { data: { secret } });
+    return ok("API-Schlüssel erstellt. Jetzt kopieren – er wird nicht mehr angezeigt.", { data: { secret } });
   } catch (e) {
     return toActionError(e);
   }
@@ -115,10 +115,10 @@ export async function revokeApiKey(_: ActionState, fd: FormData): Promise<Action
   try {
     const ctx = await requirePermission("integrations.manage");
     const k = await db.apiKey.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId } });
-    if (!k) return fail("Not found.");
+    if (!k) return fail("Nicht gefunden.");
     await db.apiKey.update({ where: { id: k.id }, data: { revokedAt: new Date() } });
     await audit(ctx.orgId, userActor(ctx.user), "apikey.revoked", { type: "ApiKey", id: k.id, label: k.name });
-    return ok("API key revoked.");
+    return ok("API-Schlüssel widerrufen.");
   } catch (e) {
     return toActionError(e);
   }
@@ -128,9 +128,9 @@ export async function rotateWebhookSecret(_: ActionState, fd: FormData): Promise
   try {
     const ctx = await requirePermission("integrations.manage");
     const integ = await db.integration.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId } });
-    if (!integ) return fail("Not found.");
+    if (!integ) return fail("Nicht gefunden.");
     await db.integration.update({ where: { id: integ.id }, data: { webhookSecret: encrypt(randomToken(24)) } });
-    return ok("Webhook secret rotated. Update it in your ATS.");
+    return ok("Webhook-Schlüssel erneuert. Bitte im ATS aktualisieren.");
   } catch (e) {
     return toActionError(e);
   }
