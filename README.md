@@ -53,6 +53,10 @@ The seed creates 8 jobs (6 open), 28 candidates with realistic Swiss CVs, AI int
 
 Every email/SMS is recorded in **Automations → Outbox** (mock provider) so the flow is fully visible without external accounts.
 
+### Run in GitHub Codespaces (only a browser needed)
+
+On GitHub: **Code → Codespaces → Create codespace**. `.devcontainer/` starts Postgres, installs dependencies, loads the demo data, builds a production bundle and starts Hirely; the terminal prints the public URL (`https://<codespace>-3000.app.github.dev/login`). Reset the demo data with `npm run db:seed`, restart with `bash .devcontainer/start.sh`.
+
 ### Live demo on Windows
 
 Double-click **`Hirely-Vorfuehrung.bat`**: it optionally resets the demo data, builds a production bundle (pages open instantly, no dev overlay) and starts Hirely on <http://localhost:3000>. A click-by-click German demo script is in [`demo/Vorfuehrung.md`](demo/Vorfuehrung.md), with a sample CV in `demo/Lebenslauf-Max-Muster.txt`. For day-to-day development keep using `Hirely-starten.bat` (`npm run dev`).

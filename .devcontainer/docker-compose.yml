@@ -1,0 +1,22 @@
+# Hirely in GitHub Codespaces: the app container shares the network with Postgres,
+# so the database is reachable at localhost:5432 (same as on a local machine).
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    network_mode: service:db
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hirely
+      POSTGRES_PASSWORD: hirely
+      POSTGRES_DB: hirely
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

@@ -1,0 +1,21 @@
+{
+  "name": "Hirely",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "hostRequirements": { "cpus": 2, "memory": "8gb" },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Hirely", "onAutoForward": "notify" }
+  },
+  // First start only: install, create the database, load demo data, build.
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  // Every time the codespace is opened: start Hirely (or show the link if it is already running).
+  "postAttachCommand": "bash .devcontainer/start.sh",
+  "customizations": {
+    "codespaces": { "openFiles": ["demo/Vorfuehrung.md"] }
+  }
+}

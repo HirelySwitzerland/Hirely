@@ -2,6 +2,41 @@
 
 Dauer: etwa 25 Minuten. Alles läuft direkt in der App, ohne Präsentation.
 
+Zwei Wege, Hirely zu starten:
+- **Firmenlaptop, nichts installieren:** Hirely läuft bei GitHub in der Cloud (Codespaces), Sie brauchen nur den Browser. Siehe Abschnitt 0.
+- **Eigener Laptop mit Hirely auf Q:** Abschnitte 1 und 2.
+
+---
+
+## 0. Firmenlaptop: Hirely in GitHub Codespaces
+
+### Einmalig einrichten (am besten 1–2 Tage vorher, ca. 15 Minuten)
+
+1. Auf dem Firmenlaptop in Chrome oder Edge bei **github.com** anmelden.
+2. Einstellungen: **github.com/settings/codespaces** öffnen, dort bei „Default idle timeout“ **120** Minuten eintragen und speichern.
+   Sonst stoppt Hirely nach 30 Minuten ohne Tippen, womöglich mitten in der Vorführung.
+3. **github.com/HirelySwitzerland/Hirely** öffnen.
+   - Links oben im Branch-Menü **claude/determined-archimedes-tc8a82** wählen.
+   - Grüner Knopf **Code** → Reiter **Codespaces** → **Create codespace on claude/…**
+4. Es öffnet sich ein Editor im Browser. Beim ersten Mal richtet sich Hirely selbst ein, das dauert **5–10 Minuten**. Einfach warten.
+5. Unten im Terminal erscheint:
+   `Hirely laeuft:  https://….app.github.dev/login`
+   Diesen Link öffnen (Strg + Klick) und als **Lesezeichen speichern**.
+6. Den Beispiel-Lebenslauf auf den Laptop laden: auf GitHub die Datei `demo/Lebenslauf-Max-Muster.txt` öffnen und rechts oben auf **Download raw file** klicken.
+7. Einmal den ganzen Durchlauf (Teil B) üben. Testen Sie das unbedingt im Firmennetz. Falls die Firma GitHub-Seiten blockiert, nehmen Sie den Hotspot Ihres Handys.
+
+### Am Tag, 15 Minuten vor dem Termin
+
+1. **github.com/codespaces** öffnen und den Hirely-Codespace anklicken. Er startet in etwa 1 Minute, Hirely startet automatisch mit.
+2. Frische Demo-Daten: im Editor unten im Terminal-Bereich auf **+** (neues Terminal) klicken, `npm run db:seed` eintippen, Enter.
+3. Den Editor-Tab offen lassen (im Hintergrund).
+4. **Fenster A – HR:** das Lesezeichen öffnen, anmelden mit `demo@hirely.app` / `Hirely-Demo-2026`.
+5. **Fenster B – Bewerber:** ein zweites, normales Browserfenster mit derselben Adresse, aber am Ende `/careers/helvetic-engineering` statt `/login`.
+   Hier kein privates Fenster nehmen, sonst verlangt GitHub dort eine Anmeldung.
+6. Weiter mit Punkt 5 und 6 von Abschnitt 2, dann Teil A.
+
+Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über **github.com/codespaces** → „…“ → **Stop codespace**.
+
 ---
 
 ## 1. Am Vorabend (10 Minuten)
@@ -158,6 +193,8 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Max Muster klappt gar nicht:** Profil von **Roman Egli** (Servicetechniker/in, fertig geprüft) zeigen. Es enthält dieselben Inhalte.
 - **„Sie haben sich bereits auf diese Stelle beworben“:** Die E-Mail-Adresse wurde schon benutzt. Zurück zur Karriereseite und eine neue Adresse verwenden (`max.muster3@…`).
 - **Ganz neu starten:** Fenster schliessen und **Hirely-Vorfuehrung.bat** wieder starten, dabei **J** wählen.
+- **Codespaces – Seite zeigt einen GitHub-Fehler oder lädt nicht:** Der Codespace ist eingeschlafen. **github.com/codespaces** öffnen, Codespace anklicken, 1 Minute warten, dann F5.
+- **Codespaces – Hirely neu starten:** Im Terminal, in dem Hirely läuft, Strg + C drücken, dann `bash .devcontainer/start.sh` eintippen und Enter.
 
 ## Ehrlich bleiben, falls gefragt
 

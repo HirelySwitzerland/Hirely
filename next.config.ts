@@ -27,7 +27,13 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ["@prisma/client", "unpdf"],
-  experimental: { serverActions: { bodySizeLimit: "12mb" } },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "12mb",
+      // GitHub Codespaces forwards requests with Host "localhost:3000" but the browser's Origin is "<name>-3000.app.github.dev".
+      ...(process.env.CODESPACES === "true" ? { allowedOrigins: ["*.app.github.dev", "*.preview.app.github.dev"] } : {}),
+    },
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
