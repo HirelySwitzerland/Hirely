@@ -1,30 +1,29 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, Clock, FileSearch, Briefcase, Users, AlertTriangle, PhoneMissed, Plus, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CalendarCheck, Clock, FileSearch, Briefcase, Users, Plus, CheckCircle2 } from "lucide-react";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
 import { applicationScope } from "@/lib/services/scope";
+import { myNextSteps } from "@/lib/services/next-steps";
 import { applicationsOverTime, dashboardMetrics, funnel, interviewCompletion, pipelineByJob, sourcePerformance, TIME_SAVED_MINUTES } from "@/lib/services/analytics";
 import { STAGES } from "@/lib/stages";
 import { Alert, Avatar, Card, CardHeader, EmptyState, LinkButton, StatCard } from "@/components/ui";
 import { FunnelChart, GroupedBars, StackedStageBars, StatusBars, TrendChart } from "@/components/charts";
-import { InterviewBadge, RequirementsMeter, StageBadge } from "@/components/status";
-import { ago, fmtDateTime } from "@/lib/utils";
+import { fmtDateTime } from "@/lib/utils";
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {
   const sp = await searchParams;
   const ctx = await pageContext();
   const scope = applicationScope(ctx);
   const canCandidates = ctx.can("candidates.view");
-  const [m, trend, fun, byJob, sources, ivStatus, ready, upcoming, attention] = await Promise.all([
+  const [m, trend, fun, byJob, sources, ivStatus, todo, upcoming] = await Promise.all([
     dashboardMetrics(ctx.orgId, scope),
     applicationsOverTime(scope, 10),
     funnel(scope),
     pipelineByJob(ctx.orgId, scope),
     sourcePerformance(scope),
     interviewCompletion(ctx.orgId, scope),
-    canCandidates ? db.application.findMany({ where: { ...scope, stage: "REVIEW" }, include: { candidate: true, job: true }, orderBy: { readyForReviewAt: "desc" }, take: 6 }) : [],
+    canCandidates ? myNextSteps(scope) : [],
     db.calendarEvent.findMany({ where: { orgId: ctx.orgId, startsAt: { gte: new Date() }, status: { not: "CANCELLED" }, application: scope }, include: { application: { include: { candidate: true, job: true } } }, orderBy: { startsAt: "asc" }, take: 4 }),
-    canCandidates ? db.application.findMany({ where: { ...scope, OR: [{ interviewStatus: { in: ["NO_ANSWER", "FAILED"] } }, { screeningStatus: "FAILED" }], stage: { notIn: ["REJECTED", "HIRED"] } }, include: { candidate: true }, take: 4 }) : [],
   ]);
   const hour = Number(new Date().toLocaleString("de-CH", { hour: "2-digit", hour12: false, timeZone: "Europe/Zurich" }));
   const greeting = hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend";
@@ -38,48 +37,49 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">{greeting}, {firstName}</h1>
           <p className="mt-1 text-[15px] text-slate-500">
-            {m.ready
-              ? <>Es {m.ready === 1 ? "wartet" : "warten"} <strong className="font-semibold text-ink">{m.ready} {m.ready === 1 ? "Person" : "Personen"}</strong> auf Ihre Entscheidung. Den Rest hat Recruit24 erledigt.</>
+            {todo.length
+              ? <>Bei <strong className="font-semibold text-ink">{todo.length} {todo.length === 1 ? "Person" : "Personen"}</strong> sind Sie dran. Den Rest erledigt Recruit24.</>
               : "Alles erledigt – Recruit24 arbeitet im Hintergrund weiter."}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new" variant="secondary"><Plus className="h-4 w-4" />Neue Stelle</LinkButton>}
-          {canCandidates && m.ready > 0 && <LinkButton href="/app/candidates?stage=REVIEW">Jetzt prüfen <ArrowRight className="h-4 w-4" /></LinkButton>}
+          {canCandidates && todo.length > 0 && <LinkButton href={`/app/candidates/${todo[0].app.id}`}>Mit dem ersten Schritt beginnen <ArrowRight className="h-4 w-4" /></LinkButton>}
         </div>
       </div>
       {sp.denied && <Alert tone="warning" title="Kein Zugriff">Ihre Rolle hat keinen Zugriff auf diese Seite ({sp.denied}). Wenden Sie sich bei Bedarf an eine Administratorin oder einen Administrator.</Alert>}
 
       {/* Kennzahlen – nur die vier wichtigsten */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Zu prüfen" value={m.ready} sub="warten auf Ihren Entscheid" icon={<FileSearch className="h-4 w-4" />} href="/app/candidates?stage=REVIEW" accent="bg-amber-100 text-amber-700" />
+        <StatCard label="Sie sind dran" value={todo.length} sub="Personen warten auf Ihren Schritt" icon={<FileSearch className="h-4 w-4" />} href="/app/candidates?todo=1" accent="bg-amber-100 text-amber-700" />
         <StatCard label="Neue Bewerbungen" value={m.newApplications} sub="letzte 30 Tage" icon={<Users className="h-4 w-4" />} href="/app/candidates" accent="bg-brand-50 text-brand-700" />
         <StatCard label="Offene Stellen" value={m.openPositions} sub={`${m.aiInterviews} KI-Interviews geführt`} icon={<Briefcase className="h-4 w-4" />} href="/app/jobs" />
         <StatCard label="Gesparte HR-Zeit" value={`${m.timeSaved} Std.`} sub="geschätzt, seit Start" icon={<Clock className="h-4 w-4" />} href="/app/analytics" accent="bg-emerald-50 text-emerald-700" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        {/* Hauptspalte: Wer wartet auf mich? */}
+        {/* Hauptspalte: Wo bin ich dran? */}
         <Card className="xl:col-span-2">
           <CardHeader
-            title="Wartet auf Ihren Entscheid"
-            description="Die KI hat CV und Interview ausgewertet – jetzt entscheiden Sie."
-            action={canCandidates && ready.length > 0 && <Link href="/app/candidates?stage=REVIEW" className="link text-[13px]">Alle anzeigen</Link>}
+            title="Ihre nächsten Schritte"
+            description="Hier braucht es Sie. Alles andere erledigt Recruit24 automatisch."
+            action={canCandidates && todo.length > 7 && <Link href="/app/candidates?todo=1" className="link text-[13px]">Alle {todo.length} anzeigen</Link>}
           />
-          {ready.length === 0 ? (
-            <EmptyState icon={<CheckCircle2 className="h-5 w-5" />} title="Nichts offen" description="Neue Kandidierende erscheinen hier, sobald ihr KI-Interview abgeschlossen ist." />
+          {todo.length === 0 ? (
+            <EmptyState icon={<CheckCircle2 className="h-5 w-5" />} title="Alles erledigt" description="Sobald jemand das KI-Interview abschliesst oder Hilfe braucht, erscheint die Person hier." />
           ) : (
             <ul className="divide-y divide-slate-100">
-              {ready.map((a) => (
+              {todo.slice(0, 7).map(({ app: a, step }) => (
                 <li key={a.id}>
                   <Link href={`/app/candidates/${a.id}`} className="group flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50">
                     <Avatar name={`${a.candidate.firstName} ${a.candidate.lastName}`} size={38} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[15px] font-medium text-ink">{a.candidate.firstName} {a.candidate.lastName}</p>
-                      <p className="truncate text-[13px] text-slate-500">{a.job.title} · bereit {ago(a.readyForReviewAt)}</p>
+                      <p className="truncate text-[13px] text-slate-500">{step.title} · {a.job.title}</p>
                     </div>
-                    <div className="hidden w-32 sm:block"><RequirementsMeter met={a.requirementsMet} total={a.requirementsTotal} mustMet={a.mustHaveMet} mustTotal={a.mustHaveTotal} /></div>
-                    <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-1.5 text-[13px] font-semibold text-white shadow-sm transition group-hover:bg-brand-700">
+                      {step.short}<ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -113,22 +113,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             )}
           </Card>
 
-          {attention.length > 0 && (
-            <Card className="border-amber-200">
-              <CardHeader title="Braucht Ihre Hilfe" description="Diese Schritte konnte Recruit24 nicht automatisch abschliessen." />
-              <ul className="divide-y divide-slate-100">
-                {attention.map((a) => (
-                  <li key={a.id}>
-                    <Link href={`/app/candidates/${a.id}?tab=interview`} className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50">
-                      {a.interviewStatus === "NO_ANSWER" ? <PhoneMissed className="h-4 w-4 shrink-0 text-amber-500" /> : <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />}
-                      <span className="min-w-0 flex-1 truncate text-sm text-ink">{a.candidate.firstName} {a.candidate.lastName}</span>
-                      {a.screeningStatus === "FAILED" ? <span className="text-xs text-rose-600">CV nicht lesbar</span> : <InterviewBadge status={a.interviewStatus} />}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          )}
         </div>
       </div>
 

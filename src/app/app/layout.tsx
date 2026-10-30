@@ -5,13 +5,14 @@ import { AssistantButton, GlobalSearch, MobileTabBar, NotificationBell, Sidebar,
 import { logout, switchOrganization } from "@/app/actions/auth";
 import { ASSISTANT_SUGGESTIONS } from "@/lib/services/assistant";
 import { applicationScope } from "@/lib/services/scope";
+import { myNextSteps } from "@/lib/services/next-steps";
 import { planById } from "@/lib/billing";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getContext();
   const [memberships, reviewCount, sub] = await Promise.all([
     db.membership.findMany({ where: { userId: ctx.user.id }, include: { org: { select: { id: true, name: true } } } }),
-    db.application.count({ where: { ...applicationScope(ctx), stage: "REVIEW" } }),
+    ctx.can("candidates.view") ? myNextSteps(applicationScope(ctx)).then((l) => l.length) : 0,
     db.subscription.findUnique({ where: { orgId: ctx.orgId } }),
   ]);
   const items: NavItem[] = [

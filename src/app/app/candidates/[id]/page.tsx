@@ -16,9 +16,11 @@ import type { Evidence } from "@/lib/services/evaluation";
 import type { VideoQuestion } from "@/lib/services/video";
 import { Alert, Avatar, Badge, Card, CardHeader, EmptyState, Tabs, Textarea } from "@/components/ui";
 import { ActionButton, ActionForm, SubmitButton } from "@/components/forms";
-import { EVIDENCE_META, EvidenceBadge, InterviewBadge, RequirementsMeter, ScreeningBadge, StageBadge, SOURCE_LABEL } from "@/components/status";
+import { EVIDENCE_META, EvidenceBadge, RequirementsMeter, StageBadge, SOURCE_LABEL } from "@/components/status";
 import { Markdown } from "@/components/markdown";
 import { ProfileActions } from "@/components/candidates/profile-actions";
+import { NextStepCard } from "@/components/candidates/next-step";
+import { nextStepFor } from "@/lib/next-step";
 import { addComment, deleteCandidate, overrideEvaluation, rerunScreening, retryInterview, updateTags } from "@/app/actions/candidates";
 import { ago, cn, fmtDate, fmtDateTime, fmtDuration } from "@/lib/utils";
 
@@ -64,6 +66,9 @@ export default async function CandidateProfile({ params, searchParams }: { param
   for (const e of app.evaluations) counts[e.status]++;
   const warnings = ((app.cvAnalyses[0]?.data as { warnings?: string[] } | undefined)?.warnings ?? []).filter(Boolean);
   const base = `/app/candidates/${app.id}`;
+  const step = nextStepFor({ ...app, events: app.events.filter((e) => e.status !== "CANCELLED" && e.kind === "PERSONAL_INTERVIEW") });
+  const leadId = app.job.hiringManagerId ?? ctx.user.id;
+  const interviewers = [...members.filter((m) => m.userId === leadId), ...members.filter((m) => m.userId !== leadId)].map((m) => ({ id: m.userId, name: m.user.name }));
   const settings = ctx.org.settings as Record<string, unknown>;
 
   return (
@@ -78,8 +83,6 @@ export default async function CandidateProfile({ params, searchParams }: { param
               <p className="mt-0.5 text-sm text-slate-600">{c.currentTitle ?? "—"} · beworben als <Link href={`/app/jobs/${app.jobId}`} className="font-medium text-ink hover:text-brand-700">{app.job.title}</Link></p>
               <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                 <StageBadge stage={app.stage} />
-                <ScreeningBadge status={app.screeningStatus} meetsMinimum={app.meetsMinimum} />
-                <InterviewBadge status={app.interviewStatus} />
                 {app.videoStatus !== "NOT_INVITED" && <Badge tone={app.videoStatus === "COMPLETED" ? "green" : "slate"}>Video: {app.videoStatus === "COMPLETED" ? "abgeschlossen" : app.videoStatus === "INVITED" ? "eingeladen" : app.videoStatus === "IN_PROGRESS" ? "läuft" : "offen"}</Badge>}
                 {c.inTalentPool && <Badge tone="stone">Talent-Pool</Badge>}
               </div>
@@ -95,12 +98,18 @@ export default async function CandidateProfile({ params, searchParams }: { param
             <ProfileActions
               applicationId={app.id} stage={app.stage} firstName={c.firstName} hasPhone={Boolean(c.phone)}
               canStage={ctx.can("candidates.stage")} canMessage={ctx.can("communication.send")} canInterview={ctx.can("interviews.manage")}
-              interviewers={[...members.filter((m) => m.userId === (app.job.hiringManagerId ?? ctx.user.id)), ...members.filter((m) => m.userId !== (app.job.hiringManagerId ?? ctx.user.id))].map((m) => ({ id: m.userId, name: m.user.name }))}
+              interviewers={interviewers}
               defaultLocation={String(settings.officeAddress ?? app.job.location ?? "")}
             />
           </div>
         </div>
       </Card>
+
+      <NextStepCard
+        step={step} stage={app.stage} applicationId={app.id} interviewId={prescreen?.id ?? null} firstName={c.firstName} hasPhone={Boolean(c.phone)}
+        perms={{ canStage: ctx.can("candidates.stage"), canMessage: ctx.can("communication.send"), canInterview: ctx.can("interviews.manage"), canManage: ctx.can("candidates.manage") }}
+        interviewers={interviewers} defaultLocation={String(settings.officeAddress ?? app.job.location ?? "")}
+      />
 
       <Tabs
         active={tab}

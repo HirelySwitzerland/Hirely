@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarPlus, ChevronDown, Mail, Phone, Video } from "lucide-react";
+import { ArrowRightLeft, CalendarPlus, ChevronDown, Mail, Phone, Video, X } from "lucide-react";
 import { ActionForm, SubmitButton, ActionButton } from "@/components/forms";
 import { Button, Checkbox, Field, Input, Select, Textarea } from "@/components/ui";
 import { callNowFromProfile, invitePersonal, inviteAi, inviteVideo, moveStage, sendCandidateMessage } from "@/app/actions/candidates";
@@ -13,7 +13,7 @@ const STAGE_OPTIONS: [Stage, string][] = STAGES.map((s) => [s.id, s.label]);
 
 function Panel({ open, children }: { open: boolean; children: React.ReactNode }) {
   if (!open) return null;
-  return <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 shadow-pop">{children}</div>;
+  return <div className="mt-3 w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-pop lg:w-[560px]">{children}</div>;
 }
 
 export function ProfileActions({
@@ -23,17 +23,34 @@ export function ProfileActions({
   interviewers: { id: string; name: string }[]; defaultLocation: string; hasPhone: boolean;
 }) {
   const [open, setOpen] = useState<"invite" | "stage" | "message" | "ai" | null>(null);
-  const toggle = (k: typeof open) => setOpen((o) => (o === k ? null : k));
+  const [menu, setMenu] = useState(false);
+  const pick = (k: typeof open) => { setMenu(false); setOpen((o) => (o === k ? null : k)); };
   const [target, setTarget] = useState<Stage>(stage === "REVIEW" ? "SHORTLISTED" : stage);
+  const items: { key: NonNullable<typeof open>; label: string; icon: React.ReactNode; show: boolean }[] = [
+    { key: "invite", label: "Zum Gespräch einladen", icon: <CalendarPlus className="h-4 w-4" />, show: canMessage && !["HIRED", "REJECTED"].includes(stage) },
+    { key: "message", label: "Nachricht senden", icon: <Mail className="h-4 w-4" />, show: canMessage },
+    { key: "ai", label: "KI- oder Video-Interview", icon: <Phone className="h-4 w-4" />, show: canInterview },
+    { key: "stage", label: "Stufe von Hand ändern", icon: <ArrowRightLeft className="h-4 w-4" />, show: canStage },
+  ];
+  if (!items.some((i) => i.show)) return null;
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
-        {canMessage && !["HIRED", "REJECTED"].includes(stage) && (
-          <Button onClick={() => toggle("invite")}><CalendarPlus className="h-4 w-4" />Zum Gespräch einladen</Button>
+      <div className="relative flex justify-end">
+        <Button variant="secondary" onClick={() => { if (open) setOpen(null); else setMenu((m) => !m); }} aria-expanded={menu || Boolean(open)}>
+          {open ? <>Schliessen <X className="h-3.5 w-3.5" /></> : <>Weitere Aktionen <ChevronDown className="h-3.5 w-3.5" /></>}
+        </Button>
+        {menu && (
+          <>
+            <button className="fixed inset-0 z-10 cursor-default" aria-label="Menü schliessen" onClick={() => setMenu(false)} />
+            <div className="absolute right-0 top-full z-20 mt-1 w-64 rounded-xl border border-slate-200 bg-white p-1 shadow-pop" role="menu">
+              {items.filter((i) => i.show).map((i) => (
+                <button key={i.key} role="menuitem" onClick={() => pick(i.key)} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-50">
+                  <span className="text-slate-500">{i.icon}</span>{i.label}
+                </button>
+              ))}
+            </div>
+          </>
         )}
-        {canStage && <Button variant="secondary" onClick={() => toggle("stage")}>Stufe ändern <ChevronDown className="h-3.5 w-3.5" /></Button>}
-        {canMessage && <Button variant="secondary" onClick={() => toggle("message")}><Mail className="h-4 w-4" />Nachricht</Button>}
-        {canInterview && <Button variant="secondary" onClick={() => toggle("ai")}><Phone className="h-4 w-4" />KI-Interview</Button>}
       </div>
 
       <Panel open={open === "invite"}>

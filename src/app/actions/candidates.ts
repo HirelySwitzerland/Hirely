@@ -121,7 +121,7 @@ export async function inviteAi(_: ActionState, fd: FormData): Promise<ActionStat
     const app = await loadApp(ctx, str(fd, "applicationId"));
     const channel = (["EMAIL", "SMS", "WHATSAPP"].includes(str(fd, "channel")) ? str(fd, "channel") : "EMAIL") as "EMAIL";
     const r = await inviteToAiInterview(ctx.orgId, app.id, userActor(ctx.user), channel);
-    return r.delivered ? ok("AI interview invitation sent.") : fail(`Einladung erstellt, aber nicht zugestellt: ${r.error}. Sie können den Interview-Link im Profil kopieren.`);
+    return r.delivered ? ok("Einladung zum KI-Interview gesendet.") : fail(`Einladung erstellt, aber nicht zugestellt: ${r.error}. Sie können den Interview-Link im Profil kopieren.`);
   } catch (e) {
     return toActionError(e);
   }

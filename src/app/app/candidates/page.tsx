@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Prisma, Stage } from "@prisma/client";
-import { LayoutList, Columns3, Plus, Users } from "lucide-react";
+import { ArrowRight, LayoutList, Columns3, Plus, Users } from "lucide-react";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
 import { applicationScope } from "@/lib/services/scope";
@@ -8,10 +8,12 @@ import { STAGES } from "@/lib/services/pipeline";
 import { Card, EmptyState, LinkButton, PageHeader, Select } from "@/components/ui";
 import { InboxTable, PipelineBoard, type InboxRow } from "@/components/candidates/inbox";
 import { ago, cn, fmtDate } from "@/lib/utils";
+import { nextStepFor, nextStepInclude } from "@/lib/next-step";
+import { myNextSteps } from "@/lib/services/next-steps";
 
 export const metadata = { title: "Kandidierende" };
 
-type SP = { q?: string; job?: string; stage?: string; source?: string; interview?: string; view?: string; sort?: string };
+type SP = { q?: string; job?: string; stage?: string; source?: string; interview?: string; view?: string; sort?: string; todo?: string };
 
 export default async function CandidatesPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -20,7 +22,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
   const where: Prisma.ApplicationWhereInput = { ...scope, candidate: { anonymizedAt: null } };
   if (sp.job) where.jobId = sp.job;
   if (sp.stage && STAGES.some((s) => s.id === sp.stage)) where.stage = sp.stage as Stage;
-  else if (sp.view !== "board" && !sp.q) where.stage = { notIn: ["REJECTED", "TALENT_POOL", "HIRED"] };
+  else if (sp.view !== "board" && (!sp.q || sp.todo)) where.stage = { notIn: ["REJECTED", "TALENT_POOL", "HIRED"] };
   if (sp.source) where.source = sp.source as Prisma.ApplicationWhereInput["source"];
   if (sp.interview) where.interviewStatus = sp.interview as Prisma.ApplicationWhereInput["interviewStatus"];
   if (sp.q) {
@@ -36,16 +38,19 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
   }
   const orderBy: Prisma.ApplicationOrderByWithRelationInput[] =
     sp.sort === "requirements" ? [{ requirementsMet: "desc" }, { appliedAt: "desc" }] : sp.sort === "stage" ? [{ stageChangedAt: "desc" }] : [{ appliedAt: "desc" }];
-  const [apps, jobs, stageCounts] = await Promise.all([
-    db.application.findMany({ where, include: { candidate: true, job: { select: { title: true } }, evaluations: { select: { status: true } } }, orderBy, take: 300 }),
+  const [apps, jobs, stageCounts, todo] = await Promise.all([
+    db.application.findMany({ where, include: { candidate: true, job: { select: { title: true } }, evaluations: { select: { status: true } }, ...nextStepInclude }, orderBy, take: 300 }),
     db.job.findMany({ where: { orgId: ctx.orgId, ...(ctx.role === "HIRING_MANAGER" ? { hiringManagerId: ctx.user.id } : {}) }, select: { id: true, title: true, status: true }, orderBy: { title: "asc" } }),
     db.application.groupBy({ by: ["stage"], where: { ...scope, ...(sp.job ? { jobId: sp.job } : {}), candidate: { anonymizedAt: null } }, _count: true }),
+    myNextSteps({ ...scope, ...(sp.job ? { jobId: sp.job } : {}) }),
   ]);
-  const rows: InboxRow[] = apps.map((a) => ({
+  const now = new Date();
+  const rows: InboxRow[] = apps.map((a) => ({ a, step: nextStepFor(a, now) })).filter((x) => !sp.todo || x.step.owner === "you").map(({ a, step }) => ({
     id: a.id, name: `${a.candidate.firstName} ${a.candidate.lastName}`, email: a.candidate.email, jobTitle: a.job.title,
     appliedAt: fmtDate(a.appliedAt), appliedAgo: ago(a.appliedAt), source: a.source, sourceDetail: a.sourceDetail, stage: a.stage,
     screeningStatus: a.screeningStatus, meetsMinimum: a.meetsMinimum, interviewStatus: a.interviewStatus, met: a.requirementsMet, total: a.requirementsTotal,
     mustMet: a.mustHaveMet, mustTotal: a.mustHaveTotal, location: a.candidate.location, flags: a.evaluations.map((e) => e.status),
+    nextOwner: step.owner, nextShort: step.short,
   }));
   const board = sp.view === "board";
   const qs = (patch: Partial<SP>) => {
@@ -71,9 +76,13 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
       />
       {!board && (
         <div className="scrollbar-thin -mx-1 mb-4 flex gap-1.5 overflow-x-auto px-1">
-          <Link href={qs({ stage: undefined })} className={cn("shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium", !sp.stage ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600")}>Alle aktiven</Link>
+          <Link href={qs({ todo: "1", stage: undefined })} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-[13px] font-semibold", sp.todo ? "border-brand-600 bg-brand-600 text-white" : "border-brand-200 bg-brand-50 text-brand-800 hover:border-brand-300")}>
+            <ArrowRight className="h-3.5 w-3.5" />Sie sind dran <span className={cn("rounded-full px-1.5 text-[12px]", sp.todo ? "bg-white/20" : "bg-white text-brand-700")}>{todo.length}</span>
+          </Link>
+          <span className="mx-1 w-px shrink-0 bg-slate-200" aria-hidden />
+          <Link href={qs({ stage: undefined, todo: undefined })} className={cn("shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium", !sp.stage && !sp.todo ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600")}>Alle aktiven</Link>
           {STAGES.filter((s) => count(s.id) > 0 || sp.stage === s.id).map((s) => (
-            <Link key={s.id} href={qs({ stage: s.id })} className={cn("shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium", sp.stage === s.id ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")}>
+            <Link key={s.id} href={qs({ stage: s.id, todo: undefined })} className={cn("shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium", sp.stage === s.id ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")}>
               {s.label} <span className="opacity-60">{count(s.id)}</span>
             </Link>
           ))}
@@ -82,6 +91,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
       <form className="mb-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4" action="/app/candidates">
         {board && <input type="hidden" name="view" value="board" />}
         {sp.stage && <input type="hidden" name="stage" value={sp.stage} />}
+        {sp.todo && <input type="hidden" name="todo" value={sp.todo} />}
         <input name="q" defaultValue={sp.q} placeholder="Suchen: Name, E-Mail, Skill…" className="input lg:col-span-2" aria-label="Suche" />
         <Select name="job" defaultValue={sp.job ?? ""} aria-label="Stelle">
           <option value="">Alle Stellen</option>
@@ -102,7 +112,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
       ) : (
         <Card className="overflow-hidden">
           {rows.length === 0 ? (
-            <EmptyState icon={<Users className="h-5 w-5" />} title="Keine Treffer" description="Passen Sie die Filter an oder fügen Sie Kandidierende manuell bzw. per CSV hinzu." action={ctx.can("candidates.manage") && <LinkButton href="/app/candidates/new" size="sm">Kandidierende hinzufügen</LinkButton>} />
+            sp.todo ? <EmptyState icon={<Users className="h-5 w-5" />} title="Alles erledigt" description="Im Moment wartet niemand auf Sie. Recruit24 meldet sich, sobald es wieder etwas zu entscheiden gibt." /> : <EmptyState icon={<Users className="h-5 w-5" />} title="Keine Treffer" description="Passen Sie die Filter an oder fügen Sie Kandidierende manuell bzw. per CSV hinzu." action={ctx.can("candidates.manage") && <LinkButton href="/app/candidates/new" size="sm">Kandidierende hinzufügen</LinkButton>} />
           ) : (
             <InboxTable rows={rows} canStage={ctx.can("candidates.stage")} />
           )}

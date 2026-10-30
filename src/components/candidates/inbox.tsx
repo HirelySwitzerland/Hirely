@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Columns3, GitCompareArrows, Loader2, X } from "lucide-react";
+import { ArrowRight, Check, Clock, Columns3, GitCompareArrows, Hourglass, Loader2, X } from "lucide-react";
+import type { NextOwner } from "@/lib/next-step";
 import type { EvidenceStatus, InterviewState, ProcessStatus, Stage } from "@prisma/client";
 import { Avatar, Button, Select } from "@/components/ui";
-import { InterviewBadge, RequirementsMeter, ScreeningBadge, StageBadge, SOURCE_LABEL } from "@/components/status";
+import { RequirementsMeter, ScreeningBadge, StageBadge, SOURCE_LABEL } from "@/components/status";
 import { bulkMoveStage, moveStage } from "@/app/actions/candidates";
 import { STAGES } from "@/lib/stages";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,17 @@ export type InboxRow = {
   mustTotal: number;
   location: string | null;
   flags: EvidenceStatus[];
+  nextOwner: NextOwner;
+  nextShort: string;
 };
+
+/** The next step in one glance: highlighted when HR has to act, grey while others are at it. */
+export function NextChip({ owner, label }: { owner: NextOwner; label: string }) {
+  if (owner === "you")
+    return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white"><ArrowRight className="h-3 w-3" />{label}</span>;
+  const Icon = owner === "done" ? Check : owner === "candidate" ? Hourglass : Clock;
+  return <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs text-slate-500"><Icon className="h-3.5 w-3.5 text-slate-400" />{label}</span>;
+}
 
 export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boolean }) {
   const [sel, setSel] = useState<string[]>([]);
@@ -76,7 +87,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/60 text-xs font-medium text-slate-500">
               <th className="w-10 px-4 py-3"><input type="checkbox" checked={all} onChange={() => setSel(all ? [] : rows.map((r) => r.id))} className="rounded border-slate-300 text-brand-600" aria-label="Alle auswählen" /></th>
-              <th className="px-3 py-3">Kandidat/in</th><th className="px-3 py-3">Stufe</th><th className="px-3 py-3">Anforderungen</th><th className="px-3 py-3">KI-Interview</th><th className="px-3 py-3 text-right">Eingegangen</th>
+              <th className="px-3 py-3">Kandidat/in</th><th className="px-3 py-3">Nächster Schritt</th><th className="px-3 py-3">Stufe</th><th className="px-3 py-3">Anforderungen</th><th className="px-3 py-3 text-right">Eingegangen</th>
             </tr>
           </thead>
           <tbody>
@@ -92,9 +103,9 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                     </span>
                   </Link>
                 </td>
+                <td className="px-3 py-3"><Link href={`/app/candidates/${r.id}`}><NextChip owner={r.nextOwner} label={r.nextShort} /></Link></td>
                 <td className="px-3 py-3"><StageBadge stage={r.stage} /></td>
                 <td className="px-3 py-3">{r.screeningStatus === "COMPLETED" || r.total > 0 ? <RequirementsMeter met={r.met} total={r.total} mustMet={r.mustMet} mustTotal={r.mustTotal} /> : <ScreeningBadge status={r.screeningStatus} meetsMinimum={r.meetsMinimum} />}</td>
-                <td className="px-3 py-3"><InterviewBadge status={r.interviewStatus} /></td>
                 <td className="px-3 py-3 text-right text-[13px] text-slate-500" title={`${r.appliedAt} · ${SOURCE_LABEL[r.source] ?? r.source}${r.sourceDetail ? ` (${r.sourceDetail})` : ""}`}>{r.appliedAgo}</td>
               </tr>
             ))}
@@ -114,8 +125,8 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                 </div>
                 <p className="truncate text-xs text-slate-500">{r.jobTitle}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <NextChip owner={r.nextOwner} label={r.nextShort} />
                   <StageBadge stage={r.stage} />
-                  <InterviewBadge status={r.interviewStatus} />
                   {r.total > 0 && <span className="text-xs tabular-nums text-slate-600">{r.met}/{r.total} Anf.</span>}
                 </div>
               </div>
@@ -187,7 +198,7 @@ export function PipelineBoard({ rows, canStage }: { rows: InboxRow[]; canStage: 
                     <p className="mt-1 truncate text-xs text-slate-500">{r.jobTitle}</p>
                     <div className="mt-2.5 flex items-center justify-between gap-2">
                       <RequirementsMeter met={r.met} total={r.total} compact />
-                      <InterviewBadge status={r.interviewStatus} />
+                      <NextChip owner={r.nextOwner} label={r.nextShort} />
                     </div>
                   </Link>
                 ))}
