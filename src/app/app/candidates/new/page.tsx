@@ -55,7 +55,7 @@ export default async function AddCandidatesPage() {
               <li>• <Link href="/app/integrations" className="link">ATS-Anbindung</Link> (Personio, Workday, SuccessFactors, Abacus, rexx, Recruitee)</li>
               <li>• <Link href={`/careers/${ctx.org.slug}`} className="link" target="_blank">Karriereseite</Link> mit Bewerbungsformular</li>
               <li>• <Link href="/app/integrations#api" className="link">REST-API</Link> für Jobportale und eigene Quellen</li>
-              <li>• E-Mail-Weiterleitung: jobs+{ctx.org.slug}@inbound.hirely.app</li>
+              <li>• E-Mail-Weiterleitung: jobs+{ctx.org.slug}@inbound.recruit24.ch</li>
             </ul>
           </div>
         </Card>

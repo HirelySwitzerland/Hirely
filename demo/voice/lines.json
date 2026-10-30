@@ -1,10 +1,10 @@
 {
   "lines": [
     {
-      "id": "03e90b5e8ffc8d",
+      "id": "1300441799b74d",
       "speaker": "ai",
-      "text": "Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
-      "say": "Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "text": "Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "say": "Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
       "for": [
         "aufnahme:roman-egli"
       ]
@@ -228,10 +228,10 @@
       ]
     },
     {
-      "id": "08665b9f50ac8d",
+      "id": "09d687cec23f79",
       "speaker": "ai",
-      "text": "Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
-      "say": "Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "text": "Grüezi Max Muster, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "say": "Grüezi Max Muster, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
       "for": [
         "live-demo"
       ]

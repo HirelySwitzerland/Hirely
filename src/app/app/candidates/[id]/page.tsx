@@ -116,7 +116,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
       {tab === "overview" && (
         <div className="grid gap-5 xl:grid-cols-3">
           <div className="space-y-5 xl:col-span-2">
-            {app.knockoutFailed && <Alert tone="warning" title="Eine Ausschlussfrage wurde unerwartet beantwortet">Hirely hat nicht abgesagt. Bitte prüfen Sie die Antworten unten und entscheiden Sie selbst.</Alert>}
+            {app.knockoutFailed && <Alert tone="warning" title="Eine Ausschlussfrage wurde unerwartet beantwortet">Recruit24 hat nicht abgesagt. Bitte prüfen Sie die Antworten unten und entscheiden Sie selbst.</Alert>}
             {app.meetsMinimum === false && !app.knockoutFailed && <Alert tone="warning" title="Nicht alle Muss-Kriterien sind belegt">Mindestens ein Muss-Kriterium ist aufgrund eines klaren Belegs „Nicht erfüllt“. Prüfen Sie die Belege – Sie können jede Bewertung anpassen.</Alert>}
             {app.screeningStatus === "FAILED" && (
               <Alert tone="error" title="Der Lebenslauf konnte nicht ausgewertet werden" action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Erneut auswerten</ActionButton>}>
@@ -300,7 +300,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                 </ol>
               </Card>
               <Card>
-                <CardHeader title="Skills & Sprachen" description="Bestätigt = im CV genannt · Abgeleitet = von Hirely erschlossen" />
+                <CardHeader title="Skills & Sprachen" description="Bestätigt = im CV genannt · Abgeleitet = von Recruit24 erschlossen" />
                 <div className="space-y-4 p-5">
                   <div className="flex flex-wrap gap-1.5">
                     {(profile.skills ?? []).map((s) => <Badge key={s.value} tone="slate">{s.value}</Badge>)}
@@ -322,7 +322,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
             </div>
         <div className="grid gap-5 xl:grid-cols-5">
           <Card className="xl:col-span-2">
-            <CardHeader title="Erkannte Angaben" description="Von Hirely aus dem CV gelesen" action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Neu auswerten</ActionButton>} />
+            <CardHeader title="Erkannte Angaben" description="Von Recruit24 aus dem CV gelesen" action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Neu auswerten</ActionButton>} />
             <div className="space-y-4 p-5 text-sm">
               {warnings.map((w) => <Alert key={w} tone="warning">{w}</Alert>)}
               <dl className="space-y-2">
@@ -340,7 +340,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                   {![...(profile.certifications ?? []), ...(profile.licenses ?? [])].length && <li className="text-slate-400">Keine gefunden</li>}
                 </ul>
               </div>
-              <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500"><strong className="text-slate-700">Bestätigt</strong> = wörtlich im CV. <strong className="text-slate-700">Abgeleitet</strong> = von Hirely erschlossen (z. B. Jahre aus Daten, Region aus PLZ). Ableitungen werden nie als Fakten dargestellt.</p>
+              <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500"><strong className="text-slate-700">Bestätigt</strong> = wörtlich im CV. <strong className="text-slate-700">Abgeleitet</strong> = von Recruit24 erschlossen (z. B. Jahre aus Daten, Region aus PLZ). Ableitungen werden nie als Fakten dargestellt.</p>
             </div>
           </Card>
           <Card className="xl:col-span-3">
@@ -375,7 +375,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                         <ActionButton action={retryInterview} fields={{ interviewId: iv.id, mode: "browser" }}>Browser-Link senden</ActionButton>
                       </>
                     )}>
-                    {iv.error ?? "Keine Details."} {iv.status === "NO_ANSWER" && iv.attempts < 3 && "Hirely versucht es automatisch erneut (max. 3 Versuche) und hat einen Link zum Verschieben gesendet."}
+                    {iv.error ?? "Keine Details."} {iv.status === "NO_ANSWER" && iv.attempts < 3 && "Recruit24 versucht es automatisch erneut (max. 3 Versuche) und hat einen Link zum Verschieben gesendet."}
                   </Alert>
                 </div>
               )}
@@ -422,7 +422,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                         <div key={s.id} className={cn("flex gap-2.5", s.speaker === "CANDIDATE" && "flex-row-reverse")}>
                           <span className={cn("mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full", s.speaker === "AI" ? "bg-brand-50 text-brand-600" : "bg-slate-100 text-slate-600")}>{s.speaker === "AI" ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}</span>
                           <div className={cn("max-w-[80%]", s.speaker === "CANDIDATE" && "text-right")}>
-                            <p className="mb-0.5 text-[11px] text-slate-400">{s.speaker === "AI" ? "Hirely KI" : c.firstName} · {fmtDuration(Math.round(s.offsetMs / 1000)) === "—" ? "0:00" : fmtDuration(Math.round(s.offsetMs / 1000))}</p>
+                            <p className="mb-0.5 text-[11px] text-slate-400">{s.speaker === "AI" ? "Recruit24 KI" : c.firstName} · {fmtDuration(Math.round(s.offsetMs / 1000)) === "—" ? "0:00" : fmtDuration(Math.round(s.offsetMs / 1000))}</p>
                             <p className={cn("inline-block rounded-2xl px-3.5 py-2 text-left text-[13.5px] leading-relaxed", s.speaker === "AI" ? "rounded-tl-md bg-slate-50 text-ink" : "rounded-tr-md bg-brand-600 text-white")}>{s.text}</p>
                           </div>
                         </div>
@@ -469,7 +469,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                   <span className={cn("mt-1.5 h-2 w-2 shrink-0 rounded-full", h.actorType === "AI" ? "bg-brand-500" : h.actorType === "USER" ? "bg-ink" : "bg-slate-300")} />
                   <div>
                     <p className="text-ink">{h.fromStage ? `${STAGE_LABEL[h.fromStage]} → ` : ""}<strong className="font-medium">{STAGE_LABEL[h.toStage]}</strong></p>
-                    <p className="text-xs text-slate-500">{fmtDateTime(h.createdAt)} · {h.actorType === "AI" ? "Hirely KI" : h.actorType === "USER" ? members.find((m) => m.userId === h.actorId)?.user.name ?? "Benutzer/in" : h.actorType === "SYSTEM" ? "System" : h.actorType === "CANDIDATE" ? "Kandidat/in" : h.actorType.toLowerCase()}{h.reason ? ` · ${h.reason}` : ""}</p>
+                    <p className="text-xs text-slate-500">{fmtDateTime(h.createdAt)} · {h.actorType === "AI" ? "Recruit24 KI" : h.actorType === "USER" ? members.find((m) => m.userId === h.actorId)?.user.name ?? "Benutzer/in" : h.actorType === "SYSTEM" ? "System" : h.actorType === "CANDIDATE" ? "Kandidat/in" : h.actorType.toLowerCase()}{h.reason ? ` · ${h.reason}` : ""}</p>
                   </div>
                 </li>
               ))}

@@ -28,10 +28,10 @@ const SOLUTION = [
 ];
 
 const STEPS = [
-  { t: "Stelle erfassen", d: "Ein paar Stichworte genügen – Hirely schreibt ein professionelles Inserat und schlägt Anforderungen und Fragen vor." },
+  { t: "Stelle erfassen", d: "Ein paar Stichworte genügen – Recruit24 schreibt ein professionelles Inserat und schlägt Anforderungen und Fragen vor." },
   { t: "Bewerbungen kommen rein", d: "Aus ATS, Karriereseite, E-Mail, CSV oder API. jobs.ch, LinkedIn und Indeed laufen über Ihr ATS." },
-  { t: "Hirely prüft", d: "Lebensläufe werden ausgewertet, Fakten von Ableitungen getrennt und jede Anforderung mit Belegen geprüft." },
-  { t: "Hirely meldet sich", d: "Passende Kandidierende erhalten eine freundliche Einladung zu einem kurzen Vorabgespräch – inklusive Erinnerungen." },
+  { t: "Recruit24 prüft", d: "Lebensläufe werden ausgewertet, Fakten von Ableitungen getrennt und jede Anforderung mit Belegen geprüft." },
+  { t: "Recruit24 meldet sich", d: "Passende Kandidierende erhalten eine freundliche Einladung zu einem kurzen Vorabgespräch – inklusive Erinnerungen." },
   { t: "KI-Interview", d: "Per Telefon, im Browser oder per Video. Ihre Fragen, Ihre Nachfragen, Ihre Ausschlusskriterien." },
   { t: "Klares Kandidatenprofil", d: "Transkript, Zusammenfassung, Belege, Verfügbarkeit und Lohnvorstellung an einem Ort." },
   { t: "Persönliches Gespräch", d: "Klick auf „Zum Gespräch einladen“ – die Person bucht einen Termin, der Kalendereintrag entsteht automatisch." },
@@ -64,7 +64,7 @@ export default function LandingPage() {
             Ihr KI-Mitarbeiter fürs Recruiting.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Hirely übernimmt die Routinearbeit im Recruiting – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung. So kann sich Ihr HR-Team auf Menschen konzentrieren statt auf Papierkram.
+            Recruit24 übernimmt die Routinearbeit im Recruiting – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung. So kann sich Ihr HR-Team auf Menschen konzentrieren statt auf Papierkram.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href="/register" size="lg">
@@ -107,8 +107,8 @@ export default function LandingPage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold text-brand-600">Die Lösung</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Hirely arbeitet wie ein digitaler Recruiting-Mitarbeiter.</h2>
-          <p className="mt-4 text-slate-600">Hirely arbeitet mit Ihrem HR-Team, folgt Ihrem Prozess und übergibt passende Kandidierende – jeder Schritt dokumentiert, jede Empfehlung begründet.</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Recruit24 arbeitet wie ein digitaler Recruiting-Mitarbeiter.</h2>
+          <p className="mt-4 text-slate-600">Recruit24 arbeitet mit Ihrem HR-Team, folgt Ihrem Prozess und übergibt passende Kandidierende – jeder Schritt dokumentiert, jede Empfehlung begründet.</p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SOLUTION.map(({ i: Icon, t, d }) => (
@@ -139,7 +139,7 @@ export default function LandingPage() {
             <li className="rounded-xl border border-dashed border-brand-300 bg-brand-50/50 p-5">
               <UserCheck className="h-5 w-5 text-brand-600" />
               <p className="mt-3 font-semibold text-ink">Sie entscheiden.</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">Hirely trifft nie den Anstellungsentscheid. Es bereitet ihn vor – nachvollziehbar.</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">Recruit24 trifft nie den Anstellungsentscheid. Es bereitet ihn vor – nachvollziehbar.</p>
             </li>
           </ol>
         </div>
@@ -171,7 +171,7 @@ export default function LandingPage() {
             <p className="text-sm font-semibold text-brand-300">Nachvollziehbar von Grund auf</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight">Keine Blackbox. Kein „Die KI sagt, das ist die beste Person“.</h2>
             <p className="mt-4 text-slate-300">
-              Hirely zeigt, was es gefunden hat und wo: <span className="text-white">„Diese Person erfüllt 8 von 10 Anforderungen. Hier sind die Belege.“</span> Jede Aussage verweist auf die Stelle im CV oder die Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
+              Recruit24 zeigt, was es gefunden hat und wo: <span className="text-white">„Diese Person erfüllt 8 von 10 Anforderungen. Hier sind die Belege.“</span> Jede Aussage verweist auf die Stelle im CV oder die Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
             </p>
           </div>
           <div className="rounded-xl bg-white p-5 text-ink shadow-pop">
@@ -203,7 +203,7 @@ export default function LandingPage() {
             <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-ink">Vertrauenswürdig genug für eine Schweizer HR-Abteilung.</h2>
           </div>
           {[
-            { i: Scale, t: "Menschen entscheiden", d: "Die KI bereitet vor, Menschen entscheiden. Hirely kann niemandem selbst absagen oder jemanden einstellen." },
+            { i: Scale, t: "Menschen entscheiden", d: "Die KI bereitet vor, Menschen entscheiden. Recruit24 kann niemandem selbst absagen oder jemanden einstellen." },
             { i: ShieldCheck, t: "revDSG & DSGVO", d: "Einwilligungen, Aufbewahrungsfristen, Löschung und Export auf Anfrage, lückenloses Protokoll." },
             { i: Lock, t: "Sicherheit", d: "Verschlüsselte Speicherung und Übertragung, strikte Mandantentrennung, Rollenrechte, 2FA und signierte Webhooks." },
             { i: CheckCircle2, t: "Fair & transparent", d: "Kandidierende wissen immer, dass sie mit einer KI sprechen. Keine geschützten Merkmale, keine Analyse des Aussehens." },
@@ -259,7 +259,7 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
         <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-brand-50 to-white px-8 py-14 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-ink">Hirely erledigt die Routinearbeit im Recruiting.<br className="hidden sm:block" /> Die wichtigen Entscheide treffen Menschen.</h2>
+          <h2 className="text-3xl font-semibold tracking-tight text-ink">Recruit24 erledigt die Routinearbeit im Recruiting.<br className="hidden sm:block" /> Die wichtigen Entscheide treffen Menschen.</h2>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href="/register" size="lg">Kostenlos starten</LinkButton>
             <LinkButton href="/demo" size="lg" variant="secondary">Demo vereinbaren</LinkButton>

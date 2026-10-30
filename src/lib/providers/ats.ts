@@ -8,7 +8,7 @@ import { randomPersonaApplication } from "@/lib/demo/personas";
  *                     ↓
  *                    ATS  (Personio, Workday, SuccessFactors, Abacus, rexx, Recruitee)
  *                     ↓   REST polling + signed webhooks
- *                  Hirely → AI screening → AI interview → recruiter
+ *                  Recruit24 → AI screening → AI interview → recruiter
  *                     ↑   status write-back
  *
  * Each adapter normalizes the vendor payload into `NormalizedApplication`.
@@ -166,7 +166,7 @@ export const ATS_ADAPTERS: Record<string, AtsAdapter> = {
         email: p.contactEmail, phone: p.cellPhone, location: p.city, appliedAt: new Date(p.appliedDate ?? Date.now()), sourceDetail: p.source ?? "SuccessFactors",
       };
     },
-    async pushStatus(c) { return isDemo(c) ? { ok: true } : { ok: false, error: "Map Hirely stages to SuccessFactors application statuses first." }; },
+    async pushStatus(c) { return isDemo(c) ? { ok: true } : { ok: false, error: "Map Recruit24 stages to SuccessFactors application statuses first." }; },
   },
   abacus: {
     id: "abacus",

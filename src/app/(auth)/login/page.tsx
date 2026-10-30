@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight text-ink">Willkommen zurück</h1>
-      <p className="mt-1.5 text-sm text-slate-500">Melden Sie sich bei Hirely an.</p>
+      <p className="mt-1.5 text-sm text-slate-500">Melden Sie sich bei Recruit24 an.</p>
       {sp.reset && <Alert tone="success" className="mt-5">Passwort geändert. Bitte melden Sie sich an.</Alert>}
       <ActionForm action={login} className="mt-6 space-y-4">
         <input type="hidden" name="next" value={sp.next ?? ""} />
@@ -27,11 +27,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <SubmitButton className="w-full" size="lg" pendingText="Anmeldung…">Anmelden</SubmitButton>
       </ActionForm>
       <p className="mt-6 text-center text-sm text-slate-500">
-        Neu bei Hirely? <Link href="/register" className="link">Konto erstellen</Link>
+        Neu bei Recruit24? <Link href="/register" className="link">Konto erstellen</Link>
       </p>
       <div className="mt-8 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-600">
         <p className="font-medium text-ink">Demo-Zugang</p>
-        <p className="mt-1">demo@hirely.app · Hirely-Demo-2026 (Inhaber/in). Weitere Rollen: laura.frei@, daniel.huber@, thomas.brunner@, martin.roth@helvetic-engineering.ch</p>
+        <p className="mt-1">demo@recruit24.ch · Recruit24-Demo-2026 (Inhaber/in). Weitere Rollen: laura.frei@, daniel.huber@, thomas.brunner@, martin.roth@helvetic-engineering.ch</p>
       </div>
     </div>
   );

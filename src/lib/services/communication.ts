@@ -180,7 +180,7 @@ export async function sendMessage(input: SendInput): Promise<SendOutcome> {
 export async function deliver(messageId: string, actor: Actor = { type: "SYSTEM" }): Promise<SendOutcome> {
   const msg = await db.message.findUniqueOrThrow({ where: { id: messageId } });
   if (msg.channel === "PORTAL" || msg.channel === "PHONE") {
-    await db.message.update({ where: { id: msg.id }, data: { status: "DELIVERED", sentAt: new Date(), provider: "hirely" } });
+    await db.message.update({ where: { id: msg.id }, data: { status: "DELIVERED", sentAt: new Date(), provider: "recruit24" } });
     return { ok: true, messageId };
   }
   if (msg.channel === "SMS" || msg.channel === "WHATSAPP") {
@@ -206,7 +206,7 @@ export async function deliver(messageId: string, actor: Actor = { type: "SYSTEM"
   await notify(msg.orgId, {
     type: "message_failed",
     title: `${msg.channel === "EMAIL" ? "E-Mail" : msg.channel} an ${msg.to} fehlgeschlagen`,
-    body: `${res.error}${res.retryable ? " – Hirely versucht es automatisch erneut." : " – bitte Empfänger prüfen und erneut senden."}`,
+    body: `${res.error}${res.retryable ? " – Recruit24 versucht es automatisch erneut." : " – bitte Empfänger prüfen und erneut senden."}`,
     link: msg.applicationId ? `/app/candidates/${msg.applicationId}?tab=messages` : "/app/communication",
     severity: "error",
   });

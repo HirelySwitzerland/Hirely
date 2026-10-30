@@ -2,7 +2,7 @@
   "name": "hirely",
   "version": "1.0.0",
   "private": true,
-  "description": "Hirely — Your AI Recruiting Employee. Multi-tenant AI recruiting platform.",
+  "description": "Recruit24 — Your AI Recruiting Employee. Multi-tenant AI recruiting platform.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate && next build",

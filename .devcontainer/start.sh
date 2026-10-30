@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Starts Hirely in production mode and prints the link. Safe to run more than once.
+# Starts Recruit24 in production mode and prints the link. Safe to run more than once.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 PORT=3000
@@ -15,8 +15,8 @@ sed -i "s#^APP_URL=.*#APP_URL=\"${URL}\"#" .env
 banner() {
   echo
   echo "  ================================================================"
-  echo "   Hirely laeuft:  ${URL}/login"
-  echo "   Login: demo@hirely.app  /  Hirely-Demo-2026"
+  echo "   Recruit24 laeuft:  ${URL}/login"
+  echo "   Login: demo@recruit24.ch  /  Recruit24-Demo-2026"
   echo "   Frische Demo-Daten: in einem neuen Terminal  npm run db:seed"
   echo "  ================================================================"
   echo
@@ -26,7 +26,7 @@ if curl -s -o /dev/null "http://localhost:${PORT}/login"; then banner; exit 0; f
 
 # Rebuild only when the code changed since the last build (e.g. after git pull).
 if [ ! -f .next/BUILD_ID ] || [ -n "$(find src prisma public next.config.ts package.json -newer .next/BUILD_ID -print -quit 2>/dev/null)" ]; then
-  echo "Hirely wird gebaut ..."
+  echo "Recruit24 wird gebaut ..."
   npm run build || exit 1
 fi
 

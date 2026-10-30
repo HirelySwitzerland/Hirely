@@ -1,4 +1,4 @@
-// Hirely — multi-tenant data model.
+// Recruit24 — multi-tenant data model.
 // Every tenant-owned table carries `orgId`; all application queries are scoped
 // through `src/lib/tenant.ts` so no organization can read another's data.
 

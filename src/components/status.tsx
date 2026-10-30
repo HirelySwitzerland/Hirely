@@ -60,7 +60,7 @@ export function EvidenceBadge({ status }: { status: EvidenceStatus }) {
   );
 }
 
-/** "Meets X of Y" — the only aggregate Hirely shows. No opaque score. */
+/** "Meets X of Y" — the only aggregate Recruit24 shows. No opaque score. */
 export function RequirementsMeter({ met, total, mustMet, mustTotal, compact }: { met: number; total: number; mustMet?: number; mustTotal?: number; compact?: boolean }) {
   if (!total) return <span className="inline-flex items-center gap-1 text-xs text-slate-400"><CircleDashed className="h-3.5 w-3.5" />Ausstehend</span>;
   const pct = met / total;

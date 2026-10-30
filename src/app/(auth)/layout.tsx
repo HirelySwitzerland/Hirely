@@ -15,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="relative hidden overflow-hidden bg-night lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(122,104,230,0.35),transparent_55%)]" />
         <div className="relative flex h-full flex-col justify-center px-16">
-          <p className="text-sm font-medium text-brand-300">Hirely</p>
+          <p className="text-sm font-medium text-brand-300">Recruit24</p>
           <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-tight text-white">Ihr KI-Mitarbeiter fürs Recruiting.</h2>
           <ul className="mt-8 space-y-4 text-[15px] text-slate-300">
             {["Jede Bewerbung in Minuten ausgewertet", "Strukturierte KI-Interviews per Telefon, Browser oder Video", "Nachvollziehbare Belege für jede Anforderung", "Jeden Entscheid trifft ein Mensch"].map((x) => (

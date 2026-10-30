@@ -44,7 +44,7 @@ export default async function InterviewLanding({ params }: { params: Promise<{ t
             error={iv.status === "NO_ANSWER" || iv.status === "FAILED" ? iv.error : null}
           />
         )}
-        <p className="mt-8 text-center text-xs text-slate-400">{app.org.name} · Hirely · <a href={`/careers/${app.org.slug}/privacy`} className="hover:text-slate-600">{t("careers.privacy")}</a></p>
+        <p className="mt-8 text-center text-xs text-slate-400">{app.org.name} · Recruit24 · <a href={`/careers/${app.org.slug}/privacy`} className="hover:text-slate-600">{t("careers.privacy")}</a></p>
       </main>
     </div>
   );

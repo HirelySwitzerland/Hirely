@@ -1,6 +1,6 @@
-# Hirely — Your AI Recruiting Employee
+# Recruit24 — Your AI Recruiting Employee
 
-Hirely is a multi-tenant B2B SaaS platform that automates the repetitive parts of recruiting for SMEs and mid-sized companies in Switzerland and the DACH region — from incoming application to qualified candidate and a booked personal interview — while every hiring decision stays with a human.
+Recruit24 is a multi-tenant B2B SaaS platform that automates the repetitive parts of recruiting for SMEs and mid-sized companies in Switzerland and the DACH region — from incoming application to qualified candidate and a booked personal interview — while every hiring decision stays with a human.
 
 ```
 Job created → Applications arrive → CV analyzed → Candidate contacted → AI pre-screening
@@ -8,7 +8,7 @@ Job created → Applications arrive → CV analyzed → Candidate contacted → 
 → recruiter review → personal interview scheduled
 ```
 
-> **Hirely handles the repetitive recruiting work. Humans handle the important decisions.**
+> **Recruit24 handles the repetitive recruiting work. Humans handle the important decisions.**
 
 ---
 
@@ -30,11 +30,11 @@ Generate an encryption key with:
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
-### Demo accounts (password `Hirely-Demo-2026`)
+### Demo accounts (password `Recruit24-Demo-2026`)
 
 | Role | Email |
 | --- | --- |
-| Owner | `demo@hirely.app` |
+| Owner | `demo@recruit24.ch` |
 | Admin | `thomas.brunner@helvetic-engineering.ch` |
 | Recruiter | `laura.frei@helvetic-engineering.ch` |
 | Hiring manager (sees only CNC Operator & Production Technician) | `daniel.huber@helvetic-engineering.ch` |
@@ -55,7 +55,7 @@ Every email/SMS is recorded in **Automations → Outbox** (mock provider) so the
 
 ### Run in GitHub Codespaces (only a browser needed)
 
-On GitHub: **Code → Codespaces → Create codespace**. `.devcontainer/` starts Postgres, installs dependencies, loads the demo data, builds a production bundle and starts Hirely; the terminal prints the public URL (`https://<codespace>-3000.app.github.dev/login`). Reset the demo data with `npm run db:seed`, restart with `bash .devcontainer/start.sh`.
+On GitHub: **Code → Codespaces → Create codespace**. `.devcontainer/` starts Postgres, installs dependencies, loads the demo data, builds a production bundle and starts Recruit24; the terminal prints the public URL (`https://<codespace>-3000.app.github.dev/login`). Reset the demo data with `npm run db:seed`, restart with `bash .devcontainer/start.sh`.
 
 ### Demo voices and call recordings (ElevenLabs, no live AI needed)
 
@@ -71,7 +71,7 @@ Clips are matched by a hash of the sentence; lines without a clip fall back to t
 
 ### Live demo on Windows
 
-Double-click **`Hirely-Vorfuehrung.bat`**: it optionally resets the demo data, builds a production bundle (pages open instantly, no dev overlay) and starts Hirely on <http://localhost:3000>. A click-by-click German demo script is in [`demo/Vorfuehrung.md`](demo/Vorfuehrung.md), with a sample CV in `demo/Lebenslauf-Max-Muster.txt`. For day-to-day development keep using `Hirely-starten.bat` (`npm run dev`).
+Double-click **`Recruit24-Vorfuehrung.bat`**: it optionally resets the demo data, builds a production bundle (pages open instantly, no dev overlay) and starts Recruit24 on <http://localhost:3000>. A click-by-click German demo script is in [`demo/Vorfuehrung.md`](demo/Vorfuehrung.md), with a sample CV in `demo/Lebenslauf-Max-Muster.txt`. For day-to-day development keep using `Recruit24-starten.bat` (`npm run dev`).
 
 ---
 

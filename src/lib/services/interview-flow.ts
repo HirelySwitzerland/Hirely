@@ -286,7 +286,7 @@ export function extractStructured(state: FlowState) {
 
 const T = {
   de: {
-    welcome: "Grüezi {{candidate}}, hier ist der Hirely Recruiting-Assistent von {{company}}. Sie haben sich für die Stelle als {{position}} beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+    welcome: "Grüezi {{candidate}}, hier ist der Recruiting-Assistent von {{company}}. Sie haben sich für die Stelle als {{position}} beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
     consent: "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?",
     decline: "Kein Problem, vielen Dank. Wir melden uns per E-Mail mit einer Alternative bei Ihnen. Auf Wiederhören!",
     motivation: "Was interessiert Sie an der Stelle als {{position}}?",
@@ -301,7 +301,7 @@ const T = {
     leadership: "Sie haben bereits mehrjährige Erfahrung. Haben Sie in dieser Zeit auch Personen geführt oder angeleitet?",
   },
   en: {
-    welcome: "Hello {{candidate}}, this is the Hirely recruiting assistant for {{company}}. You applied for the position of {{position}}. I am an automated AI interview assistant — this conversation takes about 10 minutes, and any decision about next steps is always made by a person from our HR team.",
+    welcome: "Hello {{candidate}}, this is the recruiting assistant for {{company}}. You applied for the position of {{position}}. I am an automated AI interview assistant — this conversation takes about 10 minutes, and any decision about next steps is always made by a person from our HR team.",
     consent: "Do you agree that this conversation is recorded and transcribed so the HR team can review your answers?",
     decline: "No problem, thank you. We will contact you by email with an alternative. Goodbye!",
     motivation: "What interests you about the {{position}} position?",

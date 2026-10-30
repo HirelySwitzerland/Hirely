@@ -36,7 +36,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       </div>
       <Card>
         {jobs.length === 0 ? (
-          <EmptyState icon={<Briefcase className="h-5 w-5" />} title="Noch keine Stellen" description="Erstellen Sie Ihre erste Stelle – Hirely schreibt das Inserat und richtet das KI-Interview ein." action={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new" size="sm">Stelle erstellen</LinkButton>} />
+          <EmptyState icon={<Briefcase className="h-5 w-5" />} title="Noch keine Stellen" description="Erstellen Sie Ihre erste Stelle – Recruit24 schreibt das Inserat und richtet das KI-Interview ein." action={ctx.can("jobs.manage") && <LinkButton href="/app/jobs/new" size="sm">Stelle erstellen</LinkButton>} />
         ) : (
           <Table>
             <thead>

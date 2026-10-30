@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-/** Reloads the page data while Hirely is still working on an application: every 5 s for 3 minutes, then every 30 s up to 20 minutes. */
+/** Reloads the page data while Recruit24 is still working on an application: every 5 s for 3 minutes, then every 30 s up to 20 minutes. */
 export function AutoRefresh() {
   const router = useRouter();
   useEffect(() => {

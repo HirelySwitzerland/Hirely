@@ -2,7 +2,7 @@
  * Deterministic CV parser. Used directly by the mock provider and as a
  * validation/fallback layer for LLM-based extraction. Every extracted field is
  * tagged `confirmed` (explicitly stated in the document) or `inferred`
- * (derived by Hirely — e.g. total years, region). Inferences are never shown as facts.
+ * (derived by Recruit24 — e.g. total years, region). Inferences are never shown as facts.
  */
 
 export type FieldStatus = "confirmed" | "inferred";

@@ -4,8 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Hirely – Ihr KI-Recruiting-Mitarbeiter", template: "%s · Hirely" },
-  description: "Hirely übernimmt die repetitive Recruiting-Arbeit – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung –, damit sich Ihr HR-Team auf Menschen konzentrieren kann.",
+  title: { default: "Recruit24 – Ihr KI-Recruiting-Mitarbeiter", template: "%s · Recruit24" },
+  description: "Recruit24 übernimmt die repetitive Recruiting-Arbeit – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung –, damit sich Ihr HR-Team auf Menschen konzentrieren kann.",
   icons: { icon: "/favicon.svg" },
 };
 

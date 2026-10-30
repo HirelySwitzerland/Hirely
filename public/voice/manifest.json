@@ -1,10 +1,6 @@
 {
   "source": "ElevenLabs",
   "clips": {
-    "03e90b5e8ffc8d": {
-      "speaker": "ai",
-      "text": "Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team."
-    },
     "15cd0e37921aa1": {
       "speaker": "ai",
       "text": "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?"
@@ -96,10 +92,6 @@
     "08bb93d3107de2": {
       "speaker": "ai",
       "text": "Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!"
-    },
-    "08665b9f50ac8d": {
-      "speaker": "ai",
-      "text": "Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team."
     },
     "14032f5fff4bb2": {
       "speaker": "ai",

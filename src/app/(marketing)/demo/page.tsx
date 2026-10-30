@@ -10,7 +10,7 @@ export default function DemoPage() {
     <main className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2">
       <div>
         <p className="text-sm font-semibold text-brand-600">Demo vereinbaren</p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-ink">Erleben Sie Hirely mit Ihren eigenen Stellen.</h1>
+        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-ink">Erleben Sie Recruit24 mit Ihren eigenen Stellen.</h1>
         <p className="mt-4 text-slate-600">In 30 Minuten zeigen wir den ganzen Ablauf – von der Bewerbung über das KI-Interview bis zum gebuchten Gespräch – anhand einer Ihrer echten Stellen.</p>
         <ul className="mt-8 space-y-3 text-sm text-slate-700">
           {["Live-KI-Telefoninterview auf Deutsch oder Schweizerdeutsch", "Anbindung an Ihr ATS (Personio, Abacus, SuccessFactors, …)", "Datenschutz-Rundgang für Ihre Datenschutzberatung", "Preis passend zu Ihrem Recruiting-Volumen"].map((x) => (

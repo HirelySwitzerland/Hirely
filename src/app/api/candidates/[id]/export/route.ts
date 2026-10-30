@@ -12,6 +12,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   if (!c) return new NextResponse("Not found", { status: 404 });
   const data = await exportCandidateData(ctx.orgId, id, userActor(ctx.user));
   return new NextResponse(JSON.stringify(data, null, 2), {
-    headers: { "content-type": "application/json", "content-disposition": `attachment; filename="hirely-export-${c.lastName.toLowerCase()}-${id.slice(-6)}.json"`, "cache-control": "no-store" },
+    headers: { "content-type": "application/json", "content-disposition": `attachment; filename="recruit24-export-${c.lastName.toLowerCase()}-${id.slice(-6)}.json"`, "cache-control": "no-store" },
   });
 }

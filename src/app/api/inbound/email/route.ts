@@ -3,7 +3,7 @@ import { hmacSha256, safeEqual } from "@/lib/crypto";
 import { ingestApplication } from "@/lib/services/pipeline";
 
 /**
- * Inbound email (Postmark inbound JSON format). Address: jobs+<org-slug>@inbound.hirely.app.
+ * Inbound email (Postmark inbound JSON format). Address: jobs+<org-slug>@inbound.recruit24.ch.
  * The job is matched from the subject line; unmatched emails go to the org's most recent open job
  * and are flagged for review. Protected with INBOUND_EMAIL_SECRET (HMAC of the body).
  */

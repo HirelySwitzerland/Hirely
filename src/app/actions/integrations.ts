@@ -79,7 +79,7 @@ export async function syncNow(_: ActionState, fd: FormData): Promise<ActionState
     const integ = await db.integration.findFirst({ where: { id: str(fd, "id"), orgId: ctx.orgId, kind: "ATS" } });
     if (!integ) return fail("Nicht gefunden.");
     const r = await syncIntegration(integ.id, userActor(ctx.user));
-    return r.ok ? ok(r.message) : fail(`${r.error} ${r.retryable ? "Hirely versucht es automatisch erneut." : "Bitte Zugangsdaten prüfen."}`);
+    return r.ok ? ok(r.message) : fail(`${r.error} ${r.retryable ? "Recruit24 versucht es automatisch erneut." : "Bitte Zugangsdaten prüfen."}`);
   } catch (e) {
     return toActionError(e);
   }
@@ -89,7 +89,7 @@ export async function sendTestEmail(): Promise<ActionState> {
   try {
     const ctx = await requirePermission("integrations.manage");
     const p = getMessageProvider("EMAIL");
-    const r = await p.send({ to: ctx.user.email, subject: "Hirely Test-E-Mail", body: `Dies ist eine Test-E-Mail von Hirely (${p.name}).` });
+    const r = await p.send({ to: ctx.user.email, subject: "Recruit24 Test-E-Mail", body: `Dies ist eine Test-E-Mail von Recruit24 (${p.name}).` });
     return r.ok ? ok(`Test-E-Mail an ${ctx.user.email} gesendet (über ${p.name}).`) : fail(`E-Mail fehlgeschlagen: ${r.error}`);
   } catch (e) {
     return toActionError(e);

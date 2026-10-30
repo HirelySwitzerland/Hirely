@@ -150,7 +150,7 @@ export function AiConfigEditor({ jobId, initialReqs, initialQs, initialSettings 
       <input type="hidden" name="regenerateFlow" value={regenerate ? "1" : "0"} />
       <FormMessage state={state} />
       <div className="rounded-xl border border-brand-200 bg-brand-50/50 p-4 text-sm text-brand-900">
-        Hirely prüft nur die hier festgelegten Kriterien. Jede Anforderung erscheint als <strong>Erfüllt</strong>, <strong>Teilweise belegt</strong>, <strong>Nicht erfüllt</strong> oder <strong>Info fehlt</strong> – immer mit dem Zitat als Beleg. Es gibt keine versteckte Punktzahl.
+        Recruit24 prüft nur die hier festgelegten Kriterien. Jede Anforderung erscheint als <strong>Erfüllt</strong>, <strong>Teilweise belegt</strong>, <strong>Nicht erfüllt</strong> oder <strong>Info fehlt</strong> – immer mit dem Zitat als Beleg. Es gibt keine versteckte Punktzahl.
       </div>
       {reqSection("MUST")}
       {reqSection("NICE")}

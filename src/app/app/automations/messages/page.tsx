@@ -17,7 +17,7 @@ export default async function OutboxPage({ searchParams }: { searchParams: Promi
   const failed = await db.message.count({ where: { orgId: ctx.orgId, status: "FAILED" } });
   return (
     <div>
-      <PageHeader title="Automationen" description="Alle Nachrichten, die Hirely und Ihr Team an Kandidierende gesendet haben." />
+      <PageHeader title="Automationen" description="Alle Nachrichten, die Recruit24 und Ihr Team an Kandidierende gesendet haben." />
       <AutomationTabs active="messages" />
       <div className="mb-3 flex gap-2 text-[13px]">
         <Link href="/app/automations/messages" className={!sp.status ? "font-semibold text-ink" : "text-slate-500"}>Alle</Link>

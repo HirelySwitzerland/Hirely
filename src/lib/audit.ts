@@ -17,7 +17,7 @@ export async function audit(
         orgId,
         actorType: actor.type,
         actorId: actor.id ?? null,
-        actorName: actor.name ?? (actor.type === "AI" ? "Hirely AI" : actor.type === "SYSTEM" ? "System" : null),
+        actorName: actor.name ?? (actor.type === "AI" ? "Recruit24 KI" : actor.type === "SYSTEM" ? "System" : null),
         action,
         entityType: entity?.type,
         entityId: entity?.id,

@@ -1,4 +1,4 @@
-/* Demo data for Hirely: Helvetic Engineering AG (+ a second tenant to demonstrate isolation). */
+/* Demo data for Recruit24: Helvetic Engineering AG (+ a second tenant to demonstrate isolation). */
 import fs from "node:fs/promises";
 import path from "node:path";
 import { addDays, addMinutes, setHours, setMinutes, subDays } from "date-fns";
@@ -19,7 +19,7 @@ import { enqueue } from "../src/lib/queue";
 import { CANDIDATES, JOBS } from "./seed-data";
 import { getStorage } from "../src/lib/providers/storage";
 
-const PASSWORD = "Hirely-Demo-2026";
+const PASSWORD = "Recruit24-Demo-2026";
 const now = new Date();
 
 async function wipe() {
@@ -133,12 +133,12 @@ async function seedVideo(appId: string, orgId: string, lang: string, answers: st
 }
 
 async function main() {
-  console.log("Seeding Hirely demo data…");
+  console.log("Seeding Recruit24 demo data…");
   await wipe();
   const pw = await hashPassword(PASSWORD);
   const mk = (email: string, name: string, title: string, locale = "de") =>
     db.user.create({ data: { email, name, title, passwordHash: pw, emailVerifiedAt: subDays(now, 90), locale, lastLoginAt: subDays(now, 1) } });
-  const sandra = await mk("demo@hirely.app", "Sandra Keller", "Leiterin HR");
+  const sandra = await mk("demo@recruit24.ch", "Sandra Keller", "Leiterin HR");
   const thomas = await mk("thomas.brunner@helvetic-engineering.ch", "Thomas Brunner", "IT & HR-Systeme");
   const laura = await mk("laura.frei@helvetic-engineering.ch", "Laura Frei", "Senior Recruiter");
   const daniel = await mk("daniel.huber@helvetic-engineering.ch", "Daniel Huber", "Leiter Produktion");
@@ -205,7 +205,7 @@ async function main() {
     await db.invoice.create({
       data: {
         orgId: O, number: `HRL-${ps.getFullYear()}${String(ps.getMonth() + 1).padStart(2, "0")}-0142`, periodStart: ps, periodEnd: pe, status: "PAID", subtotalCents: sub, taxCents: tax, totalCents: sub + tax, issuedAt: pe, paidAt: addDays(pe, 2),
-        lines: [{ label: "Hirely Growth – monatlich", cents: 69000 }, ...(over ? [{ label: "Mehrverbrauch KI-Telefonminuten", cents: over }] : [])],
+        lines: [{ label: "Recruit24 Growth – monatlich", cents: 69000 }, ...(over ? [{ label: "Mehrverbrauch KI-Telefonminuten", cents: over }] : [])],
       },
     });
   }
@@ -293,7 +293,7 @@ async function main() {
     const D = { type: "USER" as const, id: daniel.id, name: daniel.name };
 
     if (["INVITED", "NO_ANSWER"].includes(cs.target)) {
-      await inviteToAiInterview(O, app.id, { type: "AI", name: "Hirely Automation" }, "EMAIL");
+      await inviteToAiInterview(O, app.id, { type: "AI", name: "Recruit24 Automation" }, "EMAIL");
       if (cs.target === "NO_ANSWER") {
         const iv = await ensurePrescreen(O, app.id);
         await db.interview.update({ where: { id: iv.id }, data: { status: "SCHEDULED", scheduledAt: subDays(now, 1) } });
@@ -397,7 +397,7 @@ async function main() {
     if (c > 7) await db.notification.update({ where: { id: n.id }, data: { readAt: now } });
   }
   await db.notification.createMany({
-    data: [sandra, laura, thomas].map((u) => ({ orgId: O, userId: u.id, type: "ats_sync_failed", title: "Personio: Synchronisation fehlgeschlagen", body: "Das ATS meldete HTTP 503. Hirely hat es automatisch erneut versucht und die nächste Synchronisation war erfolgreich – keine Bewerbung ging verloren.", link: "/app/integrations", severity: "warning", createdAt: subDays(now, 1.2), readAt: now })),
+    data: [sandra, laura, thomas].map((u) => ({ orgId: O, userId: u.id, type: "ats_sync_failed", title: "Personio: Synchronisation fehlgeschlagen", body: "Das ATS meldete HTTP 503. Recruit24 hat es automatisch erneut versucht und die nächste Synchronisation war erfolgreich – keine Bewerbung ging verloren.", link: "/app/integrations", severity: "warning", createdAt: subDays(now, 1.2), readAt: now })),
   });
 
   // Second tenant (isolation demo)
@@ -418,7 +418,7 @@ async function main() {
 
   const counts = { users: await db.user.count(), jobs: await db.job.count({ where: { orgId: O } }), candidates: await db.candidate.count({ where: { orgId: O } }), interviews: await db.interview.count({ where: { orgId: O } }) };
   console.log("Done.", counts);
-  console.log(`\nLogin: demo@hirely.app / ${PASSWORD}  (Owner)\nOther roles: laura.frei@… (Recruiter), daniel.huber@… (Hiring Manager), thomas.brunner@… (Admin), martin.roth@… (Viewer) — all @helvetic-engineering.ch, same password.\nSecond tenant: anna.weber@alpine-logistik.ch`);
+  console.log(`\nLogin: demo@recruit24.ch / ${PASSWORD}  (Owner)\nOther roles: laura.frei@… (Recruiter), daniel.huber@… (Hiring Manager), thomas.brunner@… (Admin), martin.roth@… (Viewer) — all @helvetic-engineering.ch, same password.\nSecond tenant: anna.weber@alpine-logistik.ch`);
 }
 
 main()

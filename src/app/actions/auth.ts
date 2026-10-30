@@ -36,7 +36,7 @@ async function sendVerificationEmail(userId: string) {
   const user = await db.user.findUniqueOrThrow({ where: { id: userId } });
   const token = await issueToken(user.id, "EMAIL_VERIFY", 48);
   const link = appUrl(`/verify-email/${token}`);
-  await sendSystemEmail(user.email, "Bitte bestätigen Sie Ihre E-Mail-Adresse", `Hallo ${user.name}\n\nBitte bestätigen Sie Ihre E-Mail-Adresse für Hirely:\n${link}\n\nDer Link ist 48 Stunden gültig.`);
+  await sendSystemEmail(user.email, "Bitte bestätigen Sie Ihre E-Mail-Adresse", `Hallo ${user.name}\n\nBitte bestätigen Sie Ihre E-Mail-Adresse für Recruit24:\n${link}\n\nDer Link ist 48 Stunden gültig.`);
   if (process.env.NODE_ENV !== "production") console.log(`[auth] verification link for ${user.email}: ${link}`);
   return link;
 }
@@ -131,7 +131,7 @@ export async function forgotPassword(_: ActionState, fd: FormData): Promise<Acti
     if (user) {
       const token = await issueToken(user.id, "PASSWORD_RESET", 1);
       devLink = appUrl(`/reset-password/${token}`);
-      await sendSystemEmail(user.email, "Hirely-Passwort zurücksetzen", `Hallo ${user.name}\n\nÜber diesen Link legen Sie ein neues Passwort fest (1 Stunde gültig):\n${devLink}\n\nFalls Sie das nicht angefordert haben, können Sie diese E-Mail ignorieren.`);
+      await sendSystemEmail(user.email, "Recruit24-Passwort zurücksetzen", `Hallo ${user.name}\n\nÜber diesen Link legen Sie ein neues Passwort fest (1 Stunde gültig):\n${devLink}\n\nFalls Sie das nicht angefordert haben, können Sie diese E-Mail ignorieren.`);
     }
     // Same response whether or not the account exists (no user enumeration).
     return ok("Falls es zu dieser E-Mail ein Konto gibt, haben wir einen Link zum Zurücksetzen gesendet.", isMockEmail() && devLink ? { data: { devLink } } : {});

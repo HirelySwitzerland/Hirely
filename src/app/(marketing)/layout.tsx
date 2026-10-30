@@ -6,7 +6,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
     <div className="bg-white">
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" aria-label="Hirely Startseite">
+          <Link href="/" aria-label="Recruit24 Startseite">
             <Logo />
           </Link>
           <nav className="hidden items-center gap-7 text-sm text-slate-600 md:flex">
@@ -50,7 +50,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             </ul>
           </div>
         </div>
-        <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-400">© {new Date().getFullYear()} Hirely. Alle Rechte vorbehalten.</div>
+        <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-400">© {new Date().getFullYear()} Recruit24. Alle Rechte vorbehalten.</div>
       </footer>
     </div>
   );

@@ -1,7 +1,7 @@
 /**
  * Calendar provider abstraction (Google Calendar, Microsoft 365 / Outlook).
  * OAuth tokens are stored encrypted on the Integration record. The mock
- * provider generates ICS-compatible events and relies on Hirely's own
+ * provider generates ICS-compatible events and relies on Recruit24's own
  * CalendarEvent table for busy-time checks.
  */
 export type CalendarEventInput = {
@@ -118,8 +118,8 @@ export function toIcs(ev: CalendarEventInput & { uid: string }): string {
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const esc = (s: string) => s.replace(/[,;\\]/g, (m) => "\\" + m).replace(/\n/g, "\\n");
   return [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Hirely//Scheduling//EN", "METHOD:REQUEST", "BEGIN:VEVENT",
-    `UID:${ev.uid}@hirely.app`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(ev.start)}`, `DTEND:${fmt(ev.end)}`,
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Recruit24//Scheduling//EN", "METHOD:REQUEST", "BEGIN:VEVENT",
+    `UID:${ev.uid}@recruit24.ch`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(ev.start)}`, `DTEND:${fmt(ev.end)}`,
     `SUMMARY:${esc(ev.title)}`, `DESCRIPTION:${esc(ev.description)}`, ev.location ? `LOCATION:${esc(ev.location)}` : "",
     ...ev.attendees.map((a) => `ATTENDEE;CN=${esc(a.name ?? a.email)};RSVP=TRUE:mailto:${a.email}`),
     "END:VEVENT", "END:VCALENDAR",

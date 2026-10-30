@@ -58,7 +58,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
     <div>
       <PageHeader
         title="Kandidierende"
-        description="Alle Bewerbungen an einem Ort – von Hirely geprüft und sortiert."
+        description="Alle Bewerbungen an einem Ort – von Recruit24 geprüft und sortiert."
         actions={
           <>
             <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
@@ -108,7 +108,7 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
           )}
         </Card>
       )}
-      <p className="mt-3 text-xs text-slate-500">„Anforderungen“ zeigt, wie viele der Stellenanforderungen belegt sind. Hirely bewertet Menschen nie mit einer undurchsichtigen Punktzahl.</p>
+      <p className="mt-3 text-xs text-slate-500">„Anforderungen“ zeigt, wie viele der Stellenanforderungen belegt sind. Recruit24 bewertet Menschen nie mit einer undurchsichtigen Punktzahl.</p>
     </div>
   );
 }

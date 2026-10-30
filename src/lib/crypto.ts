@@ -38,7 +38,7 @@ export function encryptBuffer(buf: Buffer): Buffer {
 }
 
 export function decryptBuffer(buf: Buffer): Buffer {
-  if (buf.subarray(0, 4).toString() !== "HRL1") throw new Error("Not an encrypted Hirely blob");
+  if (buf.subarray(0, 4).toString() !== "HRL1") throw new Error("Not an encrypted Recruit24 blob");
   const iv = buf.subarray(4, 16);
   const tag = buf.subarray(16, 32);
   const decipher = crypto.createDecipheriv("aes-256-gcm", key(), iv);

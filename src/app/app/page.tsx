@@ -39,8 +39,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">{greeting}, {firstName}</h1>
           <p className="mt-1 text-[15px] text-slate-500">
             {m.ready
-              ? <>Es {m.ready === 1 ? "wartet" : "warten"} <strong className="font-semibold text-ink">{m.ready} {m.ready === 1 ? "Person" : "Personen"}</strong> auf Ihre Entscheidung. Den Rest hat Hirely erledigt.</>
-              : "Alles erledigt – Hirely arbeitet im Hintergrund weiter."}
+              ? <>Es {m.ready === 1 ? "wartet" : "warten"} <strong className="font-semibold text-ink">{m.ready} {m.ready === 1 ? "Person" : "Personen"}</strong> auf Ihre Entscheidung. Den Rest hat Recruit24 erledigt.</>
+              : "Alles erledigt – Recruit24 arbeitet im Hintergrund weiter."}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -115,7 +115,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
           {attention.length > 0 && (
             <Card className="border-amber-200">
-              <CardHeader title="Braucht Ihre Hilfe" description="Diese Schritte konnte Hirely nicht automatisch abschliessen." />
+              <CardHeader title="Braucht Ihre Hilfe" description="Diese Schritte konnte Recruit24 nicht automatisch abschliessen." />
               <ul className="divide-y divide-slate-100">
                 {attention.map((a) => (
                   <li key={a.id}>

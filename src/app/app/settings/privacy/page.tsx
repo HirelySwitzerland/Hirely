@@ -57,7 +57,7 @@ export default async function PrivacySettings() {
             <li>• KI-Transparenzerklärung</li>
             <li>• Technische & organisatorische Massnahmen (TOM)</li>
           </ul>
-          <p className="mt-2 text-xs text-slate-500">Erhältlich bei Ihrer Ansprechperson bei Hirely; die Datenschutzerklärung für Bewerbende steht auf Ihrer Karriereseite.</p>
+          <p className="mt-2 text-xs text-slate-500">Erhältlich bei Ihrer Ansprechperson bei Recruit24; die Datenschutzerklärung für Bewerbende steht auf Ihrer Karriereseite.</p>
         </Card>
       </div>
       <Card>

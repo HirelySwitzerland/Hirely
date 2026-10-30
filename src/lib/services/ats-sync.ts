@@ -5,7 +5,7 @@ import { ATS_ADAPTERS, AtsError, type NormalizedApplication } from "@/lib/provid
 import { notify } from "./notifications";
 import { ingestApplication } from "./pipeline";
 
-/** Matches an incoming ATS application to a Hirely job by external id, then by title. */
+/** Matches an incoming ATS application to a Recruit24 job by external id, then by title. */
 async function matchJob(orgId: string, a: NormalizedApplication) {
   if (a.jobExternalId) {
     const j = await db.job.findFirst({ where: { orgId, externalId: a.jobExternalId } });
@@ -66,7 +66,7 @@ export async function syncIntegration(integrationId: string, actor: Actor = { ty
     await notify(integ.orgId, {
       type: "ats_sync_failed",
       title: `${adapter.label}: Synchronisation fehlgeschlagen`,
-      body: `${err.message} ${err.retryable ? "Hirely versucht es automatisch erneut." : "Bitte prüfen Sie die Zugangsdaten unter Integrationen."} Neue Bewerbungen aus diesem ATS werden gesammelt, bis die Verbindung wieder steht.`,
+      body: `${err.message} ${err.retryable ? "Recruit24 versucht es automatisch erneut." : "Bitte prüfen Sie die Zugangsdaten unter Integrationen."} Neue Bewerbungen aus diesem ATS werden gesammelt, bis die Verbindung wieder steht.`,
       link: "/app/integrations",
       severity: "error",
     });

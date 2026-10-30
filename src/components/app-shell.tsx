@@ -269,7 +269,7 @@ export function AssistantButton({ suggestions }: { suggestions: string[] }) {
     <>
       <button onClick={() => setOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
         <Sparkles className="h-4 w-4 text-brand-600" />
-        <span className="hidden sm:inline">Hirely fragen</span>
+        <span className="hidden sm:inline">Recruit24 fragen</span>
       </button>
       {open && (
         <div className="fixed inset-0 z-50">

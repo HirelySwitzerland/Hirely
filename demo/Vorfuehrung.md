@@ -1,36 +1,36 @@
-# Hirely live vorführen – Ablauf zum Mitnehmen
+# Recruit24 live vorführen – Ablauf zum Mitnehmen
 
 Dauer: etwa 25 Minuten. Alles läuft direkt in der App, ohne Präsentation.
 
-Zwei Wege, Hirely zu starten:
-- **Firmenlaptop, nichts installieren:** Hirely läuft bei GitHub in der Cloud (Codespaces), Sie brauchen nur den Browser. Siehe Abschnitt 0.
-- **Eigener Laptop mit Hirely auf Q:** Abschnitte 1 und 2.
+Zwei Wege, Recruit24 zu starten:
+- **Firmenlaptop, nichts installieren:** Recruit24 läuft bei GitHub in der Cloud (Codespaces), Sie brauchen nur den Browser. Siehe Abschnitt 0.
+- **Eigener Laptop mit Recruit24 auf Q:** Abschnitte 1 und 2.
 
 ---
 
-## 0. Firmenlaptop: Hirely in GitHub Codespaces
+## 0. Firmenlaptop: Recruit24 in GitHub Codespaces
 
 ### Einmalig einrichten (am besten 1–2 Tage vorher, ca. 15 Minuten)
 
 1. Auf dem Firmenlaptop in Chrome oder Edge bei **github.com** anmelden.
 2. Einstellungen: **github.com/settings/codespaces** öffnen, dort bei „Default idle timeout“ **120** Minuten eintragen und speichern.
-   Sonst stoppt Hirely nach 30 Minuten ohne Tippen, womöglich mitten in der Vorführung.
-3. **github.com/HirelySwitzerland/Hirely** öffnen.
+   Sonst stoppt Recruit24 nach 30 Minuten ohne Tippen, womöglich mitten in der Vorführung.
+3. **github.com/Recruit24Switzerland/Recruit24** öffnen.
    - Links oben im Branch-Menü **claude/determined-archimedes-tc8a82** wählen.
    - Grüner Knopf **Code** → Reiter **Codespaces** → **Create codespace on claude/…**
-4. Es öffnet sich ein Editor im Browser. Beim ersten Mal richtet sich Hirely selbst ein, das dauert **5–10 Minuten**. Einfach warten.
+4. Es öffnet sich ein Editor im Browser. Beim ersten Mal richtet sich Recruit24 selbst ein, das dauert **5–10 Minuten**. Einfach warten.
 5. Unten im Terminal erscheint:
-   `Hirely laeuft:  https://….app.github.dev/login`
+   `Recruit24 laeuft:  https://….app.github.dev/login`
    Diesen Link öffnen (Strg + Klick) und als **Lesezeichen speichern**.
 6. Den Beispiel-Lebenslauf auf den Laptop laden: auf GitHub die Datei `demo/Lebenslauf-Max-Muster.txt` öffnen und rechts oben auf **Download raw file** klicken.
 7. Einmal den ganzen Durchlauf (Teil B) üben. Testen Sie das unbedingt im Firmennetz. Falls die Firma GitHub-Seiten blockiert, nehmen Sie den Hotspot Ihres Handys.
 
 ### Am Tag, 15 Minuten vor dem Termin
 
-1. **github.com/codespaces** öffnen und den Hirely-Codespace anklicken. Er startet in etwa 1 Minute, Hirely startet automatisch mit.
+1. **github.com/codespaces** öffnen und den Recruit24-Codespace anklicken. Er startet in etwa 1 Minute, Recruit24 startet automatisch mit.
 2. Frische Demo-Daten: im Editor unten im Terminal-Bereich auf **+** (neues Terminal) klicken, `npm run db:seed` eintippen, Enter.
 3. Den Editor-Tab offen lassen (im Hintergrund).
-4. **Fenster A – HR:** das Lesezeichen öffnen, anmelden mit `demo@hirely.app` / `Hirely-Demo-2026`.
+4. **Fenster A – HR:** das Lesezeichen öffnen, anmelden mit `demo@recruit24.ch` / `Recruit24-Demo-2026`.
 5. **Fenster B – Bewerber:** ein zweites, normales Browserfenster mit derselben Adresse, aber am Ende `/careers/helvetic-engineering` statt `/login`.
    Hier kein privates Fenster nehmen, sonst verlangt GitHub dort eine Anmeldung.
 6. Weiter mit Punkt 5 und 6 von Abschnitt 2, dann Teil A.
@@ -42,7 +42,7 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
 ## 1. Am Vorabend (10 Minuten)
 
 1. Im Ordner `Q:\hirely` die neueste Version holen: `git pull`
-2. Doppelklick auf **Hirely-Vorfuehrung.bat**
+2. Doppelklick auf **Recruit24-Vorfuehrung.bat**
    - Frage „Demo-Daten zurücksetzen?“ mit **J** beantworten.
    - 1 bis 3 Minuten warten, bis sich der Browser öffnet.
 3. Einmal anmelden und den Durchlauf unten (Teil B) komplett üben.
@@ -50,10 +50,10 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
 
 ## 2. Am Tag, 15 Minuten vor dem Termin
 
-1. Doppelklick auf **Hirely-Vorfuehrung.bat**, wieder **J** (frische Daten), Fenster offen lassen.
+1. Doppelklick auf **Recruit24-Vorfuehrung.bat**, wieder **J** (frische Daten), Fenster offen lassen.
 2. **Fenster A – HR** (normales Chrome-Fenster):
    - `http://localhost:3000/login`
-   - E-Mail `demo@hirely.app`, Passwort `Hirely-Demo-2026`
+   - E-Mail `demo@recruit24.ch`, Passwort `Recruit24-Demo-2026`
    - Sie sind dann „Sandra Keller, Leiterin HR“ und dürfen alles sehen.
 3. **Fenster B – Bewerber** (privates Fenster: Strg + Umschalt + N):
    - `http://localhost:3000/careers/helvetic-engineering`
@@ -72,7 +72,7 @@ Fenster A, **Übersicht**:
 - Rechts: **Nächste Gespräche** und „**Braucht Ihre Hilfe**“ (z. B. jemand war am Telefon nicht erreichbar).
 - Runterscrollen: Grafiken (Bewerbungen pro Woche, Stufen pro Stelle, Quellen).
 
-Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Hirely erledigt.“
+Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Recruit24 erledigt.“
 
 ---
 
@@ -88,7 +88,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Hi
    - Lebenslauf: die Datei `Lebenslauf-Max-Muster.txt`
    - Beide Fragen mit **Ja**, die zwei Pflicht-Häkchen setzen
    - **Bewerbung absenden**
-3. Das Bewerberportal öffnet sich. Erklären: „Hirely prüft jetzt den Lebenslauf gegen die Anforderungen der Stelle.“
+3. Das Bewerberportal öffnet sich. Erklären: „Recruit24 prüft jetzt den Lebenslauf gegen die Anforderungen der Stelle.“
    - **Nichts anklicken, einfach warten.** Nach etwa 10 Sekunden erscheint von selbst **Vorabgespräch starten**.
 4. **Vorabgespräch starten** → **Im Browser durchführen**.
 5. Die KI stellt sich als KI vor **und spricht dabei mit natürlicher Stimme**. Das Lautsprecher-Symbol unten links schaltet den Ton ein und aus. Ist er aus, einmal draufklicken: Die letzte Frage wird dann nochmals gesprochen. Antworten eintippen und mit Enter senden:
@@ -151,7 +151,7 @@ Alles in Fenster A, Menü links von oben nach unten.
 
 **Hörprobe: so klingt ein Telefoninterview**
 - **Kandidierende** → **Roman Egli** → Reiter **KI-Interview** → oben **Aufnahme des Gesprächs** abspielen (2:44 Minuten).
-- Rechts läuft das Transkript mit, die Zeitangaben passen zur Aufnahme. Links stehen die wichtigsten Antworten, die Hirely daraus gezogen hat.
+- Rechts läuft das Transkript mit, die Zeitangaben passen zur Aufnahme. Links stehen die wichtigsten Antworten, die Recruit24 daraus gezogen hat.
 - Satz: „So klingt das Vorabgespräch am Telefon – rund um die Uhr, für jede Bewerbung. HR liest danach nur noch das Ergebnis.“
 - Ehrlich bleiben, falls gefragt: Die Aufnahme ist ein Beispiel, mit ElevenLabs-Stimmen erzeugt. Echte Anrufe laufen über eine Schweizer Telefonnummer (Twilio).
 
@@ -162,7 +162,7 @@ Alles in Fenster A, Menü links von oben nach unten.
 **Talent-Pool**
 - Suche in normaler Sprache, z. B. `Elektrotechnik Ostschweiz`. Es erscheinen nur Personen, die eingewilligt haben.
 
-**KI-Assistent** (oder oben rechts „Hirely fragen“)
+**KI-Assistent** (oder oben rechts „Recruit24 fragen“)
 - `Wer wartet auf einen Entscheid?`
 - `Fasse die drei neuesten Bewerbungen zusammen.`
 - `Schreibe eine E-Mail an Lukas Meier mit Einladung zum Gespräch.`
@@ -186,7 +186,7 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **KI-Einstellungen**: die Grundsätze der KI.
 
 **Handy-Ansicht**
-- F12 drücken, dann Strg + Umschalt + M und oben ein iPhone wählen. Hirely passt sich an, unten erscheint das Menü. Danach wieder F12.
+- F12 drücken, dann Strg + Umschalt + M und oben ein iPhone wählen. Recruit24 passt sich an, unten erscheint das Menü. Danach wieder F12.
 
 ---
 
@@ -200,9 +200,9 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Einladung zum Interview kommt nicht:** 20 Sekunden warten, dann F5. Sonst in Fenster A das Profil von Max öffnen und oben **KI-Interview** klicken.
 - **Max Muster klappt gar nicht:** Profil von **Roman Egli** (Servicetechniker/in, fertig geprüft) zeigen. Es enthält dieselben Inhalte.
 - **„Sie haben sich bereits auf diese Stelle beworben“:** Die E-Mail-Adresse wurde schon benutzt. Zurück zur Karriereseite und eine neue Adresse verwenden (`max.muster3@…`).
-- **Ganz neu starten:** Fenster schliessen und **Hirely-Vorfuehrung.bat** wieder starten, dabei **J** wählen.
+- **Ganz neu starten:** Fenster schliessen und **Recruit24-Vorfuehrung.bat** wieder starten, dabei **J** wählen.
 - **Codespaces – Seite zeigt einen GitHub-Fehler oder lädt nicht:** Der Codespace ist eingeschlafen. **github.com/codespaces** öffnen, Codespace anklicken, 1 Minute warten, dann F5.
-- **Codespaces – Hirely neu starten:** Im Terminal, in dem Hirely läuft, Strg + C drücken, dann `bash .devcontainer/start.sh` eintippen und Enter.
+- **Codespaces – Recruit24 neu starten:** Im Terminal, in dem Recruit24 läuft, Strg + C drücken, dann `bash .devcontainer/start.sh` eintippen und Enter.
 
 ## Ehrlich bleiben, falls gefragt
 

@@ -85,7 +85,7 @@ export function JobForm({ job, managers, requirementsText }: { job?: JobValues; 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-[15px] font-semibold text-ink">Stelleninserat</h2>
-            <p className="text-[13px] text-slate-500">Stichworte notieren – Hirely schreibt daraus ein professionelles Inserat. Sie prüfen es vor der Veröffentlichung.</p>
+            <p className="text-[13px] text-slate-500">Stichworte notieren – Recruit24 schreibt daraus ein professionelles Inserat. Sie prüfen es vor der Veröffentlichung.</p>
           </div>
           <Button type="button" variant="subtle" onClick={generate} disabled={pending}>
             {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}

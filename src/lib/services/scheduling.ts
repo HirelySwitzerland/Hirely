@@ -153,7 +153,7 @@ export async function bookSlot(token: string, startIso: string) {
   if (!res.ok) {
     await notify(link.orgId, {
       type: "integration_error",
-      title: "Kalender-Sync fehlgeschlagen – Gespräch in Hirely gespeichert",
+      title: "Kalender-Sync fehlgeschlagen – Gespräch in Recruit24 gespeichert",
       body: `${res.error} Der Termin mit ${app.candidate.firstName} ${app.candidate.lastName} ist bestätigt; bitte tragen Sie ihn selbst in den Kalender ein oder verbinden Sie den Kalender neu.`,
       link: "/app/integrations",
       severity: "error",

@@ -1,4 +1,4 @@
-# Hirely in GitHub Codespaces: the app container shares the network with Postgres,
+# Recruit24 in GitHub Codespaces: the app container shares the network with Postgres,
 # so the database is reachable at localhost:5432 (same as on a local machine).
 services:
   app:

@@ -55,7 +55,7 @@ export default async function OnboardingPage() {
             <input type="hidden" name="step" value={step} />
             {step === 1 && (
               <>
-                <Header title={`Willkommen${session.user.name ? `, ${session.user.name.split(" ")[0]}` : ""}! Erzählen Sie uns von Ihrer Firma.`} sub="Damit wird Ihr sicherer, abgetrennter Hirely-Bereich erstellt." />
+                <Header title={`Willkommen${session.user.name ? `, ${session.user.name.split(" ")[0]}` : ""}! Erzählen Sie uns von Ihrer Firma.`} sub="Damit wird Ihr sicherer, abgetrennter Recruit24-Bereich erstellt." />
                 <Field label="Firmenname"><Input name="name" required defaultValue={org?.name ?? ""} placeholder="z. B. Muster AG" autoFocus /></Field>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Branche">
@@ -98,11 +98,11 @@ export default async function OnboardingPage() {
             )}
             {step === 3 && (
               <>
-                <Header title="Ihre heutigen Systeme" sub="Sie können diese später unter Integrationen verbinden. Hirely funktioniert ab dem ersten Tag auch ohne." />
+                <Header title="Ihre heutigen Systeme" sub="Sie können diese später unter Integrationen verbinden. Recruit24 funktioniert ab dem ersten Tag auch ohne." />
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Bewerbermanagement-System (ATS)">
                     <Select name="ats" defaultValue={setup.ats ?? "none"}>
-                      <option value="none">Kein ATS – nur Hirely</option><option value="personio">Personio</option><option value="workday">Workday</option><option value="successfactors">SAP SuccessFactors</option><option value="abacus">Abacus</option><option value="rexx">rexx systems</option><option value="recruitee">Recruitee</option><option value="other">Anderes</option>
+                      <option value="none">Kein ATS – nur Recruit24</option><option value="personio">Personio</option><option value="workday">Workday</option><option value="successfactors">SAP SuccessFactors</option><option value="abacus">Abacus</option><option value="rexx">rexx systems</option><option value="recruitee">Recruitee</option><option value="other">Anderes</option>
                     </Select>
                   </Field>
                   <Field label="E-Mail-Anbieter">
@@ -117,7 +117,7 @@ export default async function OnboardingPage() {
                   </Field>
                   <Field label="Telefonie für KI-Anrufe">
                     <Select name="phone" defaultValue={setup.phone ?? "hirely"}>
-                      <option value="hirely">Schweizer Nummer von Hirely</option><option value="twilio">Eigenes Twilio-Konto</option><option value="none">Keine Telefoninterviews</option>
+                      <option value="hirely">Schweizer Nummer von Recruit24</option><option value="twilio">Eigenes Twilio-Konto</option><option value="none">Keine Telefoninterviews</option>
                     </Select>
                   </Field>
                 </div>
@@ -125,7 +125,7 @@ export default async function OnboardingPage() {
             )}
             {step === 4 && (
               <>
-                <Header title="Wie soll Hirely Ihre Firma vorstellen?" sub="Hirely nutzt dies in Inseraten, Nachrichten und bei der Vorstellung am Telefon." />
+                <Header title="Wie soll Recruit24 Ihre Firma vorstellen?" sub="Recruit24 nutzt dies in Inseraten, Nachrichten und bei der Vorstellung am Telefon." />
                 <Field label="Firmenbeschreibung"><Textarea name="description" rows={4} defaultValue={org?.description ?? ""} placeholder="Was macht Ihre Firma, wo, wie viele Mitarbeitende…" /></Field>
                 <Field label="Werte"><Textarea name="values" rows={3} defaultValue={org?.values ?? ""} placeholder="z. B. Präzision, Verlässlichkeit und Respekt." /></Field>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -140,7 +140,7 @@ export default async function OnboardingPage() {
             )}
             {step === 5 && (
               <>
-                <Header title="Ihre erste Stelle" sub="Notieren Sie Stichworte – Hirely macht daraus ein professionelles Inserat und ein KI-Interview. Sie prüfen alles vor der Veröffentlichung." />
+                <Header title="Ihre erste Stelle" sub="Notieren Sie Stichworte – Recruit24 macht daraus ein professionelles Inserat und ein KI-Interview. Sie prüfen alles vor der Veröffentlichung." />
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Stellentitel"><Input name="title" placeholder="Servicetechniker/in" autoFocus /></Field>
                   <Field label="Pensum"><Input name="workload" placeholder="80–100%" /></Field>

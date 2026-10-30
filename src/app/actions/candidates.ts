@@ -146,7 +146,7 @@ export async function callNowFromProfile(_: ActionState, fd: FormData): Promise<
     const iv = await ensurePrescreen(ctx.orgId, app.id);
     await resetInterviewForRetry(ctx.orgId, iv.id, userActor(ctx.user), "PHONE");
     await db.application.update({ where: { id: app.id }, data: { interviewStatus: "SCHEDULED", ...(["NEW", "AI_SCREENING"].includes(app.stage) ? { stage: "AI_INTERVIEW" } : {}) } });
-    return ok("Anruf gestartet – Hirely ruft jetzt an.");
+    return ok("Anruf gestartet – Recruit24 ruft jetzt an.");
   } catch (e) {
     return toActionError(e);
   }

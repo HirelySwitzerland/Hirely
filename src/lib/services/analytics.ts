@@ -190,6 +190,6 @@ export async function fullAnalytics(orgId: string, appWhere: Prisma.ApplicationW
     },
     savedBreakdown: saved.breakdown,
     perJob,
-    workload: [...workload, { name: "Hirely KI", assigned: 0, actions: aiActions }],
+    workload: [...workload, { name: "Recruit24 KI", assigned: 0, actions: aiActions }],
   };
 }

@@ -20,7 +20,7 @@ export default async function CareersLayout({ children, params }: { children: Re
       </header>
       {children}
       <footer className="border-t border-slate-100 py-8 text-center text-xs text-slate-400">
-        <Link href={`/careers/${org.slug}/privacy`} className="hover:text-slate-600">Datenschutz / Privacy</Link> · Recruiting mit <Link href="/" className="font-medium text-slate-500 hover:text-ink">Hirely</Link>
+        <Link href={`/careers/${org.slug}/privacy`} className="hover:text-slate-600">Datenschutz / Privacy</Link> · Recruiting mit <Link href="/" className="font-medium text-slate-500 hover:text-ink">Recruit24</Link>
       </footer>
     </div>
   );

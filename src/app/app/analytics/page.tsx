@@ -29,7 +29,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     <div>
       <PageHeader
         title="Auswertungen"
-        description="Wie Ihr Recruiting läuft – und wie viel Routinearbeit Hirely Ihrem Team abnimmt."
+        description="Wie Ihr Recruiting läuft – und wie viel Routinearbeit Recruit24 Ihrem Team abnimmt."
         actions={
           <form className="flex flex-wrap items-center gap-2" action="/app/analytics">
             <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
@@ -54,7 +54,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         <StatCard label="Ø Tage bis KI-Interview" value={k.avgTimeToInterview != null ? `${k.avgTimeToInterview}` : "—"} sub="ab Bewerbungseingang" />
         <StatCard label="KI-Prüfung abgeschlossen" value={`${k.screeningCompletion}%`} sub="aller Bewerbungen" />
         <StatCard label="Bewerbung → Einstellung" value={`${k.conversion}%`} sub={`KI-Interview → Gespräch: ${k.interviewConversion}%`} />
-        <StatCard label="Kosten pro Einstellung" value={k.costPerHire != null ? chf(k.costPerHire, { decimals: false }) : "—"} sub={`Hirely gesamt: ${chf(k.totalCostCents, { decimals: false })}`} />
+        <StatCard label="Kosten pro Einstellung" value={k.costPerHire != null ? chf(k.costPerHire, { decimals: false }) : "—"} sub={`Recruit24 gesamt: ${chf(k.totalCostCents, { decimals: false })}`} />
       </div>
       <div className="mt-5 grid gap-5 xl:grid-cols-3">
         <Card className="xl:col-span-2">

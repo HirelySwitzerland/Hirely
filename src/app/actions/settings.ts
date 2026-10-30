@@ -86,7 +86,7 @@ export async function inviteMember(_: ActionState, fd: FormData): Promise<Action
     const token = randomToken(24);
     await db.invitation.create({ data: { orgId: ctx.orgId, email, role, tokenHash: sha256(token), invitedById: ctx.user.id, expiresAt: addDays(new Date(), 7) } });
     const link = appUrl(`/invite/${token}`);
-    const r = await getMessageProvider("EMAIL").send({ to: email, subject: `${ctx.user.name} invited you to ${ctx.org.name} on Hirely`, body: `Hallo\n\n${ctx.user.name} lädt Sie ein, ${ctx.org.name} auf Hirely als ${ROLE_LABELS[role]} beizutreten.\n\nEinladung annehmen (7 Tage gültig):\n${link}` });
+    const r = await getMessageProvider("EMAIL").send({ to: email, subject: `${ctx.user.name} invited you to ${ctx.org.name} on Recruit24`, body: `Hallo\n\n${ctx.user.name} lädt Sie ein, ${ctx.org.name} auf Recruit24 als ${ROLE_LABELS[role]} beizutreten.\n\nEinladung annehmen (7 Tage gültig):\n${link}` });
     await audit(ctx.orgId, userActor(ctx.user), "user.invited", { type: "Invitation", label: email }, { role });
     if (!r.ok) return fail(`Einladung erstellt, aber die E-Mail ist fehlgeschlagen: ${r.error}. Teilen Sie diesen Link selbst: ${link}`);
     return ok(`Einladung an ${email} gesendet.`, getMessageProvider("EMAIL").name === "mock-email" ? { data: { devLink: link } } : {});
@@ -177,7 +177,7 @@ export async function changePlan(_: ActionState, fd: FormData): Promise<ActionSt
     await db.subscription.update({ where: { orgId: ctx.orgId }, data: { plan: plan.id, interval, status: sub.paymentMethod ? "ACTIVE" : sub.status, scheduledPlan: null, seats: plan.seats ?? 999, ...(sub.status === "ACTIVE" || sub.paymentMethod ? { currentPeriodStart: new Date(), currentPeriodEnd: periodEnd } : {}) } });
     if (sub.paymentMethod) {
       const monthly = (interval === "ANNUAL" ? plan.annualMonthlyCents : plan.monthlyCents) ?? 0;
-      await issueInvoice(ctx.orgId, [{ label: `Hirely ${plan.name} – ${interval === "ANNUAL" ? "jährlich (12 Monate)" : "monatlich"}`, cents: interval === "ANNUAL" ? monthly * 12 : monthly }], true);
+      await issueInvoice(ctx.orgId, [{ label: `Recruit24 ${plan.name} – ${interval === "ANNUAL" ? "jährlich (12 Monate)" : "monatlich"}`, cents: interval === "ANNUAL" ? monthly * 12 : monthly }], true);
     }
     await audit(ctx.orgId, userActor(ctx.user), "billing.plan_changed", { type: "Subscription", label: `${current.name} → ${plan.name}` }, { interval });
     return ok(sub.paymentMethod ? `Sie nutzen jetzt ${plan.name} (${interval === "ANNUAL" ? "jährlich" : "monatlich"}). Eine Rechnung wurde erstellt.` : `${plan.name} selected. Add a payment method to activate it after your trial.`);
@@ -204,7 +204,7 @@ export async function updatePaymentMethod(): Promise<ActionState> {
     const sub = await db.subscription.update({ where: { orgId: ctx.orgId }, data: { paymentMethod: { type: "card", brand: "Visa", last4: "4242", expMonth: 12, expYear: new Date().getFullYear() + 3, test: true }, status: "ACTIVE", trialEndsAt: null } });
     if (!(await db.invoice.count({ where: { orgId: ctx.orgId } }))) {
       const plan = planById(sub.plan);
-      await issueInvoice(ctx.orgId, [{ label: `Hirely ${plan.name} — monthly`, cents: plan.monthlyCents ?? 0 }], true);
+      await issueInvoice(ctx.orgId, [{ label: `Recruit24 ${plan.name} — monthly`, cents: plan.monthlyCents ?? 0 }], true);
     }
     await audit(ctx.orgId, userActor(ctx.user), "billing.payment_method", { type: "Subscription", label: "Test card ••4242" });
     return ok("Zahlungsart gespeichert (Testkarte – Test-Abrechnung). Ihr Abo ist aktiv.");

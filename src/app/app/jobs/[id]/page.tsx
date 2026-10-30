@@ -32,7 +32,7 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
       <div className="space-y-5 xl:col-span-2">
         {sp.welcome && (
           <Alert tone="success" title="Ihre erste Stelle ist bereit">
-            Hirely hat aus Ihren Stichworten Inserat und KI-Interview erstellt. Prüfen Sie die KI-Kriterien und veröffentlichen Sie dann – Bewerbungen werden automatisch geprüft.
+            Recruit24 hat aus Ihren Stichworten Inserat und KI-Interview erstellt. Prüfen Sie die KI-Kriterien und veröffentlichen Sie dann – Bewerbungen werden automatisch geprüft.
           </Alert>
         )}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -89,7 +89,7 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
           </ul>
         </Card>
         <Card>
-          <CardHeader title="KI-Kriterien" description="Was Hirely prüft – und nichts anderes" action={ctx.can("jobs.manage") && <Link href={`/app/jobs/${id}/ai`} className="link text-xs">Anpassen</Link>} />
+          <CardHeader title="KI-Kriterien" description="Was Recruit24 prüft – und nichts anderes" action={ctx.can("jobs.manage") && <Link href={`/app/jobs/${id}/ai`} className="link text-xs">Anpassen</Link>} />
           <div className="space-y-4 p-5">
             {(["MUST", "NICE"] as const).map((k) => (
               <div key={k}>

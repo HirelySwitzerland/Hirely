@@ -8,7 +8,7 @@ import { changeStage } from "./pipeline";
 import { STAGE_LABEL } from "@/lib/stages";
 
 export async function runAction(step: Extract<Step, { type: "action" }>, applicationId: string, orgId: string): Promise<string> {
-  const actor = { type: "AI" as const, name: "Hirely Automation" };
+  const actor = { type: "AI" as const, name: "Recruit24 Automation" };
   const app = await db.application.findUniqueOrThrow({ where: { id: applicationId }, include: { candidate: true, job: true } });
   const name = `${app.candidate.firstName} ${app.candidate.lastName}`;
   switch (step.action) {

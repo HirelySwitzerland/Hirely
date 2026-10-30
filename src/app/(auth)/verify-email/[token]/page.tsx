@@ -18,7 +18,7 @@ export default async function VerifyEmailPage({ params }: { params: Promise<{ to
       {valid ? <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-500" /> : <XCircle className="mx-auto h-10 w-10 text-rose-500" />}
       <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink">{valid ? "E-Mail bestätigt" : "Link ungültig oder abgelaufen"}</h1>
       <p className="mt-2 text-sm text-slate-500">{valid ? "Danke – Ihre E-Mail-Adresse ist bestätigt." : "Fordern Sie in Ihren Kontoeinstellungen eine neue Bestätigungs-E-Mail an."}</p>
-      <LinkButton href="/app" className="mt-6">Weiter zu Hirely</LinkButton>
+      <LinkButton href="/app" className="mt-6">Weiter zu Recruit24</LinkButton>
     </div>
   );
 }

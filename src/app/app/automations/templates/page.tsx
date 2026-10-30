@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Vorlagen" };
 
-const SAMPLE = { candidateName: "Lara Muster", candidateFirstName: "Lara", jobTitle: "Servicetechniker/in", recruiterName: "Laura Frei", portalLink: "https://app.hirely.ch/portal/…", interviewLink: "https://app.hirely.ch/interview/…", schedulingLink: "https://app.hirely.ch/schedule/…", videoLink: "https://app.hirely.ch/video/…", interviewDate: "Donnerstag, 2. Oktober 2026 um 10:00", location: "Industriestrasse 12, 8404 Winterthur" };
+const SAMPLE = { candidateName: "Lara Muster", candidateFirstName: "Lara", jobTitle: "Servicetechniker/in", recruiterName: "Laura Frei", portalLink: "https://app.recruit24.ch/portal/…", interviewLink: "https://app.recruit24.ch/interview/…", schedulingLink: "https://app.recruit24.ch/schedule/…", videoLink: "https://app.recruit24.ch/video/…", interviewDate: "Donnerstag, 2. Oktober 2026 um 10:00", location: "Industriestrasse 12, 8404 Winterthur" };
 
 export default async function TemplatesPage({ searchParams }: { searchParams: Promise<{ key?: string; channel?: string; lang?: string }> }) {
   const sp = await searchParams;
@@ -28,7 +28,7 @@ export default async function TemplatesPage({ searchParams }: { searchParams: Pr
   const q = (p: Record<string, string>) => `/app/automations/templates?${new URLSearchParams({ key, channel, lang, ...p })}`;
   return (
     <div>
-      <PageHeader title="Automationen" description="Jede Nachricht von Hirely ist anpassbar – pro Vorlage, Kanal und Sprache." />
+      <PageHeader title="Automationen" description="Jede Nachricht von Recruit24 ist anpassbar – pro Vorlage, Kanal und Sprache." />
       <AutomationTabs active="templates" />
       <div className="grid gap-5 lg:grid-cols-4">
         <Card className="h-fit p-2">
@@ -47,7 +47,7 @@ export default async function TemplatesPage({ searchParams }: { searchParams: Pr
           </div>
           <div className="grid gap-5 xl:grid-cols-2">
             <Card>
-              <CardHeader title={TEMPLATE_KEYS[key]} description={current ? "Für Ihre Firma angepasst" : fallback ? "Hirely-Standard – bearbeiten zum Anpassen" : "Für diesen Kanal / diese Sprache gibt es noch keinen Standard"} />
+              <CardHeader title={TEMPLATE_KEYS[key]} description={current ? "Für Ihre Firma angepasst" : fallback ? "Recruit24-Standard – bearbeiten zum Anpassen" : "Für diesen Kanal / diese Sprache gibt es noch keinen Standard"} />
               <ActionForm action={saveTemplate} className="space-y-4 p-5" key={`${key}-${channel}-${lang}`}>
                 <input type="hidden" name="key" value={key} />
                 <input type="hidden" name="channel" value={channel} />

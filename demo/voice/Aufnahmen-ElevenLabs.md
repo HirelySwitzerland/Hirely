@@ -1,10 +1,32 @@
-# Hirely – Aufnahmen für ElevenLabs
+# Recruit24 – Aufnahmen für ElevenLabs
 
 28 Sätze, zusammen rund 2990 Zeichen. Modell in ElevenLabs: **Eleven Multilingual v2**, Format **MP3**.
 
 Jede Datei genau so benennen wie in der Spalte „Dateiname“ und in den Ordner `Q:\hirely\public\voice\` legen.
 
 Den Text 1:1 kopieren (nichts ändern, sonst passt die Aufnahme nicht mehr zum Satz in der App).
+
+
+## Neu nach der Umbenennung zu Recruit24: nur 2 Sätze
+
+Die KI stellt sich jetzt ohne Markennamen vor („hier ist der Recruiting-Assistent von …“). Darum braucht es nur die zwei Begrüssungen neu, alle anderen Aufnahmen bleiben.
+
+So geht es (gleiche Stimme wie bisher, der Schlüssel steht schon in `.env`):
+
+```
+git pull
+npm run demo:voice -- elevenlabs
+git add public/voice
+git commit -m "Stimmen Recruit24"
+git push
+```
+
+Der Befehl erzeugt nur die zwei fehlenden Dateien. Von Hand (Weg B):
+
+| Dateiname | Text |
+|---|---|
+| `1300441799b74d.mp3` | Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
+| `09d687cec23f79.mp3` | Grüezi Max Muster, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
 
 
 ## Weg A – automatisch mit API-Schlüssel (empfohlen)
@@ -17,7 +39,7 @@ Den Text 1:1 kopieren (nichts ändern, sonst passt die Aufnahme nicht mehr zum S
 - **Voices** öffnen. Stimmen aus der Voice Library zuerst mit **Add to my voices** übernehmen.
 - Bei der Stimme auf **…** → **Copy voice ID**. Einmal für die KI-Stimme (z. B. Ihre geklonte Stimme), einmal für eine männliche Bewerber-Stimme.
 
-**3. Auf dem Laptop: Eingabeaufforderung im Hirely-Ordner öffnen**
+**3. Auf dem Laptop: Eingabeaufforderung im Recruit24-Ordner öffnen**
 - Im Explorer `Q:\hirely` öffnen, oben in die Adresszeile klicken, `cmd` tippen, Enter.
 
 **4. Neueste Version holen**
@@ -64,7 +86,7 @@ Stimme: **die Interviewerin oder Ihre eigene geklonte Stimme**
 
 | Nr. | Dateiname | Text |
 |---|---|---|
-| 1 | `03e90b5e8ffc8d.mp3` | Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
+| 1 | `1300441799b74d.mp3` | Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
 | 2 | `15cd0e37921aa1.mp3` | Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann? |
 | 3 | `0eef01597a4c6c.mp3` | Besitzen Sie den Führerausweis Kategorie B? |
 | 4 | `06bcf63201f08b.mp3` | Sind Sie bereit, Pikettdienst zu leisten? |
@@ -77,7 +99,7 @@ Stimme: **die Interviewerin oder Ihre eigene geklonte Stimme**
 | 11 | `0f6ea98d1aa7fd.mp3` | Was sind Ihre Lohnvorstellungen, brutto pro Jahr? |
 | 12 | `1c9d4d02a26bbf.mp3` | Gibt es noch etwas, das Sie uns mitteilen möchten, oder haben Sie Fragen zur Stelle? |
 | 13 | `08bb93d3107de2.mp3` | Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören! |
-| 14 | `08665b9f50ac8d.mp3` | Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
+| 14 | `09d687cec23f79.mp3` | Grüezi Max Muster, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
 | 15 | `14032f5fff4bb2.mp3` | Vielen Dank für das Gespräch, Max Muster. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören! |
 | 16 | `1843d14a2cfeae.mp3` | Können Sie das bitte etwas genauer ausführen, zum Beispiel mit einem konkreten Beispiel? |
 | 17 | `199b8621070e87.mp3` | Entschuldigung, ich habe Sie nicht verstanden. Könnten Sie das bitte wiederholen? |

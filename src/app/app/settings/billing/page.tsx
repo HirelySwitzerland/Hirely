@@ -27,7 +27,7 @@ export default async function BillingPage() {
   const estimate = base + overage.reduce((s, o) => s + o.cents, 0) + extraPositions * OVERAGE_CENTS.EXTRA_POSITIONS.cents;
   return (
     <div className="space-y-5">
-      {sub.status === "TRIALING" && <Alert tone="info" title={`Testphase – ${sub.trialEndsAt ? `endet am ${fmtDate(sub.trialEndsAt)}` : "aktiv"}`}>Hinterlegen Sie eine Zahlungsart, um Hirely nach der Testphase weiter zu nutzen. Alle Funktionen des Plans {plan.name} sind enthalten.</Alert>}
+      {sub.status === "TRIALING" && <Alert tone="info" title={`Testphase – ${sub.trialEndsAt ? `endet am ${fmtDate(sub.trialEndsAt)}` : "aktiv"}`}>Hinterlegen Sie eine Zahlungsart, um Recruit24 nach der Testphase weiter zu nutzen. Alle Funktionen des Plans {plan.name} sind enthalten.</Alert>}
       {sub.status === "PAST_DUE" && <Alert tone="error" title="Zahlung fehlgeschlagen">Bitte aktualisieren Sie Ihre Zahlungsart, damit KI-Anrufe und Automationen weiterlaufen.</Alert>}
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">

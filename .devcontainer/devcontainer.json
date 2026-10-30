@@ -1,5 +1,5 @@
 {
-  "name": "Hirely",
+  "name": "Recruit24",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -9,11 +9,11 @@
   "hostRequirements": { "cpus": 2, "memory": "8gb" },
   "forwardPorts": [3000],
   "portsAttributes": {
-    "3000": { "label": "Hirely", "onAutoForward": "notify" }
+    "3000": { "label": "Recruit24", "onAutoForward": "notify" }
   },
   // First start only: install, create the database, load demo data, build.
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  // Every time the codespace is opened: start Hirely (or show the link if it is already running).
+  // Every time the codespace is opened: start Recruit24 (or show the link if it is already running).
   "postAttachCommand": "bash .devcontainer/start.sh",
   "customizations": {
     "codespaces": { "openFiles": ["demo/Vorfuehrung.md"] }

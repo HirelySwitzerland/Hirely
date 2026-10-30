@@ -12,8 +12,8 @@ export default async function AiSettings() {
   const llm = getLLM();
   return (
     <div className="space-y-5">
-      <Alert tone="info" title="Die KI-Grundsätze von Hirely">
-        Die KI bereitet vor, Menschen entscheiden. Hirely prüft nur die stellenbezogenen Kriterien, die Sie festlegen, zeigt zu jedem den Beleg, trennt Fakten von Ableitungen, bewertet nie Persönlichkeit oder Aussehen, nutzt keine geschützten Merkmale und kann nie jemandem absagen oder jemanden einstellen.
+      <Alert tone="info" title="Die KI-Grundsätze von Recruit24">
+        Die KI bereitet vor, Menschen entscheiden. Recruit24 prüft nur die stellenbezogenen Kriterien, die Sie festlegen, zeigt zu jedem den Beleg, trennt Fakten von Ableitungen, bewertet nie Persönlichkeit oder Aussehen, nutzt keine geschützten Merkmale und kann nie jemandem absagen oder jemanden einstellen.
       </Alert>
       <Card>
         <CardHeader title="Standardverhalten der KI" description="Gilt für alle Stellen, sofern eine Stelle nichts anderes festlegt." />

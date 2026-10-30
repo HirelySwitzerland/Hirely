@@ -38,7 +38,7 @@ export default async function IntegrationsPage() {
   const stt = getTranscriber();
   return (
     <div>
-      <PageHeader title="Integrationen" description="Hirely arbeitet hinter Ihrem ATS: Jobportale (jobs.ch, LinkedIn, Indeed) und Ihre Karriereseite füllen das ATS – Hirely prüft, führt Interviews und schreibt den Status zurück." />
+      <PageHeader title="Integrationen" description="Recruit24 arbeitet hinter Ihrem ATS: Jobportale (jobs.ch, LinkedIn, Indeed) und Ihre Karriereseite füllen das ATS – Recruit24 prüft, führt Interviews und schreibt den Status zurück." />
 
       <Card className="mb-6 overflow-hidden">
         <div className="grid items-center gap-4 bg-slate-50/70 p-5 text-center text-[13px] md:grid-cols-7">
@@ -46,7 +46,7 @@ export default async function IntegrationsPage() {
           <span className="text-slate-400">→</span>
           <span className="rounded-lg bg-white px-3 py-2 font-medium text-ink ring-1 ring-slate-200">Ihr ATS</span>
           <span className="text-slate-400">⇄ API + Webhooks</span>
-          <span className="rounded-lg bg-brand-600 px-3 py-2 font-semibold text-white md:col-span-2">Hirely → KI-Prüfung → KI-Interview → HR-Team</span>
+          <span className="rounded-lg bg-brand-600 px-3 py-2 font-semibold text-white md:col-span-2">Recruit24 → KI-Prüfung → KI-Interview → HR-Team</span>
         </div>
       </Card>
 
@@ -202,7 +202,7 @@ curl -X POST ${appUrl("/api/v1/applications")} \\
   -d '{"jobId":"…","firstName":"Anna","lastName":"Keller",
        "email":"anna@example.ch","source":"Partner board",
        "consent":true,"cvText":"…"}'`}</pre>
-            <p className="text-slate-600">E-Mail-Eingang: Bewerbungen weiterleiten an <code className="rounded bg-slate-100 px-1">jobs+{ctx.org.slug}@inbound.hirely.app</code> (Postmark-Eingangs-Webhook → <code>/api/inbound/email</code>).</p>
+            <p className="text-slate-600">E-Mail-Eingang: Bewerbungen weiterleiten an <code className="rounded bg-slate-100 px-1">jobs+{ctx.org.slug}@inbound.recruit24.ch</code> (Postmark-Eingangs-Webhook → <code>/api/inbound/email</code>).</p>
           </div>
         </Card>
       </div>

@@ -42,7 +42,7 @@ export default async function JobLayout({ children, params }: { children: React.
               <ActionButton action={duplicateJob} fields={{ id: job.id }} variant="ghost">Duplizieren</ActionButton>
               {job.status !== "OPEN" && <ActionButton action={setJobStatus} fields={{ id: job.id, status: "OPEN" }} variant="primary">Veröffentlichen</ActionButton>}
               {job.status === "OPEN" && <ActionButton action={setJobStatus} fields={{ id: job.id, status: "PAUSED" }}>Pausieren</ActionButton>}
-              {job.status !== "CLOSED" && job.status !== "DRAFT" && <ActionButton action={setJobStatus} fields={{ id: job.id, status: "CLOSED" }} confirm="Stelle schliessen? Sie verschwindet von der Karriereseite. Die Kandidierenden bleiben in Hirely.">Schliessen</ActionButton>}
+              {job.status !== "CLOSED" && job.status !== "DRAFT" && <ActionButton action={setJobStatus} fields={{ id: job.id, status: "CLOSED" }} confirm="Stelle schliessen? Sie verschwindet von der Karriereseite. Die Kandidierenden bleiben in Recruit24.">Schliessen</ActionButton>}
             </>
           )}
         </div>

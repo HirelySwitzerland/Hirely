@@ -7,7 +7,7 @@ export default async function PrivacyNotice({ params }: { params: Promise<{ slug
   return (
     <main className="prose-hirely mx-auto max-w-3xl px-4 py-12 text-[15px]">
       <h2>Datenschutzhinweis für Bewerbende</h2>
-      <p><strong>{org.name}</strong> ist verantwortlich für die Bearbeitung Ihrer Bewerbungsdaten. Hirely bearbeitet die Daten im Auftrag von {org.name} (Datenhaltung in der Schweiz).</p>
+      <p><strong>{org.name}</strong> ist verantwortlich für die Bearbeitung Ihrer Bewerbungsdaten. Recruit24 bearbeitet die Daten im Auftrag von {org.name} (Datenhaltung in der Schweiz).</p>
       <h3>Welche Daten wir bearbeiten</h3>
       <ul>
         <li>Ihre Kontaktdaten, Ihren Lebenslauf und Ihre Antworten.</li>

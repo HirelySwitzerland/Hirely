@@ -114,7 +114,7 @@ export async function resetTemplate(_: ActionState, fd: FormData): Promise<Actio
   try {
     const ctx = await requirePermission("templates.manage");
     await db.messageTemplate.deleteMany({ where: { orgId: ctx.orgId, key: str(fd, "key"), channel: str(fd, "channel") as "EMAIL", language: str(fd, "language") } });
-    return ok(DEFAULT_TEMPLATES[str(fd, "key")] ? "Auf Hirely-Standard zurückgesetzt." : "Template removed.");
+    return ok(DEFAULT_TEMPLATES[str(fd, "key")] ? "Auf Recruit24-Standard zurückgesetzt." : "Template removed.");
   } catch (e) {
     return toActionError(e);
   }

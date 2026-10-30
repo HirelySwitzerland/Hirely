@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "== Hirely wird eingerichtet (dauert beim ersten Mal ein paar Minuten) =="
+echo "== Recruit24 wird eingerichtet (dauert beim ersten Mal ein paar Minuten) =="
 npm ci --no-audit --no-fund
 
 [ -f .env ] || node scripts/setup.mjs

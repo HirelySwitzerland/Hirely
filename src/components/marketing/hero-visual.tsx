@@ -14,7 +14,7 @@ const tone: Record<string, string> = {
   slate: "bg-slate-100 text-slate-700 ring-slate-200",
 };
 
-/** Static, realistic rendering of the Hirely dashboard used on the landing page. */
+/** Static, realistic rendering of the Recruit24 dashboard used on the landing page. */
 export function HeroVisual() {
   return (
     <div className="relative mx-auto max-w-5xl text-left">
@@ -24,7 +24,7 @@ export function HeroVisual() {
           <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
           <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
           <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-          <span className="ml-3 rounded-md bg-white px-3 py-0.5 text-[11px] text-slate-400 ring-1 ring-slate-200">app.hirely.ch/dashboard</span>
+          <span className="ml-3 rounded-md bg-white px-3 py-0.5 text-[11px] text-slate-400 ring-1 ring-slate-200">app.recruit24.ch/dashboard</span>
         </div>
         <div className="grid grid-cols-12">
           <aside className="col-span-3 hidden border-r border-slate-100 p-4 md:block">

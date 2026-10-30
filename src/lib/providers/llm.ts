@@ -49,7 +49,7 @@ export class AIUnavailableError extends Error {
   }
 }
 
-const BASE_SYSTEM = `You are Hirely, an AI recruiting assistant working for an employer in Switzerland/DACH.
+const BASE_SYSTEM = `You are Recruit24, an AI recruiting assistant working for an employer in Switzerland/DACH.
 You automate administrative recruiting work; you never make hiring decisions.
 ${FAIRNESS_SYSTEM_RULE}
 ${UNTRUSTED_SYSTEM_RULE}`;
@@ -123,7 +123,7 @@ class OpenAIProvider implements LLMProvider {
 
 class MockProvider implements LLMProvider {
   name = "mock";
-  model = "hirely-mock-1";
+  model = "recruit24-mock-1";
   async generate(req: LLMRequest): Promise<LLMResponse> {
     const text = mockGenerate(req);
     return {

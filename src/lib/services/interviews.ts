@@ -194,7 +194,7 @@ export async function placeCall(interviewId: string, opts: { explicit?: boolean 
         await notify(iv.orgId, {
           type: "ai_call_failed",
           title: `${iv.application.candidate.firstName} ${iv.application.candidate.lastName} nicht erreicht (${attempts} Versuche)`,
-          body: "Hirely hat einen Link zum Verschieben gesendet. Sie können auch selbst anrufen oder einen Browser-Link senden.",
+          body: "Recruit24 hat einen Link zum Verschieben gesendet. Sie können auch selbst anrufen oder einen Browser-Link senden.",
           link: `/app/candidates/${iv.applicationId}?tab=interview`,
           severity: "warning",
         });

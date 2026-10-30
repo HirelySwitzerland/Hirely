@@ -4,7 +4,7 @@ import { downloadTwilioRecording, platformTwilio, twilioAuthTokenFor, verifyTwil
 import { getStorage } from "@/lib/providers/storage";
 import { appUrl } from "@/lib/services/communication";
 
-/** Recording status callback: downloads the consented recording, stores it encrypted in Hirely, then deletes it at Twilio. */
+/** Recording status callback: downloads the consented recording, stores it encrypted in Recruit24, then deletes it at Twilio. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const iv = await db.interview.findUnique({ where: { id } });

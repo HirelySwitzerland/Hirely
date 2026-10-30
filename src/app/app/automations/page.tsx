@@ -19,7 +19,7 @@ export default async function AutomationsPage() {
   const stat = (id: string, s: string) => runStats.find((r) => r.automationId === id && r.status === s)?._count ?? 0;
   return (
     <div>
-      <PageHeader title="Automationen" description="Diese Abläufe führt Hirely für jede Bewerbung aus – Schritt für Schritt und vollständig protokolliert." actions={<LinkButton href="/app/automations/new"><Plus className="h-4 w-4" />Neue Automation</LinkButton>} />
+      <PageHeader title="Automationen" description="Diese Abläufe führt Recruit24 für jede Bewerbung aus – Schritt für Schritt und vollständig protokolliert." actions={<LinkButton href="/app/automations/new"><Plus className="h-4 w-4" />Neue Automation</LinkButton>} />
       <AutomationTabs active="flows" />
       {autos.length === 0 ? (
         <Card><EmptyState icon={<Workflow className="h-5 w-5" />} title="Noch keine Automationen" action={<LinkButton href="/app/automations/new" size="sm">Automation erstellen</LinkButton>} /></Card>

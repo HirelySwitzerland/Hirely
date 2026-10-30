@@ -60,5 +60,5 @@ export function verifyTotp(secret: string, token: string, window = 1): boolean {
 }
 
 export function otpauthUrl(secret: string, email: string): string {
-  return `otpauth://totp/Hirely:${encodeURIComponent(email)}?secret=${secret}&issuer=Hirely&algorithm=SHA1&digits=6&period=30`;
+  return `otpauth://totp/Recruit24:${encodeURIComponent(email)}?secret=${secret}&issuer=Recruit24&algorithm=SHA1&digits=6&period=30`;
 }
