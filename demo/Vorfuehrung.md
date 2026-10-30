@@ -60,6 +60,7 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
 4. Lebenslauf bereitlegen: `Q:\hirely\demo\Lebenslauf-Max-Muster.txt`
 5. Am Beamer: in beiden Fenstern mit Strg + Plus auf 110–125 % vergrössern.
 6. Benachrichtigungen am Laptop ausschalten (Windows: „Nicht stören“).
+7. **Ton einschalten** und kurz testen: Die KI spricht im Interview mit ElevenLabs-Stimme, und Roman Eglis Telefon-Aufnahme soll man hören.
 
 ---
 
@@ -81,7 +82,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Hi
 
 1. Auf **Servicetechniker/in 80–100%** klicken.
 2. Formular ausfüllen:
-   - Vorname `Max`, Nachname `Muster`
+   - Vorname `Max`, Nachname `Muster` – genau so, denn die Begrüssung ist für diesen Namen aufgenommen
    - E-Mail **jedes Mal neu**, z. B. `max.muster1@example.ch`, beim nächsten Mal `max.muster2@…`
    - Telefon `+41 79 123 45 67`, Wohnort `8400 Winterthur`
    - Lebenslauf: die Datei `Lebenslauf-Max-Muster.txt`
@@ -90,7 +91,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Hi
 3. Das Bewerberportal öffnet sich. Erklären: „Hirely prüft jetzt den Lebenslauf gegen die Anforderungen der Stelle.“
    - **Nichts anklicken, einfach warten.** Nach etwa 10 Sekunden erscheint von selbst **Vorabgespräch starten**.
 4. **Vorabgespräch starten** → **Im Browser durchführen**.
-5. Die KI stellt sich als KI vor. Antworten eintippen und mit Enter senden:
+5. Die KI stellt sich als KI vor **und spricht dabei mit natürlicher Stimme**. Das Lautsprecher-Symbol unten links schaltet den Ton ein und aus. Ist er aus, einmal draufklicken: Die letzte Frage wird dann nochmals gesprochen. Antworten eintippen und mit Enter senden:
 
    | Die KI fragt nach … | Antwort |
    |---|---|
@@ -108,6 +109,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Hi
    - Bei sehr kurzen Antworten fragt die KI einmal nach. Das ist gewollt, also ruhig zeigen.
    - In Chrome kann man auch mit dem Mikrofon-Knopf sprechen.
    - Am Ende steht: „Vielen Dank – Ihr Vorabgespräch ist abgeschlossen.“
+   - Sie müssen nicht warten, bis die KI fertig gesprochen hat: Beim Senden der Antwort hört sie auf.
 
 ### Als HR (Fenster A)
 
@@ -146,6 +148,12 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Board**: Personen per Maus in die nächste Stufe ziehen.
 - Zurück zu **Liste**, zwei Personen anhaken → **Vergleichen**.
 - **Hinzufügen**: einzeln oder per CSV (z. B. nach einer Jobmesse).
+
+**Hörprobe: so klingt ein Telefoninterview**
+- **Kandidierende** → **Roman Egli** → Reiter **KI-Interview** → oben **Aufnahme des Gesprächs** abspielen (2:44 Minuten).
+- Rechts läuft das Transkript mit, die Zeitangaben passen zur Aufnahme. Links stehen die wichtigsten Antworten, die Hirely daraus gezogen hat.
+- Satz: „So klingt das Vorabgespräch am Telefon – rund um die Uhr, für jede Bewerbung. HR liest danach nur noch das Ergebnis.“
+- Ehrlich bleiben, falls gefragt: Die Aufnahme ist ein Beispiel, mit ElevenLabs-Stimmen erzeugt. Echte Anrufe laufen über eine Schweizer Telefonnummer (Twilio).
 
 **Gespräche**
 - Gebuchte Termine, „Braucht Ihre Hilfe“ mit **Erneut anrufen** oder **Browser-Link senden**.
