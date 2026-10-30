@@ -1,0 +1,267 @@
+{
+  "lines": [
+    {
+      "id": "03e90b5e8ffc8d",
+      "speaker": "ai",
+      "text": "Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "say": "Grüezi Roman Egli, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "15cd0e37921aa1",
+      "speaker": "ai",
+      "text": "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?",
+      "say": "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "1edcf9721f5781",
+      "speaker": "candidate",
+      "text": "Ja, das ist in Ordnung.",
+      "say": "Ja, das ist in Ordnung.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "0eef01597a4c6c",
+      "speaker": "ai",
+      "text": "Besitzen Sie den Führerausweis Kategorie B?",
+      "say": "Besitzen Sie den Führerausweis Kategorie B?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "1cfab313169f86",
+      "speaker": "candidate",
+      "text": "Ja, ich habe den Führerausweis Kategorie B.",
+      "say": "Ja, ich habe den Führerausweis Kategorie B.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "06bcf63201f08b",
+      "speaker": "ai",
+      "text": "Sind Sie bereit, Pikettdienst zu leisten?",
+      "say": "Sind Sie bereit, Pikettdienst zu leisten?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "0b9ce4c9218424",
+      "speaker": "candidate",
+      "text": "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle.",
+      "say": "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "1a10cebaab0646",
+      "speaker": "ai",
+      "text": "Was interessiert Sie an der Stelle als Servicetechniker/in?",
+      "say": "Was interessiert Sie an der Stelle als Servicetechniker?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "105e314ab662dc",
+      "speaker": "candidate",
+      "text": "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.",
+      "say": "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "101a99f10e106b",
+      "speaker": "ai",
+      "text": "In Ihrem Lebenslauf erwähnen Sie Ihre Tätigkeit als Servicetechniker bei Kardex AG. Welche Aufgaben haben Sie dort hauptsächlich übernommen?",
+      "say": "In Ihrem Lebenslauf erwähnen Sie Ihre Tätigkeit als Servicetechniker bei Kardex AG. Welche Aufgaben haben Sie dort hauptsächlich übernommen?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "1d24679d616cab",
+      "speaker": "candidate",
+      "text": "Ich nehme Lagerliftsysteme bei Kunden in Betrieb, mache die regelmässige Wartung und suche bei Störungen den Fehler, elektrisch wie mechanisch. Meistens bin ich dabei allein beim Kunden unterwegs.",
+      "say": "Ich nehme Lagerliftsysteme bei Kunden in Betrieb, mache die regelmässige Wartung und suche bei Störungen den Fehler, elektrisch wie mechanisch. Meistens bin ich dabei allein beim Kunden unterwegs.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "044d7c12568447",
+      "speaker": "ai",
+      "text": "Erzählen Sie von einer schwierigen Störung, die Sie beim Kunden behoben haben.",
+      "say": "Erzählen Sie von einer schwierigen Störung, die Sie beim Kunden behoben haben.",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "15914cef4eeba1",
+      "speaker": "candidate",
+      "text": "Bei einem Pharmakunden stand mitten in der Nacht ein Lagerlift still. Ich habe über die Fehlermeldungen einen defekten Endschalter gefunden, ihn ersetzt, und nach einer Stunde lief die Anlage wieder.",
+      "say": "Bei einem Pharmakunden stand mitten in der Nacht ein Lagerlift still. Ich habe über die Fehlermeldungen einen defekten Endschalter gefunden, ihn ersetzt, und nach einer Stunde lief die Anlage wieder.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "07ff506a2473c1",
+      "speaker": "ai",
+      "text": "Sie haben bereits mehrjährige Erfahrung. Haben Sie in dieser Zeit auch Personen geführt oder angeleitet?",
+      "say": "Sie haben bereits mehrjährige Erfahrung. Haben Sie in dieser Zeit auch Personen geführt oder angeleitet?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "03bd758170cdc2",
+      "speaker": "candidate",
+      "text": "Ich betreue seit zwei Jahren unsere Lernenden im Aussendienst und arbeite neue Kollegen ein. Ein eigenes Team habe ich aber noch nicht geführt.",
+      "say": "Ich betreue seit zwei Jahren unsere Lernenden im Aussendienst und arbeite neue Kollegen ein. Ein eigenes Team habe ich aber noch nicht geführt.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "1e56a6c6fa47f4",
+      "speaker": "ai",
+      "text": "Ab wann könnten Sie die neue Stelle antreten?",
+      "say": "Ab wann könnten Sie die neue Stelle antreten?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "1fe35438b77924",
+      "speaker": "candidate",
+      "text": "Ab dem 1. Dezember.",
+      "say": "Ab dem 1. Dezember.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "12cf3faae58f81",
+      "speaker": "ai",
+      "text": "Wie lange ist Ihre aktuelle Kündigungsfrist?",
+      "say": "Wie lange ist Ihre aktuelle Kündigungsfrist?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "15019fe041c402",
+      "speaker": "candidate",
+      "text": "Zwei Monate.",
+      "say": "Zwei Monate.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "0f6ea98d1aa7fd",
+      "speaker": "ai",
+      "text": "Was sind Ihre Lohnvorstellungen, brutto pro Jahr?",
+      "say": "Was sind Ihre Lohnvorstellungen, brutto pro Jahr?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "06757dae02f47f",
+      "speaker": "candidate",
+      "text": "85'000 Franken inklusive Pikett.",
+      "say": "85000 Franken inklusive Pikett.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "1c9d4d02a26bbf",
+      "speaker": "ai",
+      "text": "Gibt es noch etwas, das Sie uns mitteilen möchten, oder haben Sie Fragen zur Stelle?",
+      "say": "Gibt es noch etwas, das Sie uns mitteilen möchten, oder haben Sie Fragen zur Stelle?",
+      "for": [
+        "aufnahme:roman-egli",
+        "live-demo"
+      ]
+    },
+    {
+      "id": "15e3d49118c406",
+      "speaker": "candidate",
+      "text": "Nein, im Moment nicht. Ich freue mich auf Ihre Rückmeldung.",
+      "say": "Nein, im Moment nicht. Ich freue mich auf Ihre Rückmeldung.",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "08bb93d3107de2",
+      "speaker": "ai",
+      "text": "Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+      "say": "Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+      "for": [
+        "aufnahme:roman-egli"
+      ]
+    },
+    {
+      "id": "08665b9f50ac8d",
+      "speaker": "ai",
+      "text": "Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "say": "Grüezi Max Muster, hier ist der Hirely Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "for": [
+        "live-demo"
+      ]
+    },
+    {
+      "id": "14032f5fff4bb2",
+      "speaker": "ai",
+      "text": "Vielen Dank für das Gespräch, Max Muster. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+      "say": "Vielen Dank für das Gespräch, Max Muster. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+      "for": [
+        "live-demo"
+      ]
+    },
+    {
+      "id": "1843d14a2cfeae",
+      "speaker": "ai",
+      "text": "Können Sie das bitte etwas genauer ausführen, zum Beispiel mit einem konkreten Beispiel?",
+      "say": "Können Sie das bitte etwas genauer ausführen, zum Beispiel mit einem konkreten Beispiel?",
+      "for": [
+        "live-demo"
+      ]
+    },
+    {
+      "id": "199b8621070e87",
+      "speaker": "ai",
+      "text": "Entschuldigung, ich habe Sie nicht verstanden. Könnten Sie das bitte wiederholen?",
+      "say": "Entschuldigung, ich habe Sie nicht verstanden. Könnten Sie das bitte wiederholen?",
+      "for": [
+        "live-demo"
+      ]
+    }
+  ]
+}

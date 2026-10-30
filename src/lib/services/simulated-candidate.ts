@@ -15,7 +15,7 @@ function hash(s: string) {
 
 export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTitle: string; salaryMin?: number | null; salaryMax?: number | null; seed: string; language: string; hasLicense: boolean }): string {
   const de = ctx.language !== "en";
-  const h = hash(ctx.seed + node.id);
+  const h = hash(ctx.seed + (node.type === "question" ? node.text : node.id));
   const latest = ctx.cv?.experience[0];
   const years = ctx.cv?.totalYears?.value ?? 3;
   if (node.type === "consent") return de ? "Ja, das ist in Ordnung." : "Yes, that's fine.";

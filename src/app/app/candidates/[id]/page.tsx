@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { subMinutes } from "date-fns";
 import {
-  AlertTriangle, Bot, Briefcase, CalendarClock, Download, FileText, GraduationCap, Info, Languages, MapPin, Mail, Phone, ShieldCheck, Trash2, User, Wallet, Clock, Hourglass,
+  AlertTriangle, Bot, Briefcase, CalendarClock, Download, FileText, GraduationCap, Info, Languages, MapPin, Mail, Phone, ShieldCheck, Trash2, User, Wallet, Clock, Hourglass, Volume2,
 } from "lucide-react";
 import type { EvidenceStatus } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -401,10 +401,16 @@ export default async function CandidateProfile({ params, searchParams }: { param
                 </div>
               ) : (
                 <div className="grid gap-0 lg:grid-cols-3">
+                  {iv.recordingKey && (
+                    <div className="flex flex-col gap-2 border-b border-slate-100 bg-brand-50/40 px-5 py-3 sm:flex-row sm:items-center sm:gap-4 lg:col-span-3">
+                      <p className="flex shrink-0 items-center gap-2 text-sm font-medium text-ink"><Volume2 className="h-4 w-4 text-brand-600" />Aufnahme des Gesprächs</p>
+                      <audio controls preload="metadata" src={`/api/recordings/${iv.id}`} className="h-10 w-full" />
+                    </div>
+                  )}
                   <div className="border-b border-slate-100 p-5 lg:col-span-1 lg:border-b-0 lg:border-r">
                     <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Wichtigste Antworten</p>
                     {iv.summary ? <Markdown text={iv.summary} className="prose-hirely text-[13px]" /> : <p className="text-sm text-slate-400">Verfügbar, sobald das Interview abgeschlossen ist.</p>}
-                    {iv.recordingKey ? <audio controls src={`/api/recordings/${iv.id}`} className="mt-4 w-full" /> : iv.status === "COMPLETED" && <p className="mt-4 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">Audioaufnahmen werden bei echten Twilio-Anrufen gespeichert, wenn eingewilligt wurde.</p>}
+                    {!iv.recordingKey && iv.status === "COMPLETED" && <p className="mt-4 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">Audioaufnahmen werden bei echten Twilio-Anrufen gespeichert, wenn eingewilligt wurde.</p>}
                   </div>
                   <div className="scrollbar-thin max-h-[640px] space-y-3 overflow-y-auto p-5 lg:col-span-2">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Transkript</p>

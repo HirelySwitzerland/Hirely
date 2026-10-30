@@ -12,6 +12,7 @@ import { computeOverage } from "../src/lib/billing";
 import { parseTalentQuery } from "../src/lib/services/search";
 import { deriveRequirements, guessCategory } from "../src/lib/services/jobs";
 import { langLabel } from "../src/lib/stages";
+import { clipId } from "../src/lib/voice-clips";
 
 const CV = `Marco Rossi
 CNC-Fräser / Polymechaniker EFZ
@@ -185,4 +186,11 @@ test("language names are shown in German, with or without a level", () => {
   assert.equal(langLabel("German C2"), "Deutsch C2");
   assert.equal(langLabel("Swiss German"), "Schweizerdeutsch");
   assert.equal(langLabel("Klingon B1"), "Klingon B1");
+});
+
+test("voice clips are found by a stable hash of the spoken text", () => {
+  const id = clipId("Besitzen Sie den Führerausweis Kategorie B?");
+  assert.match(id, /^[0-9a-f]{14}$/);
+  assert.equal(clipId("  Besitzen Sie den   Führerausweis Kategorie B? "), id);
+  assert.notEqual(clipId("Sind Sie bereit, Pikettdienst zu leisten?"), id);
 });

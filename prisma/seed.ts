@@ -17,6 +17,7 @@ import { sendMessage } from "../src/lib/services/communication";
 import { defaultPipelineAutomation, type Step } from "../src/lib/services/automation";
 import { enqueue } from "../src/lib/queue";
 import { CANDIDATES, JOBS } from "./seed-data";
+import { getStorage } from "../src/lib/providers/storage";
 
 const PASSWORD = "Hirely-Demo-2026";
 const now = new Date();
@@ -35,6 +36,39 @@ async function retime(applicationId: string, appliedAt: Date) {
   const last = hist.length ? new Date(appliedAt.getTime() + (hist.length - 1) * step) : appliedAt;
   await db.application.update({ where: { id: applicationId }, data: { stageChangedAt: last } });
   await db.message.updateMany({ where: { applicationId, createdAt: { gt: subDays(now, 1) } }, data: { createdAt: addMinutes(appliedAt, 12), sentAt: addMinutes(appliedAt, 12) } });
+}
+
+/**
+ * Demo: attaches a pre-recorded phone interview from prisma/demo/recordings/<first>-<last>.mp3 (+ .json with
+ * the line timings, made with `npm run demo:voice`). Only used when the recording matches the transcript line by line.
+ */
+async function attachDemoRecording(interviewId: string) {
+  const iv = await db.interview.findUniqueOrThrow({ where: { id: interviewId }, include: { application: { include: { candidate: true } }, segments: { orderBy: { order: "asc" } } } });
+  const c = iv.application.candidate;
+  const slug = `${c.firstName}-${c.lastName}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
+  const base = path.join(process.cwd(), "prisma", "demo", "recordings", slug);
+  let meta: { durationSec: number; segments: { speaker: string; text: string; startMs: number }[] };
+  try { meta = JSON.parse(await fs.readFile(`${base}.json`, "utf8")); } catch { return; }
+  const norm = (t: string) => t.replace(/\s+/g, " ").trim();
+  const segs = iv.segments.filter((x) => x.speaker !== "SYSTEM");
+  if (segs.length !== meta.segments.length || segs.some((x, i) => norm(x.text) !== norm(meta.segments[i].text))) {
+    console.warn(`Demo recording for ${c.firstName} ${c.lastName} no longer matches the transcript – skipped. Run "npm run demo:voice -- recording" again.`);
+    return;
+  }
+  for (const [i, x] of segs.entries()) await db.transcriptSegment.update({ where: { id: x.id }, data: { offsetMs: meta.segments[i].startMs } });
+  const key = await getStorage().put(iv.orgId, `recordings/${iv.id}`, await fs.readFile(`${base}.mp3`), "mp3");
+  await db.interview.update({
+    where: { id: iv.id },
+    data: { recordingKey: key, durationSec: Math.round(meta.durationSec), provider: "twilio (Demo-Aufnahme)", endedAt: iv.startedAt ? new Date(iv.startedAt.getTime() + meta.durationSec * 1000) : undefined },
+  });
+  console.log(`Demo recording attached: ${c.firstName} ${c.lastName}`);
+}
+
+/** Which entry of a candidate's `answers` a question uses, besides its category. */
+function answerKey(node: FlowNode) {
+  if (node.id === "q_personal") return "personal";
+  if (node.id === "q_leadership") return "leadership";
+  return node.type === "question" && node.category === "experience" ? "phone" : node.type === "question" ? node.category : "";
 }
 
 async function seedInterview(appId: string, answers: Record<string, string> = {}, startedAt: Date) {
@@ -61,8 +95,8 @@ async function seedInterview(appId: string, answers: Record<string, string> = {}
     const pending = turn.state.pendingFollowUp;
     const answer = pending
       ? app.job.language === "en" ? "For example, I restructured the commissioning plan together with the customer, which saved us three weeks." : "Zum Beispiel habe ich die Umrüstung einer Linie begleitet und die Rüstzeit dabei um rund 20 Prozent gesenkt."
-      : (node.type === "question" && (answers[cat] ?? (node.id === "q_leadership" ? answers.experience : undefined))) ||
-        simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidateId, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0 });
+      : (node.type === "question" && (answers[answerKey(node)] ?? answers[cat] ?? (node.id === "q_leadership" ? answers.experience : undefined))) ||
+        simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidate.email, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0 });
     push("CANDIDATE", answer, node.id);
     turn = answerFlow(nodes, turn.state, answer, vars, profile, app.job.language);
     for (const t of turn.say) push("AI", t, turn.currentNodeId);
@@ -70,7 +104,7 @@ async function seedInterview(appId: string, answers: Record<string, string> = {}
   await db.transcriptSegment.createMany({ data: segs.map((s) => ({ ...s, orgId: app.orgId, interviewId: iv.id })) });
   await db.interview.update({
     where: { id: iv.id },
-    data: { type: "PHONE", status: "IN_PROGRESS", provider: "twilio (demo data)", startedAt, aiDisclosedAt: startedAt, attempts: 1, durationSec: Math.round(offset / 1000), state: turn.state as object },
+    data: { type: "PHONE", status: "IN_PROGRESS", provider: "twilio (Demo-Daten)", startedAt, aiDisclosedAt: startedAt, attempts: 1, durationSec: Math.round(offset / 1000), state: turn.state as object },
   });
   await completeInterview(iv.id);
   await db.interview.update({ where: { id: iv.id }, data: { endedAt: new Date(startedAt.getTime() + offset) } });
@@ -266,7 +300,7 @@ async function main() {
         await placeCall(iv.id, { explicit: true });
       }
     }
-    if (cs.interview) await seedInterview(app.id, (cs.answers ?? {}) as Record<string, string>, addDays(appliedAt, 1));
+    if (cs.interview) await attachDemoRecording((await seedInterview(app.id, (cs.answers ?? {}) as Record<string, string>, addDays(appliedAt, 1))).id);
     if (cs.video) {
       const vids = cs.persona.first === "Sarah"
         ? ["Ich bin Sarah Baumann, Maschineningenieurin ETH, und arbeite seit vier Jahren in der Entwicklung von Injektionssystemen bei Ypsomed. Mich interessiert die Stelle, weil ich grössere Systeme verantworten möchte und Ihre Verpackungsanlagen technisch sehr anspruchsvoll sind.", "Besonders stolz bin ich auf die Neuentwicklung eines Autoinjektors. Ich war für die Mechanik der Auslöseeinheit verantwortlich, habe die Toleranzkette in Siemens NX aufgebaut und die DFMEA moderiert. Das Produkt ging ohne Verzögerung in die Serie.", "Zuerst sichere ich die Fakten: Was genau ist passiert, seit wann, was hat sich geändert. Dann priorisiere ich gemeinsam mit Produktion und Qualität und dokumentiere die Ursache mit einem 8D-Report, damit das Problem nicht wieder auftritt."]

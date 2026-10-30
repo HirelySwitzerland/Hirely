@@ -57,6 +57,18 @@ Every email/SMS is recorded in **Automations → Outbox** (mock provider) so the
 
 On GitHub: **Code → Codespaces → Create codespace**. `.devcontainer/` starts Postgres, installs dependencies, loads the demo data, builds a production bundle and starts Hirely; the terminal prints the public URL (`https://<codespace>-3000.app.github.dev/login`). Reset the demo data with `npm run db:seed`, restart with `bash .devcontainer/start.sh`.
 
+### Demo voices and call recordings (ElevenLabs, no live AI needed)
+
+For demos the AI interviewer can speak with pre-recorded clips instead of the browser voice, and Roman Egli's phone interview in the demo data comes with a real-sounding recording (profile → *KI-Interview* → *Aufnahme des Gesprächs*).
+
+1. `npm run db:seed`, then do the live demo once as **Max Muster** (career page → browser interview).
+2. `npm run demo:voice -- lines` – collects every sentence that needs a clip (`demo/voice/lines.json`).
+3. `npm run demo:voice -- elevenlabs` – creates the missing clips in `public/voice/` with `ELEVENLABS_API_KEY` (optional `ELEVENLABS_VOICE_AI` / `ELEVENLABS_VOICE_CANDIDATE`, e.g. your own cloned voice).
+4. `npm run demo:voice -- recording` – joins the clips into the phone recording (needs `ffmpeg`), then `npm run db:seed` attaches it.
+5. Rebuild (`npm run build` – Next.js only serves files that were in `public/` at build time).
+
+Clips are matched by a hash of the sentence; lines without a clip fall back to the browser voice.
+
 ### Live demo on Windows
 
 Double-click **`Hirely-Vorfuehrung.bat`**: it optionally resets the demo data, builds a production bundle (pages open instantly, no dev overlay) and starts Hirely on <http://localhost:3000>. A click-by-click German demo script is in [`demo/Vorfuehrung.md`](demo/Vorfuehrung.md), with a sample CV in `demo/Lebenslauf-Max-Muster.txt`. For day-to-day development keep using `Hirely-starten.bat` (`npm run dev`).

@@ -279,7 +279,7 @@ export type CandidateSeed = {
   video?: boolean;
   comment?: string;
   talentPoolConsent?: boolean;
-  answers?: Partial<Record<"motivation" | "salary" | "notice" | "availability" | "closing" | "experience", string>>;
+  answers?: Partial<Record<"motivation" | "salary" | "notice" | "availability" | "closing" | "experience" | "personal" | "phone" | "leadership", string>>;
 };
 
 const P = (p: Omit<Persona, "lang"> & { lang?: "de" | "en" }): Persona => p;
@@ -523,7 +523,17 @@ export const CANDIDATES: CandidateSeed[] = [
   // ───────── Servicetechniker/in ─────────
   {
     job: "service", daysAgo: 6, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "REVIEW", interview: true,
-    answers: { motivation: "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.", salary: "85'000 Franken inklusive Pikett.", notice: "Zwei Monate.", availability: "Ab dem 1. Dezember." },
+    // Roman's phone interview is the demo recording (prisma/demo/recordings/roman-egli.*): keep these answers natural.
+    answers: {
+      motivation: "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.",
+      personal: "Ich nehme Lagerliftsysteme bei Kunden in Betrieb, mache die regelmässige Wartung und suche bei Störungen den Fehler, elektrisch wie mechanisch. Meistens bin ich dabei allein beim Kunden unterwegs.",
+      phone: "Bei einem Pharmakunden stand mitten in der Nacht ein Lagerlift still. Ich habe über die Fehlermeldungen einen defekten Endschalter gefunden, ihn ersetzt, und nach einer Stunde lief die Anlage wieder.",
+      leadership: "Ich betreue seit zwei Jahren unsere Lernenden im Aussendienst und arbeite neue Kollegen ein. Ein eigenes Team habe ich aber noch nicht geführt.",
+      availability: "Ab dem 1. Dezember.",
+      notice: "Zwei Monate.",
+      salary: "85'000 Franken inklusive Pikett.",
+      closing: "Nein, im Moment nicht. Ich freue mich auf Ihre Rückmeldung.",
+    },
     persona: P({
       first: "Roman", last: "Egli", headline: "Servicetechniker / Elektroinstallateur EFZ", street: "Dorfstrasse 41", zip: "8352", city: "Elsau", phone: "+41 79 330 71 84",
       experience: [

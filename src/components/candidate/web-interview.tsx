@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Bot, CheckCircle2, Loader2, Mic, MicOff, Send, Volume2, VolumeX } from "lucide-react";
 import { getT } from "@/lib/i18n";
 import { LinkButton } from "@/components/ui";
+import { clipId, type VoiceManifest } from "@/lib/voice-clips";
 import { cn } from "@/lib/utils";
 
 type Line = { who: "ai" | "me"; text: string };
@@ -22,6 +23,13 @@ export function WebInterview({ token, locale, initialHistory, completed, portalH
   const [done, setDone] = useState(completed);
   const [error, setError] = useState<string | null>(null);
   const [speak, setSpeak] = useState(false);
+  const [soundHint, setSoundHint] = useState(false);
+  const [clips, setClips] = useState<Set<string> | null>(null); // null while the clip list loads
+  const speakRef = useRef(false);
+  const clipsRef = useRef<Set<string>>(new Set());
+  const queueRef = useRef<string[]>([]);
+  const playingRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [listening, setListening] = useState(false);
   const recRef = useRef<SR | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -31,18 +39,80 @@ export function WebInterview({ token, locale, initialHistory, completed, portalH
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [lines, busy]);
 
-  const say = useCallback((texts: string[]) => {
-    if (!speak || typeof window === "undefined" || !window.speechSynthesis) return;
-    for (const tx of texts) {
+  useEffect(() => { speakRef.current = speak; }, [speak]);
+
+  // Pre-recorded voice clips (e.g. made with ElevenLabs). When clips exist, the AI speaks by default.
+  useEffect(() => {
+    let alive = true;
+    fetch("/voice/manifest.json")
+      .then((r) => (r.ok ? (r.json() as Promise<VoiceManifest>) : null))
+      .catch(() => null)
+      .then((m) => {
+        if (!alive) return;
+        const ids = new Set(Object.keys(m?.clips ?? {}));
+        clipsRef.current = ids;
+        if (ids.size) { speakRef.current = true; setSpeak(true); }
+        setClips(ids);
+      });
+    return () => { alive = false; };
+  }, []);
+
+  const stopVoice = useCallback(() => {
+    queueRef.current = [];
+    playingRef.current = false;
+    audioRef.current?.pause();
+    audioRef.current = null;
+    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+  }, []);
+  useEffect(() => () => stopVoice(), [stopVoice]);
+
+  // Plays queued lines one after another: the recorded clip if there is one, otherwise the browser voice.
+  const playNext = useCallback(() => {
+    const tx = queueRef.current.shift();
+    if (!tx) { playingRef.current = false; return; }
+    playingRef.current = true;
+    const browserVoice = () => {
+      if (!window.speechSynthesis) { playNext(); return; }
       const u = new SpeechSynthesisUtterance(tx);
       u.lang = LANG_TAG[locale] ?? "de-CH";
+      u.onend = () => playNext();
+      u.onerror = () => playNext();
       window.speechSynthesis.speak(u);
-    }
-  }, [speak, locale]);
+    };
+    const id = clipId(tx);
+    if (!clipsRef.current.has(id)) { browserVoice(); return; }
+    const audio = new Audio(`/voice/${id}.mp3`);
+    audioRef.current = audio;
+    audio.onended = () => playNext();
+    audio.onerror = () => browserVoice();
+    audio.play().catch(() => {
+      // Autoplay blocked: switch sound off and show how to turn it on.
+      stopVoice();
+      speakRef.current = false;
+      setSpeak(false);
+      setSoundHint(true);
+    });
+  }, [locale, stopVoice]);
+
+  const say = useCallback((texts: string[]) => {
+    if (!speakRef.current || typeof window === "undefined" || !texts.length) return;
+    queueRef.current.push(...texts);
+    if (!playingRef.current) playNext();
+  }, [playNext]);
+
+  const toggleSpeak = () => {
+    if (speak) { stopVoice(); speakRef.current = false; setSpeak(false); return; }
+    speakRef.current = true;
+    setSpeak(true);
+    setSoundHint(false);
+    const lastAnswer = lines.map((l) => l.who).lastIndexOf("me");
+    say(lines.slice(lastAnswer + 1).filter((l) => l.who === "ai").map((l) => l.text));
+  };
 
   const send = useCallback(async (answer: string | null) => {
     setBusy(true);
     setError(null);
+    if (answer !== null) stopVoice();
     if (answer !== null) setLines((l) => [...l, { who: "me", text: answer || "—" }]);
     try {
       const r = await fetch(`/api/interview/${token}/turn`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ answer }) });
@@ -56,13 +126,13 @@ export function WebInterview({ token, locale, initialHistory, completed, portalH
     } finally {
       setBusy(false);
     }
-  }, [token, say]);
+  }, [token, say, stopVoice]);
 
   useEffect(() => {
-    if (started.current || completed) return;
+    if (started.current || completed || clips === null) return;
     started.current = true;
     send(null);
-  }, [send, completed]);
+  }, [send, completed, clips]);
 
   const toggleMic = () => {
     if (listening) {
@@ -118,8 +188,9 @@ export function WebInterview({ token, locale, initialHistory, completed, portalH
       </div>
       {!done && (
         <div className="shrink-0 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)]">
+          {soundHint && <p className="mx-auto max-w-2xl px-4 pt-2 text-xs text-slate-500">{t("interview.soundHint")}</p>}
           <form className="mx-auto flex max-w-2xl items-end gap-2 px-4 py-3" onSubmit={(e) => { e.preventDefault(); if (!busy) { const a = input.trim(); setInput(""); recRef.current?.stop(); send(a); } }}>
-            <button type="button" onClick={() => setSpeak((s) => !s)} className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border", speak ? "border-brand-300 bg-brand-50 text-brand-600" : "border-slate-200 text-slate-400")} title={t("interview.readAloud")} aria-label={t("interview.readAloud")}>
+            <button type="button" onClick={toggleSpeak} className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border", speak ? "border-brand-300 bg-brand-50 text-brand-600" : "border-slate-200 text-slate-400")} title={t("interview.readAloud")} aria-label={t("interview.readAloud")}>
               {speak ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
             </button>
             {speechSupported && (

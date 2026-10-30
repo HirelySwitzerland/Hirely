@@ -15,7 +15,8 @@
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
     "db:reset": "prisma db push --force-reset --skip-generate && tsx --env-file=.env prisma/seed.ts",
     "postinstall": "prisma generate",
-    "setup": "node scripts/setup.mjs"
+    "setup": "node scripts/setup.mjs",
+    "demo:voice": "tsx --env-file=.env scripts/demo-voice.ts"
   },
   "prisma": {
     "seed": "tsx --env-file=.env prisma/seed.ts"
