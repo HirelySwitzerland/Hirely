@@ -1,0 +1,125 @@
+{
+  "durationSec": 162.3,
+  "segments": [
+    {
+      "speaker": "AI",
+      "text": "Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+      "startMs": 600
+    },
+    {
+      "speaker": "AI",
+      "text": "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?",
+      "startMs": 25406
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ja, das ist in Ordnung.",
+      "startMs": 35333
+    },
+    {
+      "speaker": "AI",
+      "text": "Besitzen Sie den Führerausweis Kategorie B?",
+      "startMs": 37476
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ja, ich habe den Führerausweis Kategorie B.",
+      "startMs": 41320
+    },
+    {
+      "speaker": "AI",
+      "text": "Sind Sie bereit, Pikettdienst zu leisten?",
+      "startMs": 44346
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle.",
+      "startMs": 47539
+    },
+    {
+      "speaker": "AI",
+      "text": "Was interessiert Sie an der Stelle als Servicetechniker/in?",
+      "startMs": 52562
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.",
+      "startMs": 56405
+    },
+    {
+      "speaker": "AI",
+      "text": "In Ihrem Lebenslauf erwähnen Sie Ihre Tätigkeit als Servicetechniker bei Kardex AG. Welche Aufgaben haben Sie dort hauptsächlich übernommen?",
+      "startMs": 65561
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ich nehme Lagerliftsysteme bei Kunden in Betrieb, mache die regelmässige Wartung und suche bei Störungen den Fehler, elektrisch wie mechanisch. Meistens bin ich dabei allein beim Kunden unterwegs.",
+      "startMs": 76138
+    },
+    {
+      "speaker": "AI",
+      "text": "Erzählen Sie von einer schwierigen Störung, die Sie beim Kunden behoben haben.",
+      "startMs": 89241
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Bei einem Pharmakunden stand mitten in der Nacht ein Lagerlift still. Ich habe über die Fehlermeldungen einen defekten Endschalter gefunden, ihn ersetzt, und nach einer Stunde lief die Anlage wieder.",
+      "startMs": 94478
+    },
+    {
+      "speaker": "AI",
+      "text": "Sie haben bereits mehrjährige Erfahrung. Haben Sie in dieser Zeit auch Personen geführt oder angeleitet?",
+      "startMs": 105909
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ich betreue seit zwei Jahren unsere Lernenden im Aussendienst und arbeite neue Kollegen ein. Ein eigenes Team habe ich aber noch nicht geführt.",
+      "startMs": 113793
+    },
+    {
+      "speaker": "AI",
+      "text": "Ab wann könnten Sie die neue Stelle antreten?",
+      "startMs": 123274
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Ab dem 1. Dezember.",
+      "startMs": 126235
+    },
+    {
+      "speaker": "AI",
+      "text": "Wie lange ist Ihre aktuelle Kündigungsfrist?",
+      "startMs": 128379
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Zwei Monate.",
+      "startMs": 131665
+    },
+    {
+      "speaker": "AI",
+      "text": "Was sind Ihre Lohnvorstellungen, brutto pro Jahr?",
+      "startMs": 133483
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "85'000 Franken inklusive Pikett.",
+      "startMs": 137002
+    },
+    {
+      "speaker": "AI",
+      "text": "Gibt es noch etwas, das Sie uns mitteilen möchten, oder haben Sie Fragen zur Stelle?",
+      "startMs": 140027
+    },
+    {
+      "speaker": "CANDIDATE",
+      "text": "Nein, im Moment nicht. Ich freue mich auf Ihre Rückmeldung.",
+      "startMs": 145775
+    },
+    {
+      "speaker": "AI",
+      "text": "Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+      "startMs": 150008
+    }
+  ]
+}
