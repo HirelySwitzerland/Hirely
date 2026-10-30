@@ -7,19 +7,51 @@ Jede Datei genau so benennen wie in der Spalte „Dateiname“ und in den Ordner
 Den Text 1:1 kopieren (nichts ändern, sonst passt die Aufnahme nicht mehr zum Satz in der App).
 
 
-## Weg A – automatisch mit API-Schlüssel (empfohlen, ca. 2 Minuten)
+## Weg A – automatisch mit API-Schlüssel (empfohlen)
 
-1. Im Ordner `Q:\hirely`: `git pull`
-2. In der Datei `Q:\hirely\.env` diese drei Zeilen ergänzen:
-   ```
-   ELEVENLABS_API_KEY="Ihr-API-Schlüssel"
-   ELEVENLABS_VOICE_AI="Voice-ID der KI-Stimme"
-   ELEVENLABS_VOICE_CANDIDATE="Voice-ID der Bewerber-Stimme"
-   ```
-   (API-Schlüssel: ElevenLabs → Profil → API Keys. Voice-ID: bei der Stimme auf „ID kopieren“.)
-3. `npm run demo:voice -- elevenlabs` – erzeugt alle Dateien mit den richtigen Namen.
-4. Hochladen: `git add public/voice` → `git commit -m "Stimmen"` → `git push`
+**1. In ElevenLabs: API-Schlüssel holen**
+- elevenlabs.io → links unten auf Ihr Profil → **API Keys** (oder **Developers → API Keys**) → **Create API Key**.
+- Bei den Berechtigungen **Text to Speech** erlauben. Schlüssel kopieren (beginnt meist mit `sk_`).
 
+**2. In ElevenLabs: zwei Stimmen-IDs kopieren**
+- **Voices** öffnen. Stimmen aus der Voice Library zuerst mit **Add to my voices** übernehmen.
+- Bei der Stimme auf **…** → **Copy voice ID**. Einmal für die KI-Stimme (z. B. Ihre geklonte Stimme), einmal für eine männliche Bewerber-Stimme.
+
+**3. Auf dem Laptop: Eingabeaufforderung im Hirely-Ordner öffnen**
+- Im Explorer `Q:\hirely` öffnen, oben in die Adresszeile klicken, `cmd` tippen, Enter.
+
+**4. Neueste Version holen**
+```
+git pull
+```
+
+**5. Schlüssel und Stimmen eintragen**
+```
+notepad .env
+```
+Ganz unten diese drei Zeilen einfügen (Ihre Werte zwischen die Anführungszeichen), speichern, Notepad schliessen:
+```
+ELEVENLABS_API_KEY="sk_..."
+ELEVENLABS_VOICE_AI="ID der KI-Stimme"
+ELEVENLABS_VOICE_CANDIDATE="ID der Bewerber-Stimme"
+```
+Die Datei `.env` wird nie hochgeladen, der Schlüssel bleibt auf Ihrem Laptop.
+
+**6. Aufnahmen erzeugen**
+```
+npm run demo:voice -- elevenlabs
+```
+Es erscheinen 28 Zeilen mit ✓, am Schluss „Fertig: 28 von 28 Sätzen haben eine Aufnahme“. Bei einem Fehler steht ein Hinweis da; danach einfach denselben Befehl nochmals starten, er macht dort weiter.
+
+**7. Hochladen**
+```
+git add public/voice
+git commit -m "Stimmen"
+git push
+```
+Fragt Git beim ersten Mal nach Name und E-Mail: `git config user.name "Kevin D."` und `git config user.email "Ihre@Mail"` eingeben, dann den Commit wiederholen. Fragt es nach einer GitHub-Anmeldung: im Browserfenster anmelden.
+
+Danach mir „hochgeladen“ schreiben.
 
 ## Weg B – von Hand auf der ElevenLabs-Webseite
 

@@ -84,16 +84,18 @@ async function manifest() {
   for (const l of list) if (await exists(path.join(CLIPS, `${l.id}.mp3`))) m.clips[l.id] = { speaker: l.speaker, text: l.text };
   await fs.mkdir(CLIPS, { recursive: true });
   await fs.writeFile(path.join(CLIPS, "manifest.json"), JSON.stringify(m, null, 2) + "\n");
-  console.log(`manifest: ${Object.keys(m.clips).length} of ${list.length} lines have a clip`);
+  console.log(`Fertig: ${Object.keys(m.clips).length} von ${list.length} Sätzen haben eine Aufnahme (public/voice/manifest.json).`);
 }
 
 async function elevenlabs() {
   const key = process.env.ELEVENLABS_API_KEY;
-  if (!key) throw new Error("ELEVENLABS_API_KEY is missing in .env");
+  if (!key) throw new Error('In der Datei .env fehlt ELEVENLABS_API_KEY="…" (Ihr ElevenLabs-API-Schlüssel).');
   // Defaults are ElevenLabs premade voices; set your own voice IDs (e.g. a cloned voice) in .env.
   const voice = { ai: process.env.ELEVENLABS_VOICE_AI || "21m00Tcm4TlvDq8ikWAM", candidate: process.env.ELEVENLABS_VOICE_CANDIDATE || "pNInz6obpgDQGcFmaJgB" };
   await fs.mkdir(CLIPS, { recursive: true });
-  for (const l of await readLines()) {
+  const all = await readLines();
+  let made = 0;
+  for (const [n, l] of all.entries()) {
     const file = path.join(CLIPS, `${l.id}.mp3`);
     if (await exists(file)) continue;
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice[l.speaker]}?output_format=mp3_44100_64`, {
@@ -101,10 +103,20 @@ async function elevenlabs() {
       headers: { "xi-api-key": key, "content-type": "application/json", accept: "audio/mpeg" },
       body: JSON.stringify({ text: l.say ?? sayText(l.text), model_id: "eleven_multilingual_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
     });
-    if (!res.ok) throw new Error(`ElevenLabs ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    if (!res.ok) {
+      const detail = (await res.text()).slice(0, 300);
+      const hint =
+        res.status === 402 || /quota/i.test(detail) ? "Zeichen-Kontingent bei ElevenLabs aufgebraucht." :
+        res.status === 401 ? "API-Schlüssel falsch, oder dem Schlüssel fehlt die Berechtigung „Text to Speech“." :
+        res.status === 404 || (res.status === 400 && /voice/i.test(detail)) ? `Stimmen-ID nicht gefunden (${voice[l.speaker]}). Stimme in ElevenLabs zu „Meine Stimmen“ hinzufügen und die ID prüfen.` :
+        "";
+      throw new Error(`ElevenLabs meldet Fehler ${res.status}. ${hint}\n${detail}\n(Die bisher erzeugten ${made} Dateien bleiben; einfach erneut starten.)`);
+    }
     await fs.writeFile(file, Buffer.from(await res.arrayBuffer()));
-    console.log(`✓ ${l.speaker.padEnd(9)} ${l.text.slice(0, 70)}`);
+    made++;
+    console.log(`✓ ${String(n + 1).padStart(2)}/${all.length} ${l.speaker === "ai" ? "KI      " : "Bewerber"}  ${l.text.slice(0, 70)}`);
   }
+  console.log(made ? `${made} neue Dateien in public/voice erzeugt.` : "Alle Dateien waren schon da.");
   await manifest();
 }
 
