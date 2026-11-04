@@ -84,7 +84,7 @@ export default function LandingPage() {
       {/* Start */}
       <section className="relative overflow-hidden bg-night">
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-[-20%] h-[720px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.35),transparent)]" />
+          <div className="absolute left-1/2 top-[-20%] h-[720px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.22),transparent)]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 pb-0 pt-20 text-center sm:px-8 sm:pt-28">
@@ -162,7 +162,7 @@ export default function LandingPage() {
         </div>
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map(({ i: Icon, t, d }) => (
-            <div key={t} className="bg-white p-7 transition hover:bg-[#FAFAFC]">
+            <div key={t} className="bg-white p-7 transition hover:bg-[#F8F9FB]">
               <Icon className="h-6 w-6 text-brand-600" strokeWidth={1.75} />
               <p className="mt-6 text-[17px] font-semibold text-ink">{t}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{d}</p>
@@ -173,7 +173,7 @@ export default function LandingPage() {
 
       {/* Nachvollziehbar */}
       <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
-        <div className="grid items-center gap-12 rounded-3xl border border-slate-200 bg-[#FAFAFC] p-8 sm:p-14 lg:grid-cols-2">
+        <div className="grid items-center gap-12 rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-14 lg:grid-cols-2">
           <div>
             <Eyebrow>Nachvollziehbar</Eyebrow>
             <h2 className="mt-4 text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[40px]">Keine Blackbox.<br />Keine geheime Punktzahl.</h2>
@@ -181,7 +181,7 @@ export default function LandingPage() {
               Recruit24 zeigt, was es gefunden hat und wo: <span className="font-medium text-ink">«Erfüllt 7 von 8 Anforderungen – hier sind die Belege.»</span> Jede Aussage verweist auf den Lebenslauf oder eine Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_30px_60px_-30px_rgba(19,17,42,0.25)]">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_30px_60px_-30px_rgba(20,24,36,0.25)]">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <p className="text-[15px] font-semibold">Anforderungen · Marco Rossi</p>
               <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">7 von 8 erfüllt</span>
@@ -203,7 +203,7 @@ export default function LandingPage() {
       </section>
 
       {/* Vertrauen */}
-      <section id="vertrauen" className="scroll-mt-16 border-y border-slate-200 bg-[#FAFAFC]">
+      <section id="vertrauen" className="scroll-mt-16 border-y border-slate-200 bg-[#F8F9FB]">
         <div className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
           <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
@@ -240,7 +240,7 @@ export default function LandingPage() {
           {PLANS.map((p) => {
             const hot = p.id === "GROWTH";
             return (
-              <div key={p.id} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(19,17,42,0.6)]" : "border-slate-200 bg-white")}>
+              <div key={p.id} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(20,24,36,0.6)]" : "border-slate-200 bg-white")}>
                 {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F97A3A] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
                 <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
                 <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
@@ -274,7 +274,7 @@ export default function LandingPage() {
       <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
         <div className="grid gap-5 lg:grid-cols-5">
           <div className="relative overflow-hidden rounded-3xl bg-night p-8 text-white sm:p-12 lg:col-span-3">
-            <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.45),transparent)]" />
+            <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.45),transparent)]" />
             <p className="relative text-[13px] font-semibold uppercase tracking-[0.14em] text-brand-300">Für Unternehmen</p>
             <h3 className="relative mt-4 text-[30px] font-semibold leading-tight tracking-[-0.02em] sm:text-[36px]">Starten Sie mit Ihrer ersten Stelle – heute noch.</h3>
             <p className="relative mt-4 max-w-lg text-[17px] leading-relaxed text-white/70">Konto erstellen, Stelle erfassen, veröffentlichen. 14 Tage kostenlos, ohne Kreditkarte.</p>
@@ -283,17 +283,17 @@ export default function LandingPage() {
               <Link href="/login" className="inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Anmelden</Link>
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-[#FAFAFC] p-8 sm:p-12 lg:col-span-2">
+          <div className="rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-12 lg:col-span-2">
             <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-500">Für Bewerbende</p>
             <h3 className="mt-4 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">Sie haben eine Einladung erhalten?</h3>
             <p className="mt-4 text-[16px] leading-relaxed text-slate-600">Öffnen Sie einfach den Link in Ihrer E-Mail oder SMS. Sie brauchen kein Konto und keine App – und Sie sprechen immer mit einer gekennzeichneten KI.</p>
-            <Image src="/marketing/interview-wahl.webp" alt="Auswahl für das Vorabgespräch: jetzt anrufen, Anruf planen oder im Browser" width={1240} height={1160} sizes="(min-width: 1024px) 420px, 100vw" className="mt-8 h-auto w-full max-w-sm rounded-xl border border-slate-200 shadow-[0_20px_40px_-24px_rgba(19,17,42,0.3)]" />
+            <Image src="/marketing/interview-wahl.webp" alt="Auswahl für das Vorabgespräch: jetzt anrufen, Anruf planen oder im Browser" width={1240} height={1160} sizes="(min-width: 1024px) 420px, 100vw" className="mt-8 h-auto w-full max-w-sm rounded-xl border border-slate-200 shadow-[0_20px_40px_-24px_rgba(20,24,36,0.3)]" />
           </div>
         </div>
       </section>
 
       {/* Fragen */}
-      <section id="fragen" className="scroll-mt-16 border-t border-slate-200 bg-[#FAFAFC]">
+      <section id="fragen" className="scroll-mt-16 border-t border-slate-200 bg-[#F8F9FB]">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-28 sm:px-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Eyebrow>Häufige Fragen</Eyebrow>
@@ -315,7 +315,7 @@ export default function LandingPage() {
 
       {/* Schluss */}
       <section className="relative overflow-hidden bg-night">
-        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.3),transparent)]" />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.3),transparent)]" />
         <div className="relative mx-auto max-w-4xl px-4 py-28 text-center sm:px-8">
           <h2 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-[60px]">Weniger Routine.<br />Mehr Zeit für Menschen.</h2>
           <p className="mx-auto mt-6 max-w-xl text-[18px] text-white/70">Recruit24 erledigt die Routinearbeit. Die wichtigen Entscheide treffen Sie.</p>

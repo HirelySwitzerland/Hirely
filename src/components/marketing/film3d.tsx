@@ -125,8 +125,8 @@ function Screen({ id, width, height, z, glow }: { id: string; width: number; hei
   );
 }
 
-const phoneLight = (p: number) => (p < 0.19 || (p >= 0.869 && p < 0.909) ? "#d9d6e6" : "#1a1733");
-const monitorLight = (p: number) => (p < 0.655 ? "#1a1733" : "#c9c6d6");
+const phoneLight = (p: number) => (p < 0.19 || (p >= 0.869 && p < 0.909) ? "#D8DCE4" : "#1C212E");
+const monitorLight = (p: number) => (p < 0.655 ? "#1C212E" : "#C8CCD6");
 
 function PhoneUI({ p }: { p: number }) {
   const m = minutesAt(p);
@@ -143,15 +143,15 @@ function Phone({ p }: { p: number }) {
   return (
     <group position={PHONE} rotation={[-0.05, 0.12 * (1 - seg(p, 0.03, 0.078)), 0]}>
       <RoundedBox args={[PHONE_BODY.w, PHONE_BODY.h, PHONE_BODY.d]} radius={0.1} smoothness={8}>
-        <meshPhysicalMaterial color="#1b1a24" metalness={0.9} roughness={0.25} clearcoat={1} clearcoatRoughness={0.12} />
+        <meshPhysicalMaterial color="#1B1D23" metalness={0.9} roughness={0.25} clearcoat={1} clearcoatRoughness={0.12} />
       </RoundedBox>
       {[0.32, 0.1, -0.06].map((y, i) => (
         <RoundedBox key={i} args={[0.012, i ? 0.13 : 0.08, 0.03]} radius={0.005} position={[(i ? -1 : 1) * (PHONE_BODY.w / 2 + 0.004), y, 0]}>
-          <meshStandardMaterial color="#2a2833" metalness={0.9} roughness={0.3} />
+          <meshStandardMaterial color="#292C32" metalness={0.9} roughness={0.3} />
         </RoundedBox>
       ))}
       <Screen id="phone" width={PHONE_SCREEN.w} height={PHONE_SCREEN.h} z={PHONE_BODY.d / 2 + 0.002} glow={phoneLight(p)} />
-      <pointLight position={[0, 0, 0.5]} color="#BDB2F7" intensity={1.2} distance={2.5} />
+      <pointLight position={[0, 0, 0.5]} color="#FDB48C" intensity={1.2} distance={2.5} />
     </group>
   );
 }
@@ -160,12 +160,12 @@ function Router({ near }: { near: number }) {
   return (
     <group position={ROUTER}>
       <RoundedBox args={[1.7, 0.3, 1.0]} radius={0.12} smoothness={6} position={[0, 0.18, 0]}>
-        <meshPhysicalMaterial color="#ECEAF4" roughness={0.38} clearcoat={0.6} clearcoatRoughness={0.3} />
+        <meshPhysicalMaterial color="#ECEEF2" roughness={0.38} clearcoat={0.6} clearcoatRoughness={0.3} />
       </RoundedBox>
       {[-0.62, 0.62].map((x) => (
         <mesh key={x} position={[x, 0.66, -0.36]} rotation={[0, 0, x > 0 ? -0.12 : 0.12]}>
           <capsuleGeometry args={[0.035, 0.7, 6, 14]} />
-          <meshPhysicalMaterial color="#DDDAE8" roughness={0.4} clearcoat={0.4} />
+          <meshPhysicalMaterial color="#DDE0E7" roughness={0.4} clearcoat={0.4} />
         </mesh>
       ))}
       {[0, 1, 2, 3].map((i) => (
@@ -177,7 +177,7 @@ function Router({ near }: { near: number }) {
       {[0, 1, 2].map((i) => (
         <mesh key={i} position={[0, 0.9, -0.36]} rotation={[0, 0, Math.PI / 4]} scale={0.25 + i * 0.22}>
           <torusGeometry args={[1, 0.02, 8, 48, Math.PI / 2]} />
-          <meshBasicMaterial color="#BDB2F7" transparent opacity={0.15 + 0.55 * near} toneMapped={false} />
+          <meshBasicMaterial color="#FDB48C" transparent opacity={0.15 + 0.55 * near} toneMapped={false} />
         </mesh>
       ))}
     </group>
@@ -187,14 +187,14 @@ function Router({ near }: { near: number }) {
 function Network({ packetPos }: { packetPos: THREE.Vector3 | null }) {
   return (
     <group>
-      {EDGES.map(([a, b], i) => <Line key={i} points={[a, b]} color="#5B4AD8" lineWidth={1} transparent opacity={0.32} />)}
+      {EDGES.map(([a, b], i) => <Line key={i} points={[a, b]} color="#C84F14" lineWidth={1} transparent opacity={0.32} />)}
       {NODES.map((n, i) => {
         const d = packetPos ? packetPos.distanceTo(new THREE.Vector3(...n)) : 99;
         const glow = Math.max(0, 1 - d / 1.6);
         return (
           <mesh key={i} position={n} scale={1 + glow * 0.8}>
             <sphereGeometry args={[0.055, 20, 20]} />
-            <meshBasicMaterial color={new THREE.Color("#9A8AF0").multiplyScalar(1.2 + glow * 4)} toneMapped={false} />
+            <meshBasicMaterial color={new THREE.Color("#FB9561").multiplyScalar(1.2 + glow * 4)} toneMapped={false} />
           </mesh>
         );
       })}
@@ -237,13 +237,13 @@ function Core({ active }: { active: number }) {
     <group position={CORE}>
       <group ref={ref}>
         <RoundedBox args={[1.9, 1.9, 1.9]} radius={0.2} smoothness={6}>
-          <meshPhysicalMaterial color="#e2ddff" transmission={1} thickness={0.5} roughness={0.12} ior={1.15} clearcoat={1} clearcoatRoughness={0.1} attenuationColor="#9A8AF0" attenuationDistance={6} envMapIntensity={1.4} />
+          <meshPhysicalMaterial color="#FFE9DD" transmission={1} thickness={0.5} roughness={0.12} ior={1.15} clearcoat={1} clearcoatRoughness={0.1} attenuationColor="#FB9561" attenuationDistance={6} envMapIntensity={1.4} />
         </RoundedBox>
       </group>
-      <mesh><sphereGeometry args={[0.75, 32, 32]} /><meshBasicMaterial color="#5B4AD8" transparent opacity={0.22} toneMapped={false} /></mesh>
+      <mesh><sphereGeometry args={[0.75, 32, 32]} /><meshBasicMaterial color="#C84F14" transparent opacity={0.22} toneMapped={false} /></mesh>
       <Logo3D />
-      <pointLight color="#7A68E6" intensity={4 + active * 10} distance={7} />
-      <Sparkles count={50} scale={[3.6, 3.2, 3.6]} size={2.4} speed={0.35} color="#BDB2F7" />
+      <pointLight color="#F97A3A" intensity={4 + active * 10} distance={7} />
+      <Sparkles count={50} scale={[3.6, 3.2, 3.6]} size={2.4} speed={0.35} color="#FDB48C" />
     </group>
   );
 }
@@ -268,29 +268,29 @@ function MonitorUI({ p }: { p: number }) {
 function Office({ p, dawn }: { p: number; dawn: number }) {
   const wood = "#3a2b24";
   const windowColor = useMemo(() => new THREE.Color(), []);
-  windowColor.set("#1a1640").lerp(new THREE.Color("#F97A3A"), dawn).multiplyScalar(0.6 + dawn * 1.6);
+  windowColor.set("#212635").lerp(new THREE.Color("#F97A3A"), dawn).multiplyScalar(0.6 + dawn * 1.6);
   return (
     <group>
       {/* desk */}
       <RoundedBox args={[4.6, 0.08, 1.7]} radius={0.03} position={[20, 1.0, -0.45]}><meshStandardMaterial color={wood} roughness={0.55} /></RoundedBox>
       {[[-2.15, -1.2], [2.15, -1.2], [-2.15, 0.3], [2.15, 0.3]].map(([x, z], i) => (
-        <mesh key={i} position={[20 + x, 0.48, z]}><boxGeometry args={[0.06, 0.96, 0.06]} /><meshStandardMaterial color="#1c1a22" metalness={0.6} roughness={0.4} /></mesh>
+        <mesh key={i} position={[20 + x, 0.48, z]}><boxGeometry args={[0.06, 0.96, 0.06]} /><meshStandardMaterial color="#1B1D21" metalness={0.6} roughness={0.4} /></mesh>
       ))}
       {/* monitor */}
       <group position={MONITOR}>
         <RoundedBox args={[MONITOR_SCREEN.w + 0.08, MONITOR_SCREEN.h + 0.08, 0.07]} radius={0.035} smoothness={6}>
-          <meshPhysicalMaterial color="#18171f" metalness={0.8} roughness={0.3} clearcoat={0.8} />
+          <meshPhysicalMaterial color="#181A1E" metalness={0.8} roughness={0.3} clearcoat={0.8} />
         </RoundedBox>
         <Screen id="monitor" width={MONITOR_SCREEN.w} height={MONITOR_SCREEN.h} z={0.037} glow={monitorLight(p)} />
         <pointLight position={[0, 0, 1.2]} color="#ffffff" intensity={p > 0.655 ? 2.5 : 0.8} distance={4} />
       </group>
-      <mesh position={[20, 1.1, -0.95]}><boxGeometry args={[0.14, 0.18, 0.06]} /><meshStandardMaterial color="#2a2833" metalness={0.8} roughness={0.3} /></mesh>
-      <RoundedBox args={[0.8, 0.025, 0.38]} radius={0.01} position={[20, 1.055, -0.95]}><meshStandardMaterial color="#2a2833" metalness={0.8} roughness={0.3} /></RoundedBox>
+      <mesh position={[20, 1.1, -0.95]}><boxGeometry args={[0.14, 0.18, 0.06]} /><meshStandardMaterial color="#292C32" metalness={0.8} roughness={0.3} /></mesh>
+      <RoundedBox args={[0.8, 0.025, 0.38]} radius={0.01} position={[20, 1.055, -0.95]}><meshStandardMaterial color="#292C32" metalness={0.8} roughness={0.3} /></RoundedBox>
       {/* keyboard, mug, plant */}
-      <RoundedBox args={[1.35, 0.035, 0.42]} radius={0.015} position={[20, 1.06, -0.05]}><meshStandardMaterial color="#d8d6e2" roughness={0.5} /></RoundedBox>
-      <mesh position={[21.6, 1.15, -0.1]}><cylinderGeometry args={[0.09, 0.085, 0.22, 32]} /><meshPhysicalMaterial color="#F6F5FA" roughness={0.2} clearcoat={1} /></mesh>
-      <mesh position={[21.72, 1.16, -0.1]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.055, 0.015, 12, 24]} /><meshPhysicalMaterial color="#F6F5FA" roughness={0.2} /></mesh>
-      <mesh position={[18.1, 1.16, -0.7]}><cylinderGeometry args={[0.16, 0.12, 0.26, 32]} /><meshStandardMaterial color="#E8E4F5" roughness={0.6} /></mesh>
+      <RoundedBox args={[1.35, 0.035, 0.42]} radius={0.015} position={[20, 1.06, -0.05]}><meshStandardMaterial color="#D7DAE1" roughness={0.5} /></RoundedBox>
+      <mesh position={[21.6, 1.15, -0.1]}><cylinderGeometry args={[0.09, 0.085, 0.22, 32]} /><meshPhysicalMaterial color="#F5F6F8" roughness={0.2} clearcoat={1} /></mesh>
+      <mesh position={[21.72, 1.16, -0.1]} rotation={[0, 0, Math.PI / 2]}><torusGeometry args={[0.055, 0.015, 12, 24]} /><meshPhysicalMaterial color="#F5F6F8" roughness={0.2} /></mesh>
+      <mesh position={[18.1, 1.16, -0.7]}><cylinderGeometry args={[0.16, 0.12, 0.26, 32]} /><meshStandardMaterial color="#E6E8EE" roughness={0.6} /></mesh>
       {[[0, 0.42, 0, 0.2], [-0.12, 0.55, 0.05, 0.16], [0.13, 0.52, -0.04, 0.15], [0, 0.66, 0, 0.13], [0.05, 0.36, 0.12, 0.13]].map(([x, y, z, r], i) => (
         <mesh key={i} position={[18.1 + x, 1.0 + y, -0.7 + z]}><sphereGeometry args={[r, 24, 24]} /><meshStandardMaterial color="#2F9E74" roughness={0.7} /></mesh>
       ))}
@@ -324,7 +324,7 @@ function Path({ curve, f, color }: { curve: THREE.CatmullRomCurve3; f: number; c
   const c = useMemo(() => new THREE.Color(color).multiplyScalar(2.5), [color]);
   return (
     <>
-      <mesh geometry={base}><meshBasicMaterial color="#3A3566" transparent opacity={0.6} /></mesh>
+      <mesh geometry={base}><meshBasicMaterial color="#3B4560" transparent opacity={0.6} /></mesh>
       {f > 0 && <mesh geometry={lit}><meshBasicMaterial color={c} toneMapped={false} /></mesh>}
     </>
   );
@@ -334,7 +334,7 @@ function Atmosphere({ dawn }: { dawn: number }) {
   const { scene } = useThree();
   const bg = useMemo(() => new THREE.Color(), []);
   useEffect(() => {
-    bg.set("#07061A").lerp(new THREE.Color("#2B1E4A"), dawn);
+    bg.set("#070A13").lerp(new THREE.Color("#282E40"), dawn);
     scene.background = bg;
     scene.fog = new THREE.Fog(bg.getHex(), 12, 34);
   }, [dawn, bg, scene]);
@@ -358,18 +358,18 @@ function World({ p }: { p: number }) {
       <Atmosphere dawn={dawn} />
       <ambientLight intensity={0.18} />
       <spotLight position={[-3, 5, 3]} angle={0.55} penumbra={1} intensity={40 * (1 - dawn)} color="#FDBA74" distance={14} />
-      <directionalLight position={[6, 9, 7]} intensity={0.7} color="#c9c1ff" />
+      <directionalLight position={[6, 9, 7]} intensity={0.7} color="#FFE3D3" />
       <Environment resolution={256} frames={1}>
         <Lightformer form="rect" intensity={2.2} position={[0, 6, 2]} rotation-x={Math.PI / 2} scale={[14, 3, 1]} color="#ffffff" />
-        <Lightformer form="rect" intensity={1.4} position={[-6, 2, 4]} rotation-y={Math.PI / 2.5} scale={[6, 2, 1]} color="#BDB2F7" />
+        <Lightformer form="rect" intensity={1.4} position={[-6, 2, 4]} rotation-y={Math.PI / 2.5} scale={[6, 2, 1]} color="#FDB48C" />
         <Lightformer form="rect" intensity={1.2} position={[8, 2, 4]} rotation-y={-Math.PI / 2.5} scale={[6, 2, 1]} color="#FDBA74" />
-        <Lightformer form="ring" intensity={1.5} position={[0, 3, -6]} scale={3} color="#7A68E6" />
+        <Lightformer form="ring" intensity={1.5} position={[0, 3, -6]} scale={3} color="#F97A3A" />
       </Environment>
       {dawn < 0.7 && <Stars radius={70} depth={40} count={1800} factor={3.2} saturation={0} fade speed={0.4} />}
 
       <mesh rotation-x={-Math.PI / 2} position={[10, 0, 0]}>
         <planeGeometry args={[220, 160]} />
-        <MeshReflectorMaterial blur={[400, 120]} resolution={384} mixBlur={1} mixStrength={14} roughness={1} depthScale={1.1} minDepthThreshold={0.35} maxDepthThreshold={1.3} color="#06051a" metalness={0.35} mirror={0.35} envMapIntensity={0.15} />
+        <MeshReflectorMaterial blur={[400, 120]} resolution={384} mixBlur={1} mixStrength={14} roughness={1} depthScale={1.1} minDepthThreshold={0.35} maxDepthThreshold={1.3} color="#06080F" metalness={0.35} mirror={0.35} envMapIntensity={0.15} />
       </mesh>
 
       <Phone p={p} />
@@ -378,9 +378,9 @@ function World({ p }: { p: number }) {
       <Core active={panelsOn} />
       <Office p={p} dawn={dawn} />
 
-      <Path curve={C1} f={Math.max(f1, p > 0.29 ? 1 : 0)} color="#9A8AF0" />
+      <Path curve={C1} f={Math.max(f1, p > 0.29 ? 1 : 0)} color="#FB9561" />
       <Path curve={C2} f={f2} color="#FDBA74" />
-      {p1 && <Packet curve={C1} f={f1} color="#BDB2F7" />}
+      {p1 && <Packet curve={C1} f={f1} color="#FDB48C" />}
       {pBack && <Packet curve={C1} f={1 - fBack} color="#FDBA74" />}
       {f2 > 0 && f2 < 1 && <Packet curve={C2} f={f2} color="#FDBA74" />}
 

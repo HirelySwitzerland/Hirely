@@ -25,7 +25,7 @@ export async function updateCompany(_: ActionState, fd: FormData): Promise<Actio
         companySize: z.string().max(20).optional(),
         language: z.enum(["de", "en", "fr", "it"]),
         website: z.string().url().or(z.literal("")).optional(),
-        brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Die Firmenfarbe muss ein Hex-Wert sein, z. B. #5B4AD8"),
+        brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Die Firmenfarbe muss ein Hex-Wert sein, z. B. #C84F14"),
         description: z.string().max(3000).optional(),
         values: z.string().max(2000).optional(),
         tone: z.string().max(40),

@@ -7,16 +7,16 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Responsive
  * categorical slots in fixed order (all-pairs pass); ordinal violet ramp for ordered stages;
  * reserved status colours that always ship with a text label.
  */
-export const SERIES = ["#5b4ad8", "#eb6834", "#1baf7a"];
-export const STAGE_RAMP = ["#a9a5ff", "#948cf5", "#7f74e8", "#6d5dd6", "#5a47be", "#4934a3", "#382485", "#281764"];
+export const SERIES = ["#E8692A", "#2E3A59", "#1BAF7A"];
+export const STAGE_RAMP = ["#FFD8C2", "#FDBE9A", "#FBA171", "#F98549", "#E8692A", "#C84F14", "#A3400F", "#7A300B"];
 export const STATUS = { good: "#0ca30c", warning: "#fab219", serious: "#ec835a", critical: "#d03b3b", neutral: "#94a3b8" };
 
 const axis = { fontSize: 12, fill: "#64748b" };
 const grid = "#eef2f6";
 const tooltipStyle = {
   contentStyle: { borderRadius: 10, border: "1px solid #e2e8f0", boxShadow: "0 12px 32px -8px rgb(16 24 40 / 0.18)", fontSize: 12, padding: "8px 10px" },
-  labelStyle: { color: "#13112A", fontWeight: 600, marginBottom: 4 },
-  itemStyle: { color: "#3E3B57", padding: 0 },
+  labelStyle: { color: "#161A26", fontWeight: 600, marginBottom: 4 },
+  itemStyle: { color: "#3B4152", padding: 0 },
   cursor: { stroke: "#cbd5e1", strokeWidth: 1 },
 };
 
@@ -124,7 +124,7 @@ export function GroupedBars({ data, keys, categoryKey }: { data: Record<string, 
 
 const STATUS_COLOR: Record<string, string> = {
   COMPLETED: STATUS.good, NO_ANSWER: STATUS.warning, DECLINED: STATUS.serious, FAILED: STATUS.critical,
-  INVITED: STATUS.neutral, SCHEDULED: "#64748b", IN_PROGRESS: "#5b4ad8",
+  INVITED: STATUS.neutral, SCHEDULED: "#64748b", IN_PROGRESS: "#C84F14",
 };
 
 /** Interview status distribution: status colours always paired with a text label and value. */

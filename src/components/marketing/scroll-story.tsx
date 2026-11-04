@@ -75,7 +75,7 @@ export function ScrollStory({ steps }: { steps: StoryStep[] }) {
 /** A quiet browser frame around product pictures. */
 export function Frame({ children, className, dark }: { children: React.ReactNode; className?: string; dark?: boolean }) {
   return (
-    <div className={cn("overflow-hidden rounded-xl border shadow-[0_40px_80px_-40px_rgba(19,17,42,0.45)]", dark ? "border-white/10 bg-night-soft" : "border-slate-200 bg-white", className)}>
+    <div className={cn("overflow-hidden rounded-xl border shadow-[0_40px_80px_-40px_rgba(20,24,36,0.45)]", dark ? "border-white/10 bg-night-soft" : "border-slate-200 bg-white", className)}>
       <div className={cn("flex items-center gap-1.5 border-b px-3.5 py-2.5", dark ? "border-white/10" : "border-slate-100 bg-slate-50/80")}>
         <span className={cn("h-2.5 w-2.5 rounded-full", dark ? "bg-white/15" : "bg-slate-200")} />
         <span className={cn("h-2.5 w-2.5 rounded-full", dark ? "bg-white/15" : "bg-slate-200")} />

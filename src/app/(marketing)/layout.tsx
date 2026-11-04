@@ -31,7 +31,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         </div>
       </header>
       {children}
-      <footer className="border-t border-slate-200 bg-[#FAFAFC]">
+      <footer className="border-t border-slate-200 bg-[#F8F9FB]">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-8 md:grid-cols-12">
           <div className="md:col-span-5">
             <Logo className="h-11" />

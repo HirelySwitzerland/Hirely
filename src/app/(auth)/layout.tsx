@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <p className="text-center text-xs text-slate-400">Geschützt durch Verschlüsselung, 2FA und Hosting in der Schweiz.</p>
       </div>
       <div className="relative hidden overflow-hidden bg-night lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(122,104,230,0.35),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(249,122,58,0.35),transparent_55%)]" />
         <div className="relative flex h-full flex-col justify-center px-16">
           <p className="text-sm font-medium text-brand-300">Recruit24</p>
           <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-tight text-white">Ihr KI-Mitarbeiter fürs Recruiting.</h2>

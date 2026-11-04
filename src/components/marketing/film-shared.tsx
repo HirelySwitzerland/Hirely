@@ -110,13 +110,13 @@ export function useSize(ref: React.RefObject<HTMLElement | null>) {
 
 export function PhoneFrame({ children, time, dark, bare }: { children: ReactNode; time: string; dark?: boolean; bare?: boolean }) {
   return (
-    <div className={cn("relative h-[780px] w-[380px]", bare ? "" : "rounded-[58px] bg-[#0B0A18] p-[12px] shadow-[0_60px_140px_-40px_rgba(122,104,230,0.75)] ring-1 ring-white/15")}>
-      <div className={cn("relative h-full w-full overflow-hidden", bare ? "rounded-[50px]" : "rounded-[46px]", dark ? "bg-[#100E22] text-white" : "bg-white text-ink")}>
+    <div className={cn("relative h-[780px] w-[380px]", bare ? "" : "rounded-[58px] bg-[#0A0C14] p-[12px] shadow-[0_60px_140px_-40px_rgba(249,122,58,0.75)] ring-1 ring-white/15")}>
+      <div className={cn("relative h-full w-full overflow-hidden", bare ? "rounded-[50px]" : "rounded-[46px]", dark ? "bg-[#0F121C] text-white" : "bg-white text-ink")}>
         <div className="relative z-20 flex h-[50px] items-center justify-between px-9 pt-1 text-[15px] font-semibold">
           <span>{time}</span>
           <span className="flex items-center gap-1.5"><span className="flex items-end gap-[2px]">{[5, 8, 11, 14].map((h) => <span key={h} className="w-[3px] rounded-sm bg-current" style={{ height: h }} />)}</span><span className="ml-1 h-[12px] w-[24px] rounded-[4px] border-2 border-current p-[1px]"><span className="block h-full w-3/4 rounded-[1px] bg-current" /></span></span>
         </div>
-        <div className="absolute left-1/2 top-[12px] z-30 h-[30px] w-[112px] -translate-x-1/2 rounded-full bg-[#0B0A18]" />
+        <div className="absolute left-1/2 top-[12px] z-30 h-[30px] w-[112px] -translate-x-1/2 rounded-full bg-[#0A0C14]" />
         {children}
       </div>
     </div>
@@ -195,7 +195,7 @@ export function ApplyScreen({ t }: { t: number }) {
       )}
       {leave > 0 && (
         <div className="absolute left-1/2 z-20 -translate-x-1/2" style={{ top: lerp(300, -140, ease(leave)) }}>
-          <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-[0_0_60px_20px_rgba(122,104,230,0.6)]"><FileText className="h-8 w-8" /></span>
+          <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-[0_0_60px_20px_rgba(249,122,58,0.6)]"><FileText className="h-8 w-8" /></span>
         </div>
       )}
     </>
@@ -359,12 +359,12 @@ export function CheckPanels({ t, tall }: { t: number; tall: boolean }) {
           })}
         </div>
         {beam > 0 && beam < 1 && (
-          <div className="pointer-events-none absolute inset-x-0 h-24" style={{ top: `${beam * 100}%`, transform: "translateY(-50%)", background: "linear-gradient(to bottom, transparent, rgba(122,104,230,0.18), transparent)" }}>
-            <div className="absolute inset-x-0 top-1/2 h-[2px] bg-brand-500 shadow-[0_0_20px_4px_rgba(122,104,230,0.7)]" />
+          <div className="pointer-events-none absolute inset-x-0 h-24" style={{ top: `${beam * 100}%`, transform: "translateY(-50%)", background: "linear-gradient(to bottom, transparent, rgba(249,122,58,0.18), transparent)" }}>
+            <div className="absolute inset-x-0 top-1/2 h-[2px] bg-brand-500 shadow-[0_0_20px_4px_rgba(249,122,58,0.7)]" />
           </div>
         )}
       </div>
-      <div className={cn("rounded-2xl border border-white/10 bg-[#1B1838]/90 p-7 text-white backdrop-blur", tall ? "w-full" : "w-[520px]")}>
+      <div className={cn("rounded-2xl border border-white/10 bg-[#1A1E2C]/90 p-7 text-white backdrop-blur", tall ? "w-full" : "w-[520px]")}>
         <div className="flex items-center justify-between">
           <p className="text-[18px] font-semibold">Anforderungen · Servicetechniker/in</p>
           <span className="font-mono text-[15px] tabular-nums text-brand-200">{count}/6</span>
@@ -392,7 +392,7 @@ export function CheckPanels({ t, tall }: { t: number; tall: boolean }) {
 /** The Recruit24 app window, simplified and with large type so it stays readable when scaled down. */
 export function AppWindow({ children, tall, active, flat }: { children: ReactNode; tall: boolean; active: "dash" | "profile" | "calendar"; flat?: boolean }) {
   return (
-    <div className={cn("flex h-full overflow-hidden bg-[#F6F5FA] text-ink", flat ? "" : "rounded-2xl shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)] ring-1 ring-white/10")}>
+    <div className={cn("flex h-full overflow-hidden bg-[#F5F6F8] text-ink", flat ? "" : "rounded-2xl shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)] ring-1 ring-white/10")}>
       {!tall && (
         <aside className="flex w-[230px] shrink-0 flex-col gap-1 bg-night px-4 py-6 text-[15px] text-white/60">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -514,7 +514,7 @@ export function CalendarCard({ t, bare }: { t: number; bare?: boolean }) {
                 {r === 0 && c === 2 && <span className="absolute inset-1 rounded-lg bg-slate-100 p-1.5 text-[11px] text-slate-500">Budget</span>}
                 {r === 2 && c === 4 && <span className="absolute inset-1 rounded-lg bg-slate-100 p-1.5 text-[11px] text-slate-500">Einführung</span>}
                 {r === 1 && c === 3 && drop > 0 && (
-                  <span className="absolute inset-1 z-10 rounded-lg bg-brand-600 p-1.5 text-[11px] font-semibold leading-tight text-white shadow-[0_8px_24px_-6px_rgba(91,74,216,0.8)]" style={{ transform: `translateY(${lerp(-40, 0, drop)}px)`, opacity: drop }}>
+                  <span className="absolute inset-1 z-10 rounded-lg bg-brand-600 p-1.5 text-[11px] font-semibold leading-tight text-white shadow-[0_8px_24px_-6px_rgba(200,79,20,0.8)]" style={{ transform: `translateY(${lerp(-40, 0, drop)}px)`, opacity: drop }}>
                     Gespräch<br />Max Muster
                   </span>
                 )}
@@ -567,7 +567,7 @@ export function Dial({ minutes, size }: { minutes: number; size: number }) {
   return (
     <svg viewBox="0 0 120 120" width={size} height={size} aria-hidden>
       <circle cx="60" cy="60" r="54" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-      <path d={arc(270, 450, 47)} fill="none" stroke="#7A68E6" strokeOpacity=".5" strokeWidth="5" strokeLinecap="round" />
+      <path d={arc(270, 450, 47)} fill="none" stroke="#F97A3A" strokeOpacity=".5" strokeWidth="5" strokeLinecap="round" />
       <path d={arc(90, 270, 47)} fill="none" stroke="#FDBA74" strokeOpacity=".55" strokeWidth="5" strokeLinecap="round" />
       {Array.from({ length: 24 }).map((_, i) => {
         const a = (i / 24) * 2 * Math.PI, major = i % 6 === 0;

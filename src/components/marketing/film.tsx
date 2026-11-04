@@ -120,7 +120,7 @@ export function Film({ fallback }: { fallback: StoryStep[] }) {
   return (
     <section id="ablauf" ref={root} className="relative scroll-mt-16 bg-night" style={{ height: "1150vh" }} aria-label="Eine Bewerbung in 24 Stunden">
       <div className="sticky top-16 flex h-[calc(100svh-4rem)] flex-col overflow-hidden lg:flex-row">
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(80% 60% at 70% 110%, rgba(245,158,91,0.35), transparent 70%)", opacity: dawn }} />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(80% 60% at 70% 110%, rgba(249,122,58,0.35), transparent 70%)", opacity: dawn }} />
 
         {/* left: clock and caption */}
         <aside className="relative z-10 flex shrink-0 items-center gap-4 border-b border-white/10 bg-night/40 px-5 py-4 backdrop-blur-sm lg:w-[34%] lg:max-w-[480px] lg:flex-col lg:items-start lg:justify-center lg:gap-0 lg:border-b-0 lg:border-r lg:px-12">

@@ -130,7 +130,7 @@ export function PageHeader({ title, description, actions, breadcrumb }: { title:
 }
 
 export function Avatar({ name, size = 32, className, color }: { name: string; size?: number; className?: string; color?: string }) {
-  const palette = ["#5B4AD8", "#0F766E", "#B45309", "#BE123C", "#0369A1", "#4D7C0F", "#7E22CE", "#475569"];
+  const palette = ["#C84F14", "#0F766E", "#B45309", "#BE123C", "#0369A1", "#4D7C0F", "#2E3A59", "#475569"];
   const bg = color ?? palette[[...name].reduce((s, c) => s + c.charCodeAt(0), 0) % palette.length];
   return (
     <span
