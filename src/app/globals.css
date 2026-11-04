@@ -57,3 +57,9 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   html:has(.marketing-root) { scroll-behavior: smooth; }
 }
+
+/* Scroll film on the public website */
+@keyframes film-wave { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+.film-wave > span { animation: film-wave 1.1s ease-in-out infinite; transform-origin: center; }
+@keyframes film-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.film-blink { animation: film-blink 1.6s ease-in-out infinite; }

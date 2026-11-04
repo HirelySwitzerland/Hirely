@@ -4,7 +4,8 @@ import {
   ArrowRight, BarChart3, Building2, CalendarCheck, Check, ChevronDown, CircleSlash, EyeOff, FileSearch, Globe2, Library, Lock, MessagesSquare,
   PhoneCall, Play, Plug, ScrollText, ShieldCheck, UserCheck, UserRound, Video,
 } from "lucide-react";
-import { Frame, ScrollStory, type StoryStep } from "@/components/marketing/scroll-story";
+import { type StoryStep } from "@/components/marketing/scroll-story";
+import { Film } from "@/components/marketing/film";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
 import { PLANS, chf } from "@/lib/billing";
 import { cn } from "@/lib/utils";
@@ -108,15 +109,17 @@ export default function LandingPage() {
             <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
             Hörprobe: So klingt ein KI-Vorabgespräch
           </a>
-          <div className="relative mx-auto mt-16 max-w-6xl translate-y-0">
-            <div aria-hidden className="absolute -inset-x-8 -top-8 bottom-24 rounded-[32px] bg-gradient-to-b from-brand-500/25 to-transparent blur-2xl" />
-            <Frame dark className="relative rounded-b-none border-b-0">
-              <Image src="/marketing/app-uebersicht.webp" alt="Recruit24-Übersicht: Ihre nächsten Schritte, Kennzahlen und nächste Gespräche" width={2560} height={1600} priority sizes="(min-width: 1280px) 1152px, 100vw" className="h-auto w-full" />
-            </Frame>
-          </div>
+          <p className="mx-auto mt-20 flex max-w-md flex-col items-center gap-3 pb-16 text-[14px] text-white/55">
+            <span className="h-10 w-px bg-gradient-to-b from-transparent to-white/40" />
+            Begleiten Sie eine Bewerbung durch 24 Stunden
+          </p>
         </div>
       </section>
 
+      {/* Film: eine Bewerbung in 24 Stunden */}
+      <Film fallback={STEPS} />
+
+      <div id="nach-film" className="scroll-mt-16" />
       {/* Vertrauensleiste */}
       <section className="border-b border-slate-200 bg-white">
         <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-4 px-4 py-7 sm:px-8 md:grid-cols-5">
@@ -126,37 +129,6 @@ export default function LandingPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* Problem */}
-      <section className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <Eyebrow>Das Problem</Eyebrow>
-            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">
-              Gute Leute warten nicht.<br /><span className="text-slate-400">Ihr Posteingang schon.</span>
-            </h2>
-          </div>
-          <div className="space-y-6 lg:col-span-5 lg:pt-3">
-            <p className="text-[18px] leading-relaxed text-slate-600">
-              Jede offene Stelle bedeutet Tage voller Routine: Lebensläufe lesen, anrufen, nachfragen, Termine hin- und herschieben. Bis HR sich meldet, hat die beste Kandidatin längst woanders zugesagt.
-            </p>
-            <p className="text-[18px] leading-relaxed text-ink">
-              Recruit24 übernimmt diese Routine – sofort, freundlich und in Ihrem Namen. Ihr Team kommt dann ins Spiel, wenn ein Entscheid nötig ist.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Ablauf */}
-      <section id="ablauf" className="scroll-mt-16 border-t border-slate-200 bg-[#FAFAFC]">
-        <div className="mx-auto max-w-7xl px-4 pt-28 sm:px-8">
-          <Eyebrow>So funktioniert's</Eyebrow>
-          <h2 className="mt-4 max-w-3xl text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Von der Bewerbung zum Termin – in vier Schritten.</h2>
-        </div>
-        <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-8 lg:pb-8">
-          <ScrollStory steps={STEPS} />
-        </div>
       </section>
 
       {/* Hörprobe */}
