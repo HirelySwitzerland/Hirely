@@ -1,0 +1,125 @@
+{
+ "durationSec": 162.3,
+ "segments": [
+  {
+   "ai": true,
+   "t": "Grüezi Roman Egli, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker/in beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team.",
+   "ms": 600
+  },
+  {
+   "ai": true,
+   "t": "Sind Sie damit einverstanden, dass dieses Gespräch aufgezeichnet und transkribiert wird, damit das HR-Team Ihre Antworten nachlesen kann?",
+   "ms": 25406
+  },
+  {
+   "ai": false,
+   "t": "Ja, das ist in Ordnung.",
+   "ms": 35333
+  },
+  {
+   "ai": true,
+   "t": "Besitzen Sie den Führerausweis Kategorie B?",
+   "ms": 37476
+  },
+  {
+   "ai": false,
+   "t": "Ja, ich habe den Führerausweis Kategorie B.",
+   "ms": 41320
+  },
+  {
+   "ai": true,
+   "t": "Sind Sie bereit, Pikettdienst zu leisten?",
+   "ms": 44346
+  },
+  {
+   "ai": false,
+   "t": "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle.",
+   "ms": 47539
+  },
+  {
+   "ai": true,
+   "t": "Was interessiert Sie an der Stelle als Servicetechniker/in?",
+   "ms": 52562
+  },
+  {
+   "ai": false,
+   "t": "Ich bin seit sechs Jahren im Aussendienst und schätze die Abwechslung. Bei Ihnen könnte ich vorwiegend in der Deutschschweiz arbeiten, was für meine Familie wichtig ist.",
+   "ms": 56405
+  },
+  {
+   "ai": true,
+   "t": "In Ihrem Lebenslauf erwähnen Sie Ihre Tätigkeit als Servicetechniker bei Kardex AG. Welche Aufgaben haben Sie dort hauptsächlich übernommen?",
+   "ms": 65561
+  },
+  {
+   "ai": false,
+   "t": "Ich nehme Lagerliftsysteme bei Kunden in Betrieb, mache die regelmässige Wartung und suche bei Störungen den Fehler, elektrisch wie mechanisch. Meistens bin ich dabei allein beim Kunden unterwegs.",
+   "ms": 76138
+  },
+  {
+   "ai": true,
+   "t": "Erzählen Sie von einer schwierigen Störung, die Sie beim Kunden behoben haben.",
+   "ms": 89241
+  },
+  {
+   "ai": false,
+   "t": "Bei einem Pharmakunden stand mitten in der Nacht ein Lagerlift still. Ich habe über die Fehlermeldungen einen defekten Endschalter gefunden, ihn ersetzt, und nach einer Stunde lief die Anlage wieder.",
+   "ms": 94478
+  },
+  {
+   "ai": true,
+   "t": "Sie haben bereits mehrjährige Erfahrung. Haben Sie in dieser Zeit auch Personen geführt oder angeleitet?",
+   "ms": 105909
+  },
+  {
+   "ai": false,
+   "t": "Ich betreue seit zwei Jahren unsere Lernenden im Aussendienst und arbeite neue Kollegen ein. Ein eigenes Team habe ich aber noch nicht geführt.",
+   "ms": 113793
+  },
+  {
+   "ai": true,
+   "t": "Ab wann könnten Sie die neue Stelle antreten?",
+   "ms": 123274
+  },
+  {
+   "ai": false,
+   "t": "Ab dem 1. Dezember.",
+   "ms": 126235
+  },
+  {
+   "ai": true,
+   "t": "Wie lange ist Ihre aktuelle Kündigungsfrist?",
+   "ms": 128379
+  },
+  {
+   "ai": false,
+   "t": "Zwei Monate.",
+   "ms": 131665
+  },
+  {
+   "ai": true,
+   "t": "Was sind Ihre Lohnvorstellungen, brutto pro Jahr?",
+   "ms": 133483
+  },
+  {
+   "ai": false,
+   "t": "85'000 Franken inklusive Pikett.",
+   "ms": 137002
+  },
+  {
+   "ai": true,
+   "t": "Gibt es noch etwas, das Sie uns mitteilen möchten, oder haben Sie Fragen zur Stelle?",
+   "ms": 140027
+  },
+  {
+   "ai": false,
+   "t": "Nein, im Moment nicht. Ich freue mich auf Ihre Rückmeldung.",
+   "ms": 145775
+  },
+  {
+   "ai": true,
+   "t": "Vielen Dank für das Gespräch, Roman Egli. Das HR-Team von Helvetic Engineering AG prüft Ihre Antworten persönlich und meldet sich in den nächsten Tagen bei Ihnen. Auf Wiederhören!",
+   "ms": 150008
+  }
+ ]
+}

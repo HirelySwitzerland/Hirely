@@ -1,57 +1,67 @@
 import Link from "next/link";
-import { Logo, LinkButton } from "@/components/ui";
+import { ArrowRight } from "lucide-react";
+import { Logo } from "@/components/ui";
+
+const NAV = [
+  { href: "/#ablauf", label: "Ablauf" },
+  { href: "/#hoerprobe", label: "Hörprobe" },
+  { href: "/#funktionen", label: "Funktionen" },
+  { href: "/#vertrauen", label: "Datenschutz" },
+  { href: "/#preise", label: "Preise" },
+  { href: "/#fragen", label: "Fragen" },
+];
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white">
-      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" aria-label="Recruit24 Startseite">
+    <div className="bg-white text-ink antialiased [scroll-behavior:smooth]">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-night/85 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-8">
+          <Link href="/" aria-label="Recruit24 Startseite" className="text-white">
             <Logo />
           </Link>
-          <nav className="hidden items-center gap-7 text-sm text-slate-600 md:flex">
-            <a href="/#how" className="hover:text-ink">So funktioniert's</a>
-            <a href="/#features" className="hover:text-ink">Produkt</a>
-            <a href="/#trust" className="hover:text-ink">Datenschutz</a>
-            <a href="/#pricing" className="hover:text-ink">Preise</a>
+          <nav className="hidden items-center gap-7 text-[14px] text-white/65 lg:flex" aria-label="Hauptnavigation">
+            {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
           </nav>
-          <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden px-3 text-sm font-medium text-slate-600 hover:text-ink sm:block">
-              Anmelden
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link href="/login" className="px-3 py-2 text-[14px] font-medium text-white/75 transition hover:text-white">Anmelden</Link>
+            <Link href="/register" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3.5 text-[14px] font-semibold text-night shadow-sm transition hover:bg-brand-50">
+              <span className="hidden sm:inline">Für Unternehmen</span><span className="sm:hidden">Starten</span><ArrowRight className="h-4 w-4" />
             </Link>
-            <LinkButton href="/register" size="sm">
-              Kostenlos starten
-            </LinkButton>
           </div>
         </div>
       </header>
       {children}
-      <footer className="border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
-          <div className="md:col-span-2">
+      <footer className="border-t border-slate-200 bg-[#FAFAFC]">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-8 md:grid-cols-12">
+          <div className="md:col-span-5">
             <Logo />
-            <p className="mt-3 max-w-sm text-sm text-slate-500">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen im DACH-Raum.</p>
-            <p className="mt-4 text-xs text-slate-400">Gehostet in der Schweiz · revDSG- & DSGVO-konform · Jeden Anstellungsentscheid trifft ein Mensch.</p>
+            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen.</p>
+            <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <div>
-            <p className="text-sm font-semibold text-ink">Produkt</p>
-            <ul className="mt-3 space-y-2 text-sm text-slate-500">
-              <li><a href="/#features" className="hover:text-ink">Funktionen</a></li>
-              <li><a href="/#pricing" className="hover:text-ink">Preise</a></li>
-              <li><Link href="/careers/helvetic-engineering" className="hover:text-ink">Beispiel-Karriereseite</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-ink">Firma</p>
-            <ul className="mt-3 space-y-2 text-sm text-slate-500">
-              <li><Link href="/demo" className="hover:text-ink">Demo vereinbaren</Link></li>
-              <li><Link href="/login" className="hover:text-ink">Anmelden</Link></li>
-              <li><a href="/#trust" className="hover:text-ink">Datenschutz</a></li>
-            </ul>
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ["/#preise", "Preise"], ["/careers/helvetic-engineering", "Beispiel-Karriereseite"]]} />
+          <FooterCol title="Für Unternehmen" links={[["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
+          <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"]]} />
+        </div>
+        <div className="border-t border-slate-200">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-[13px] text-slate-500 sm:flex-row sm:justify-between sm:px-8">
+            <span>© {new Date().getFullYear()} Recruit24. Alle Rechte vorbehalten.</span>
+            <span>Preise in CHF, exkl. MwSt.</span>
           </div>
         </div>
-        <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-400">© {new Date().getFullYear()} Recruit24. Alle Rechte vorbehalten.</div>
       </footer>
+    </div>
+  );
+}
+
+function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
+  return (
+    <div className="md:col-span-2 lg:col-span-2">
+      <p className="text-[13px] font-semibold uppercase tracking-wider text-slate-900">{title}</p>
+      <ul className="mt-4 space-y-2.5 text-[15px] text-slate-600">
+        {links.map(([href, label]) => (
+          <li key={href}>{href.startsWith("/#") ? <a href={href} className="hover:text-ink">{label}</a> : <Link href={href} className="hover:text-ink">{label}</Link>}</li>
+        ))}
+      </ul>
     </div>
   );
 }

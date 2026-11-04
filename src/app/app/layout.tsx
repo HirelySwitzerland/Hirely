@@ -55,7 +55,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </header>
         {demo && (
-          <div className="border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-xs text-amber-900 sm:px-6">
+          <div data-demo-banner className="border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-xs text-amber-900 sm:px-6">
             Demo-Firma mit erfundenen Daten. Telefonanrufe werden simuliert, bis Twilio verbunden ist.
           </div>
         )}

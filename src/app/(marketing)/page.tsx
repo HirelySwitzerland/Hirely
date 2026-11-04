@@ -1,271 +1,366 @@
+import Image from "next/image";
+import Link from "next/link";
 import {
-  ArrowRight, BarChart3, CalendarCheck, CheckCircle2, ClipboardList, FileSearch, FileText, Library, Lock, MailCheck, MessagesSquare,
-  PhoneCall, Plug, Scale, ShieldCheck, UserCheck, Users, Video, Workflow, XCircle,
+  ArrowRight, BarChart3, Building2, CalendarCheck, Check, ChevronDown, CircleSlash, EyeOff, FileSearch, Globe2, Library, Lock, MessagesSquare,
+  PhoneCall, Play, Plug, ScrollText, ShieldCheck, UserCheck, UserRound, Video,
 } from "lucide-react";
-import { HeroVisual, WorkflowStrip } from "@/components/marketing/hero-visual";
-import { LinkButton } from "@/components/ui";
+import { Frame, ScrollStory, type StoryStep } from "@/components/marketing/scroll-story";
+import { Hoerprobe } from "@/components/marketing/hoerprobe";
 import { PLANS, chf } from "@/lib/billing";
+import { cn } from "@/lib/utils";
 
-const PROBLEMS = [
-  "Hunderte Lebensläufe lesen",
-  "Immer gleiche E-Mails schreiben",
-  "Kandidierende anrufen",
-  "Immer dieselben Fragen stellen",
-  "Gesprächsnotizen tippen",
-  "Termine koordinieren",
-  "Datensätze nachführen",
+export const metadata = {
+  title: { absolute: "Recruit24 – Ihr KI-Mitarbeiter fürs Recruiting" },
+  description: "Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. Entscheiden tun immer Sie. Entwickelt in der Schweiz.",
+};
+
+const TRUST = [
+  { i: Building2, t: "Entwickelt in der Schweiz" },
+  { i: ShieldCheck, t: "revDSG & DSGVO" },
+  { i: UserCheck, t: "Der Mensch entscheidet" },
+  { i: Globe2, t: "DE · FR · IT · EN" },
+  { i: Lock, t: "Verschlüsselt & protokolliert" },
 ];
 
-const SOLUTION = [
-  { i: FileSearch, t: "Prüft Bewerbungen", d: "Jeder Lebenslauf wird strukturiert erfasst und mit Ihren Anforderungen abgeglichen – mit Belegen." },
-  { i: MailCheck, t: "Kontaktiert Kandidierende", d: "Persönliche Nachrichten per E-Mail, SMS oder WhatsApp – innert Minuten und in der Sprache der Person." },
-  { i: PhoneCall, t: "Führt Telefoninterviews", d: "Ein transparenter KI-Sprachassistent führt Ihr strukturiertes Vorabgespräch – rund um die Uhr." },
-  { i: Video, t: "Führt digitale Interviews", d: "Video- oder Browser-Interviews für alle, die lieber dann antworten, wenn es ihnen passt." },
-  { i: ClipboardList, t: "Fasst Gespräche zusammen", d: "Transkript, wichtigste Antworten, Verfügbarkeit, Kündigungsfrist und Lohnvorstellung – strukturiert." },
-  { i: Users, t: "Ordnet Kandidierende", d: "Ein klarer Prozess mit Stufen, Notizen und durchsuchbarem Talent-Pool." },
-  { i: CalendarCheck, t: "Vereinbart Termine", d: "Kandidierende wählen einen freien Termin aus Ihrem Kalender. Einladungen und Erinnerungen gehen automatisch raus." },
-  { i: MessagesSquare, t: "Informiert HR", d: "„Neue Bewerbung bereit zur Prüfung.“ Ihr Team kommt erst ins Spiel, wenn ein Entscheid nötig ist." },
-];
-
-const STEPS = [
-  { t: "Stelle erfassen", d: "Ein paar Stichworte genügen – Recruit24 schreibt ein professionelles Inserat und schlägt Anforderungen und Fragen vor." },
-  { t: "Bewerbungen kommen rein", d: "Aus ATS, Karriereseite, E-Mail, CSV oder API. jobs.ch, LinkedIn und Indeed laufen über Ihr ATS." },
-  { t: "Recruit24 prüft", d: "Lebensläufe werden ausgewertet, Fakten von Ableitungen getrennt und jede Anforderung mit Belegen geprüft." },
-  { t: "Recruit24 meldet sich", d: "Passende Kandidierende erhalten eine freundliche Einladung zu einem kurzen Vorabgespräch – inklusive Erinnerungen." },
-  { t: "KI-Interview", d: "Per Telefon, im Browser oder per Video. Ihre Fragen, Ihre Nachfragen, Ihre Ausschlusskriterien." },
-  { t: "Klares Kandidatenprofil", d: "Transkript, Zusammenfassung, Belege, Verfügbarkeit und Lohnvorstellung an einem Ort." },
-  { t: "Persönliches Gespräch", d: "Klick auf „Zum Gespräch einladen“ – die Person bucht einen Termin, der Kalendereintrag entsteht automatisch." },
+const STEPS: StoryStep[] = [
+  {
+    label: "Bewerbung", title: "In zwei Minuten beworben.",
+    text: "Bewerbungen kommen über Ihre Karriereseite oder Ihr bestehendes ATS. Recruit24 liest jeden Lebenslauf und prüft ihn gegen die Anforderungen der Stelle.",
+    points: ["Ohne Konto und ohne App – auch am Handy", "Kurze Ja/Nein-Fragen, z. B. zum Führerausweis", "Fakten und Belege statt Bauchgefühl"],
+    image: "/marketing/schritt-bewerbung.webp", alt: "Stelleninserat Servicetechniker/in mit Bewerbungsformular",
+  },
+  {
+    label: "KI-Interview", title: "Das Vorabgespräch führt Recruit24.",
+    text: "Passende Personen werden in Minuten eingeladen und wählen selbst: Anruf sofort, Anruf zur Wunschzeit oder Gespräch im Browser – auch am Sonntagabend.",
+    points: ["Stellt sich immer als KI vor", "Ihre Fragen, Ihre Nachfragen, Ihre Ausschlusskriterien", "Rund 10 Minuten, rund um die Uhr"],
+    image: "/marketing/schritt-interview.webp", alt: "Laufendes KI-Vorabgespräch im Browser mit Fragen und Antworten",
+  },
+  {
+    label: "Ihr Entscheid", title: "Sie sehen sofort, wer passt.",
+    text: "Zusammenfassung, Belege pro Anforderung, Verfügbarkeit, Kündigungsfrist und Lohnvorstellung – auf einer Seite. Der nächste Schritt ist ein Klick.",
+    points: ["Zum Gespräch einladen, vormerken oder absagen", "Jede Bewertung können Sie anpassen", "Absagen gehen nie automatisch raus"],
+    image: "/marketing/schritt-entscheid.webp", alt: "Profil von Max Muster mit dem nächsten Schritt: einladen, engere Wahl oder absagen",
+  },
+  {
+    label: "Termin", title: "Der Termin bucht sich selbst.",
+    text: "Die Person wählt einen freien Termin aus Ihrem Kalender. Kalendereintrag, Bestätigung und Erinnerung entstehen automatisch.",
+    points: ["Google Kalender und Microsoft 365", "Erinnerung vor dem Gespräch", "Kein Hin und Her per E-Mail"],
+    image: "/marketing/schritt-termin.webp", alt: "Terminwahl für das persönliche Gespräch mit freien Zeiten",
+  },
 ];
 
 const FEATURES = [
-  { i: FileSearch, t: "KI-CV-Prüfung", d: "Erfahrung, Skills, Sprachen und Zertifikate strukturiert erfasst. Fakten und Ableitungen sauber getrennt." },
-  { i: PhoneCall, t: "KI-Telefoninterviews", d: "Natürliche Gespräche mit Nachfragen – auf Deutsch, Schweizerdeutsch, Französisch, Italienisch und Englisch." },
-  { i: Video, t: "KI-Video-Interviews", d: "Zeitversetzt und handytauglich. Ausgewertet wird nur der Inhalt – nie das Aussehen." },
+  { i: FileSearch, t: "CV-Prüfung mit Belegen", d: "Erfahrung, Skills, Sprachen und Zertifikate – jede Anforderung mit Fundstelle im Lebenslauf." },
+  { i: PhoneCall, t: "Telefon- & Browser-Interviews", d: "Natürliche Gespräche mit Nachfragen, auf Deutsch, Französisch, Italienisch und Englisch." },
+  { i: Video, t: "Video-Interviews", d: "Zeitversetzt und handytauglich. Bewertet wird nur der Inhalt, nie das Aussehen." },
+  { i: CalendarCheck, t: "Terminbuchung", d: "Selbstbuchung aus Ihrem Kalender, mit Bestätigung und Erinnerungen." },
   { i: MessagesSquare, t: "Kommunikation", d: "Anpassbare Vorlagen für jeden Schritt – per E-Mail, SMS und WhatsApp." },
-  { i: CalendarCheck, t: "Terminbuchung", d: "Anbindung an Google Kalender und Microsoft 365, Selbstbuchung, Erinnerungen." },
-  { i: FileText, t: "Kandidatenberichte", d: "Belege pro Anforderung: „Erfüllt 8 von 10 Anforderungen – und zwar deshalb.“" },
-  { i: Plug, t: "ATS-Anbindung", d: "Personio, Workday, SAP SuccessFactors, Abacus, rexx und Recruitee über API und signierte Webhooks." },
-  { i: BarChart3, t: "Auswertungen", d: "Zeit bis zum Interview, Zeit bis zur Einstellung, beste Quellen, Quoten und gesparte HR-Zeit." },
-  { i: Library, t: "Talent-Pool", d: "Einwilligungsbasiert und in normaler Sprache durchsuchbar: „Elektroingenieure in der Ostschweiz“." },
-  { i: Workflow, t: "KI-Recruiting-Assistent", d: "Visuelle Abläufe: warten, prüfen, einladen, erinnern, berichten, informieren – Ihr Prozess auf Autopilot." },
+  { i: Plug, t: "ATS & Karriereseite", d: "Anbindung an Personio, Abacus, SuccessFactors und weitere – oder die eigene Karriereseite." },
+  { i: BarChart3, t: "Auswertungen", d: "Zeit bis zum Interview, beste Quellen, Quoten und gesparte HR-Zeit." },
+  { i: Library, t: "Talent-Pool", d: "Mit Einwilligung, in normaler Sprache durchsuchbar: «Elektroingenieure in der Ostschweiz»." },
+];
+
+const NEVER = [
+  { i: CircleSlash, t: "Sagt nie selbst ab", d: "Absagen und Einstellungen sind technisch Menschen vorbehalten." },
+  { i: EyeOff, t: "Bewertet nie Aussehen oder Stimme", d: "Keine geschützten Merkmale, keine Gesichts- oder Stimmanalyse." },
+  { i: UserRound, t: "Gibt sich nie als Mensch aus", d: "Bewerbende wissen immer, dass sie mit einer KI sprechen." },
+  { i: ScrollText, t: "Arbeitet nie im Verborgenen", d: "Jeder Schritt wird protokolliert – Export und Löschung auf Anfrage." },
+];
+
+const FAQ = [
+  ["Entscheidet die KI, wen wir einstellen?", "Nein. Recruit24 prüft, fragt nach und fasst zusammen. Wer eingeladen, eingestellt oder abgesagt wird, entscheidet immer eine Person aus Ihrem Team – das ist technisch so eingebaut."],
+  ["Wissen Bewerbende, dass sie mit einer KI sprechen?", "Ja, immer. Die KI stellt sich zu Beginn als KI vor, erklärt, dass am Schluss ein Mensch entscheidet, und fragt nach dem Einverständnis zur Aufnahme."],
+  ["Wie steht es um den Datenschutz?", "Recruit24 ist auf das Schweizer Datenschutzgesetz (revDSG) und die DSGVO ausgelegt: Einwilligungen, Aufbewahrungsfristen, Export und Löschung auf Anfrage, lückenloses Protokoll. Daten werden verschlüsselt gespeichert und übertragen; im Business-Plan liegen sie ausschliesslich in der Schweiz."],
+  ["Brauchen wir ein neues ATS?", "Nein. Recruit24 arbeitet mit Ihrem bestehenden System (z. B. Personio, Abacus, SuccessFactors) zusammen. Ohne ATS nutzen Sie einfach die mitgelieferte Karriereseite."],
+  ["Was brauchen Bewerbende?", "Nichts ausser einem Telefon oder Browser. Sie erhalten einen Link per E-Mail oder SMS – ohne Konto, ohne App."],
+  ["Wie schnell sind wir startklar?", "Die erste Stelle ist in rund zehn Minuten eingerichtet: Stichworte eingeben, Recruit24 schlägt Inserat, Anforderungen und Interviewfragen vor, Sie passen an und veröffentlichen."],
+  ["Was passiert nach den 14 Testtagen?", "Sie wählen einen Plan, der zu Ihrem Recruiting passt. Für die Testphase brauchen Sie keine Kreditkarte."],
 ];
 
 export default function LandingPage() {
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Für Schweizer KMU · Gehostet in der Schweiz
-          </div>
-          <h1 className="mx-auto max-w-4xl text-4xl font-semibold tracking-tight text-ink sm:text-6xl sm:leading-[1.05]">
-            Ihr KI-Mitarbeiter fürs Recruiting.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Recruit24 übernimmt die Routinearbeit im Recruiting – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung. So kann sich Ihr HR-Team auf Menschen konzentrieren statt auf Papierkram.
+    <main className="marketing-root">
+      {/* Start */}
+      <section className="relative overflow-hidden bg-night">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-[-20%] h-[720px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.35),transparent)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
+        </div>
+        <div className="relative mx-auto max-w-7xl px-4 pb-0 pt-20 text-center sm:px-8 sm:pt-28">
+          <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[13px] font-medium text-white/75">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />KI-Recruiting aus der Schweiz – für KMU
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <LinkButton href="/register" size="lg">
-              Kostenlos starten <ArrowRight className="h-4 w-4" />
-            </LinkButton>
-            <LinkButton href="/demo" size="lg" variant="secondary">
+          <h1 className="mx-auto mt-8 max-w-5xl text-[44px] font-semibold leading-[1.02] tracking-[-0.035em] text-white sm:text-[72px] lg:text-[84px]">
+            Ihr KI-Mitarbeiter<br /><span className="bg-gradient-to-r from-brand-300 via-brand-200 to-[#FDBA74] bg-clip-text text-transparent">fürs Recruiting.</span>
+          </h1>
+          <p className="mx-auto mt-7 max-w-2xl text-[18px] leading-relaxed text-white/70 [text-wrap:balance] sm:text-[20px]">
+            Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night shadow-lg transition hover:bg-brand-50">
+              14 Tage kostenlos testen <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href="/demo" className="inline-flex h-12 items-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">
               Demo vereinbaren
-            </LinkButton>
+            </Link>
           </div>
-          <p className="mt-4 text-xs text-slate-500">14 Tage gratis · Keine Kreditkarte · In 10 Minuten eingerichtet</p>
-          <WorkflowStrip />
-          <div className="mt-12">
-            <HeroVisual />
+          <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/60 transition hover:text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
+            Hörprobe: So klingt ein KI-Vorabgespräch
+          </a>
+          <div className="relative mx-auto mt-16 max-w-6xl translate-y-0">
+            <div aria-hidden className="absolute -inset-x-8 -top-8 bottom-24 rounded-[32px] bg-gradient-to-b from-brand-500/25 to-transparent blur-2xl" />
+            <Frame dark className="relative rounded-b-none border-b-0">
+              <Image src="/marketing/app-uebersicht.webp" alt="Recruit24-Übersicht: Ihre nächsten Schritte, Kennzahlen und nächste Gespräche" width={2560} height={1600} priority sizes="(min-width: 1280px) 1152px, 100vw" className="h-auto w-full" />
+            </Frame>
           </div>
         </div>
+      </section>
+
+      {/* Vertrauensleiste */}
+      <section className="border-b border-slate-200 bg-white">
+        <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-4 px-4 py-7 sm:px-8 md:grid-cols-5">
+          {TRUST.map(({ i: Icon, t }) => (
+            <li key={t} className="flex items-center justify-center gap-2.5 text-[14px] font-medium text-slate-700 md:justify-start">
+              <Icon className="h-[18px] w-[18px] shrink-0 text-brand-600" />{t}
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* Problem */}
-      <section className="border-t border-slate-100 bg-slate-50/70">
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-semibold text-brand-600">Das Problem</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Klassisches Recruiting macht viel unnötige Handarbeit.</h2>
-            <p className="mt-4 text-slate-600">
-              In einer Firma mit 300 Mitarbeitenden verbringt HR den Grossteil einer Rekrutierung mit Administration statt mit Menschen. Jede offene Stelle bedeutet Stunden mit Lesen, Telefonieren, Schreiben und Koordinieren – immer dieselben Schritte.
+      <section className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Eyebrow>Das Problem</Eyebrow>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">
+              Gute Leute warten nicht.<br /><span className="text-slate-400">Ihr Posteingang schon.</span>
+            </h2>
+          </div>
+          <div className="space-y-6 lg:col-span-5 lg:pt-3">
+            <p className="text-[18px] leading-relaxed text-slate-600">
+              Jede offene Stelle bedeutet Tage voller Routine: Lebensläufe lesen, anrufen, nachfragen, Termine hin- und herschieben. Bis HR sich meldet, hat die beste Kandidatin längst woanders zugesagt.
+            </p>
+            <p className="text-[18px] leading-relaxed text-ink">
+              Recruit24 übernimmt diese Routine – sofort, freundlich und in Ihrem Namen. Ihr Team kommt dann ins Spiel, wenn ein Entscheid nötig ist.
             </p>
           </div>
-          <ul className="grid gap-2.5 sm:grid-cols-2">
-            {PROBLEMS.map((p) => (
-              <li key={p} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-card">
-                <XCircle className="h-4 w-4 shrink-0 text-rose-400" />
-                {p}
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 
-      {/* Solution */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-brand-600">Die Lösung</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Recruit24 arbeitet wie ein digitaler Recruiting-Mitarbeiter.</h2>
-          <p className="mt-4 text-slate-600">Recruit24 arbeitet mit Ihrem HR-Team, folgt Ihrem Prozess und übergibt passende Kandidierende – jeder Schritt dokumentiert, jede Empfehlung begründet.</p>
+      {/* Ablauf */}
+      <section id="ablauf" className="scroll-mt-16 border-t border-slate-200 bg-[#FAFAFC]">
+        <div className="mx-auto max-w-7xl px-4 pt-28 sm:px-8">
+          <Eyebrow>So funktioniert's</Eyebrow>
+          <h2 className="mt-4 max-w-3xl text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Von der Bewerbung zum Termin – in vier Schritten.</h2>
         </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SOLUTION.map(({ i: Icon, t, d }) => (
-            <div key={t} className="rounded-xl border border-slate-200 p-5">
-              <Icon className="h-5 w-5 text-brand-600" />
-              <p className="mt-3 font-semibold text-ink">{t}</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{d}</p>
-            </div>
-          ))}
+        <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-8 lg:pb-8">
+          <ScrollStory steps={STEPS} />
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="border-y border-slate-100 bg-slate-50/70">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold text-brand-600">So funktioniert's</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Von der Bewerbung zum Gespräch – automatisch.</h2>
+      {/* Hörprobe */}
+      <section id="hoerprobe" className="scroll-mt-16 bg-night">
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 py-28 sm:px-8 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Eyebrow dark>Hörprobe</Eyebrow>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[48px]">So klingt ein Vorabgespräch.</h2>
+            <p className="mt-6 text-[18px] leading-relaxed text-white/70">
+              Recruit24 ruft an, stellt sich als KI vor, bittet um das Einverständnis zur Aufnahme und stellt die Fragen Ihrer Stelle. Bei zu kurzen Antworten fragt es freundlich nach.
+            </p>
+            <ul className="mt-8 space-y-3 text-[15px] text-white/80">
+              {["Transkript und Aufnahme landen im Profil", "Verfügbarkeit, Kündigungsfrist und Lohn werden erfasst", "Am Telefon und im Browser gleich"].map((x) => (
+                <li key={x} className="flex gap-3"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-300" />{x}</li>
+              ))}
+            </ul>
+            <p className="mt-8 text-[13px] text-white/45">Beispielgespräch mit einer erfundenen Person. Die Stimmen sind künstlich erzeugt.</p>
           </div>
-          <ol className="mt-12 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <li key={s.t} className="relative">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-sm font-semibold text-white">{i + 1}</div>
-                <p className="mt-4 font-semibold text-ink">{s.t}</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{s.d}</p>
-              </li>
-            ))}
-            <li className="rounded-xl border border-dashed border-brand-300 bg-brand-50/50 p-5">
-              <UserCheck className="h-5 w-5 text-brand-600" />
-              <p className="mt-3 font-semibold text-ink">Sie entscheiden.</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">Recruit24 trifft nie den Anstellungsentscheid. Es bereitet ihn vor – nachvollziehbar.</p>
-            </li>
-          </ol>
+          <div className="lg:col-span-7"><Hoerprobe /></div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-brand-600">Produkt</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Alles, was im Recruiting anfällt – erledigt.</h2>
+      {/* Funktionen */}
+      <section id="funktionen" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8">
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <Eyebrow>Funktionen</Eyebrow>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Alles, was im Recruiting anfällt.</h2>
+          </div>
+          <p className="text-[18px] leading-relaxed text-slate-600 lg:col-span-5">Eine Software statt fünf Werkzeuge – und Ihr Team sieht jederzeit, was gerade passiert.</p>
         </div>
-        <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map(({ i: Icon, t, d }) => (
-            <div key={t} className="bg-white p-6">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-                <Icon className="h-[18px] w-[18px]" />
-              </span>
-              <p className="mt-4 font-semibold text-ink">{t}</p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">{d}</p>
+            <div key={t} className="bg-white p-7 transition hover:bg-[#FAFAFC]">
+              <Icon className="h-6 w-6 text-brand-600" strokeWidth={1.75} />
+              <p className="mt-6 text-[17px] font-semibold text-ink">{t}</p>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{d}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Evidence example */}
-      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-        <div className="grid items-center gap-10 rounded-2xl bg-ink p-8 text-white sm:p-12 lg:grid-cols-2">
+      {/* Nachvollziehbar */}
+      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
+        <div className="grid items-center gap-12 rounded-3xl border border-slate-200 bg-[#FAFAFC] p-8 sm:p-14 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold text-brand-300">Nachvollziehbar von Grund auf</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Keine Blackbox. Kein „Die KI sagt, das ist die beste Person“.</h2>
-            <p className="mt-4 text-slate-300">
-              Recruit24 zeigt, was es gefunden hat und wo: <span className="text-white">„Diese Person erfüllt 8 von 10 Anforderungen. Hier sind die Belege.“</span> Jede Aussage verweist auf die Stelle im CV oder die Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
+            <Eyebrow>Nachvollziehbar</Eyebrow>
+            <h2 className="mt-4 text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[40px]">Keine Blackbox.<br />Keine geheime Punktzahl.</h2>
+            <p className="mt-6 text-[17px] leading-relaxed text-slate-600">
+              Recruit24 zeigt, was es gefunden hat und wo: <span className="font-medium text-ink">«Erfüllt 7 von 8 Anforderungen – hier sind die Belege.»</span> Jede Aussage verweist auf den Lebenslauf oder eine Antwort im Interview. Ihr Team kann jede Bewertung anpassen.
             </p>
           </div>
-          <div className="rounded-xl bg-white p-5 text-ink shadow-pop">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <p className="text-sm font-semibold">Anforderungen · Marco Rossi</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_30px_60px_-30px_rgba(19,17,42,0.25)]">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <p className="text-[15px] font-semibold">Anforderungen · Marco Rossi</p>
               <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">7 von 8 erfüllt</span>
             </div>
             {[
-              ["Deutsch B2", "CV: „Deutsch (Muttersprache)“", "Erfüllt"],
-              ["3 Jahre CNC-Erfahrung", "Interview: „Ich arbeite seit neun Jahren an 5-Achs-Maschinen.“", "Erfüllt"],
-              ["Führerausweis Kat. B", "Interview: „Ja, ich habe den Ausweis Kategorie B.“", "Erfüllt"],
-              ["SAP-Erfahrung", "Noch kein Beleg gefunden", "Info fehlt"],
-            ].map(([r, e, s]) => (
-              <div key={r} className="grid grid-cols-12 gap-2 border-b border-slate-50 py-2.5 text-[13px] last:border-0">
-                <span className="col-span-4 font-medium">{r}</span>
-                <span className="col-span-5 text-slate-500">{e}</span>
-                <span className={`col-span-3 text-right text-xs font-medium ${s === "Erfüllt" ? "text-emerald-600" : "text-amber-600"}`}>{s}</span>
+              ["Deutsch B2", "Lebenslauf: «Deutsch (Muttersprache)»", true],
+              ["3 Jahre CNC-Erfahrung", "Interview: «Ich arbeite seit neun Jahren an 5-Achs-Maschinen.»", true],
+              ["Führerausweis Kat. B", "Interview: «Ja, ich habe den Ausweis Kategorie B.»", true],
+              ["SAP-Erfahrung", "Noch kein Beleg gefunden", false],
+            ].map(([r, e, ok]) => (
+              <div key={String(r)} className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 border-b border-slate-50 py-3.5 text-[14px] last:border-0 sm:grid-cols-12">
+                <span className="font-medium sm:col-span-4">{r}</span>
+                <span className="order-3 col-span-2 text-slate-500 sm:order-none sm:col-span-5">{e}</span>
+                <span className={cn("text-right text-[13px] font-medium sm:col-span-3", ok ? "text-emerald-600" : "text-amber-600")}>{ok ? "Erfüllt" : "Info fehlt"}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Trust */}
-      <section id="trust" className="border-y border-slate-100 bg-slate-50/70">
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-20 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-4">
-            <p className="text-sm font-semibold text-brand-600">Vertrauen & Datenschutz</p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-ink">Vertrauenswürdig genug für eine Schweizer HR-Abteilung.</h2>
+      {/* Vertrauen */}
+      <section id="vertrauen" className="scroll-mt-16 border-y border-slate-200 bg-[#FAFAFC]">
+        <div className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
+          <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <Eyebrow>Vertrauen & Datenschutz</Eyebrow>
+              <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Was Recruit24 nie tut.</h2>
+            </div>
+            <p className="text-[18px] leading-relaxed text-slate-600 lg:col-span-5">Gebaut für Schweizer HR-Abteilungen, Datenschutzberatungen und Bewerbende, die wissen wollen, woran sie sind.</p>
           </div>
-          {[
-            { i: Scale, t: "Menschen entscheiden", d: "Die KI bereitet vor, Menschen entscheiden. Recruit24 kann niemandem selbst absagen oder jemanden einstellen." },
-            { i: ShieldCheck, t: "revDSG & DSGVO", d: "Einwilligungen, Aufbewahrungsfristen, Löschung und Export auf Anfrage, lückenloses Protokoll." },
-            { i: Lock, t: "Sicherheit", d: "Verschlüsselte Speicherung und Übertragung, strikte Mandantentrennung, Rollenrechte, 2FA und signierte Webhooks." },
-            { i: CheckCircle2, t: "Fair & transparent", d: "Kandidierende wissen immer, dass sie mit einer KI sprechen. Keine geschützten Merkmale, keine Analyse des Aussehens." },
-          ].map(({ i: Icon, t, d }) => (
-            <div key={t} className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
-              <Icon className="h-5 w-5 text-brand-600" />
-              <p className="mt-3 font-semibold text-ink">{t}</p>
-              <p className="mt-1.5 text-sm text-slate-600">{d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="text-center">
-          <p className="text-sm font-semibold text-brand-600">Preise</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Einfache Pläne. Der Verbrauch wächst mit Ihrem Recruiting.</h2>
-          <p className="mt-3 text-slate-600">Preise in CHF, exkl. MwSt. Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
-        </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {PLANS.map((p) => (
-            <div key={p.id} className={`flex flex-col rounded-2xl border p-6 ${p.id === "GROWTH" ? "border-brand-500 shadow-pop ring-1 ring-brand-500" : "border-slate-200"}`}>
-              <div className="flex items-center justify-between">
-                <p className="font-semibold text-ink">{p.name}</p>
-                {p.id === "GROWTH" && <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">Am beliebtesten</span>}
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {NEVER.map(({ i: Icon, t, d }) => (
+              <div key={t} className="rounded-2xl border border-slate-200 bg-white p-7">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><Icon className="h-5 w-5" /></span>
+                <p className="mt-6 text-[17px] font-semibold text-ink">{t}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{d}</p>
               </div>
-              <p className="mt-1 text-sm text-slate-500">{p.tagline}</p>
-              <p className="mt-5 text-3xl font-semibold tracking-tight text-ink">
-                {p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Individuell"}
-                {p.monthlyCents && <span className="text-sm font-normal text-slate-500"> / Monat</span>}
-              </p>
-              <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-600">
-                <li>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
-                <li>{p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten</li>
-                <li>{p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews</li>
-                {p.features.map((f) => (
-                  <li key={f} className="flex gap-2">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <LinkButton href={p.id === "ENTERPRISE" ? "/demo" : "/register"} variant={p.id === "GROWTH" ? "primary" : "secondary"} className="mt-6 w-full">
-                {p.id === "ENTERPRISE" ? "Kontakt aufnehmen" : "Kostenlos starten"}
-              </LinkButton>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 text-[15px] sm:grid-cols-3">
+            {[["revDSG & DSGVO", "Einwilligungen, Aufbewahrungsfristen, Export und Löschung auf Anfrage."], ["Sicherheit", "Verschlüsselte Speicherung und Übertragung, Rollenrechte, Zwei-Faktor-Anmeldung."], ["Getrennte Firmenbereiche", "Jede Firma sieht nur ihre eigenen Daten – strikt getrennt."]].map(([t, d]) => (
+              <div key={t} className="bg-white p-6"><p className="font-semibold text-ink">{t}</p><p className="mt-1.5 text-slate-600">{d}</p></div>
+            ))}
+          </div>
         </div>
-        <p className="mt-6 text-center text-xs text-slate-500">Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · Zusätzliche Stelle CHF 29 / Monat.</p>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-brand-50 to-white px-8 py-14 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-ink">Recruit24 erledigt die Routinearbeit im Recruiting.<br className="hidden sm:block" /> Die wichtigen Entscheide treffen Menschen.</h2>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <LinkButton href="/register" size="lg">Kostenlos starten</LinkButton>
-            <LinkButton href="/demo" size="lg" variant="secondary">Demo vereinbaren</LinkButton>
+      {/* Preise */}
+      <section id="preise" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <Eyebrow center>Preise</Eyebrow>
+          <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Klare Preise in Franken.</h2>
+          <p className="mt-5 text-[18px] text-slate-600">14 Tage kostenlos testen, ohne Kreditkarte. Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
+        </div>
+        <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {PLANS.map((p) => {
+            const hot = p.id === "GROWTH";
+            return (
+              <div key={p.id} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(19,17,42,0.6)]" : "border-slate-200 bg-white")}>
+                {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F59E5B] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
+                <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
+                <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
+                <p className="mt-6 flex flex-wrap items-baseline gap-x-1.5">
+                  <span className={cn("whitespace-nowrap text-[36px] font-semibold tracking-[-0.03em]", hot ? "text-white" : "text-ink")}>{p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Individuell"}</span>
+                  {p.monthlyCents && <span className={cn("text-[14px]", hot ? "text-white/60" : "text-slate-500")}>/ Monat</span>}
+                </p>
+                <p className={cn("mt-1 min-h-[20px] text-[13px]", hot ? "text-white/55" : "text-slate-500")}>{p.annualMonthlyCents ? `jährlich ${chf(p.annualMonthlyCents, { decimals: false })} / Monat` : "Auf Ihr Volumen zugeschnitten"}</p>
+                <Link
+                  href={p.id === "ENTERPRISE" ? "/demo" : "/register"}
+                  className={cn("mt-6 inline-flex h-11 items-center justify-center rounded-xl text-[15px] font-semibold transition", hot ? "bg-white text-night hover:bg-brand-50" : "border border-slate-300 text-ink hover:border-slate-400 hover:bg-slate-50")}
+                >
+                  {p.id === "ENTERPRISE" ? "Kontakt aufnehmen" : "Kostenlos testen"}
+                </Link>
+                <ul className={cn("mt-7 flex-1 space-y-2.5 border-t pt-6 text-[14px]", hot ? "border-white/10 text-white/80" : "border-slate-100 text-slate-600")}>
+                  <li className={cn("font-medium", hot ? "text-white" : "text-ink")}>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
+                  <li>{p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten</li>
+                  <li>{p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews</li>
+                  {p.features.map((f) => (
+                    <li key={f} className="flex gap-2.5"><Check className={cn("mt-0.5 h-4 w-4 shrink-0", hot ? "text-brand-300" : "text-brand-600")} />{f}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · zusätzliche Stelle CHF 29 / Monat.</p>
+      </section>
+
+      {/* Für Unternehmen / Bewerbende */}
+      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
+        <div className="grid gap-5 lg:grid-cols-5">
+          <div className="relative overflow-hidden rounded-3xl bg-night p-8 text-white sm:p-12 lg:col-span-3">
+            <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.45),transparent)]" />
+            <p className="relative text-[13px] font-semibold uppercase tracking-[0.14em] text-brand-300">Für Unternehmen</p>
+            <h3 className="relative mt-4 text-[30px] font-semibold leading-tight tracking-[-0.02em] sm:text-[36px]">Starten Sie mit Ihrer ersten Stelle – heute noch.</h3>
+            <p className="relative mt-4 max-w-lg text-[17px] leading-relaxed text-white/70">Konto erstellen, Stelle erfassen, veröffentlichen. 14 Tage kostenlos, ohne Kreditkarte.</p>
+            <div className="relative mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/register" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">Konto erstellen <ArrowRight className="h-4 w-4" /></Link>
+              <Link href="/login" className="inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Anmelden</Link>
+            </div>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-[#FAFAFC] p-8 sm:p-12 lg:col-span-2">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-500">Für Bewerbende</p>
+            <h3 className="mt-4 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">Sie haben eine Einladung erhalten?</h3>
+            <p className="mt-4 text-[16px] leading-relaxed text-slate-600">Öffnen Sie einfach den Link in Ihrer E-Mail oder SMS. Sie brauchen kein Konto und keine App – und Sie sprechen immer mit einer gekennzeichneten KI.</p>
+            <Image src="/marketing/interview-wahl.webp" alt="Auswahl für das Vorabgespräch: jetzt anrufen, Anruf planen oder im Browser" width={1240} height={1160} sizes="(min-width: 1024px) 420px, 100vw" className="mt-8 h-auto w-full max-w-sm rounded-xl border border-slate-200 shadow-[0_20px_40px_-24px_rgba(19,17,42,0.3)]" />
+          </div>
+        </div>
+      </section>
+
+      {/* Fragen */}
+      <section id="fragen" className="scroll-mt-16 border-t border-slate-200 bg-[#FAFAFC]">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-28 sm:px-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Eyebrow>Häufige Fragen</Eyebrow>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[44px]">Gut zu wissen.</h2>
+            <p className="mt-5 text-[17px] text-slate-600">Noch etwas offen? <Link href="/demo" className="font-medium text-brand-700 underline-offset-4 hover:underline">Sprechen Sie mit uns.</Link></p>
+          </div>
+          <div className="divide-y divide-slate-200 border-y border-slate-200 lg:col-span-8">
+            {FAQ.map(([q, a]) => (
+              <details key={q} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[17px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+                  {q}<ChevronDown className="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180" />
+                </summary>
+                <p className="mt-3 max-w-3xl text-[16px] leading-relaxed text-slate-600">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Schluss */}
+      <section className="relative overflow-hidden bg-night">
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(122,104,230,0.3),transparent)]" />
+        <div className="relative mx-auto max-w-4xl px-4 py-28 text-center sm:px-8">
+          <h2 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-[60px]">Weniger Routine.<br />Mehr Zeit für Menschen.</h2>
+          <p className="mx-auto mt-6 max-w-xl text-[18px] text-white/70">Recruit24 erledigt die Routinearbeit. Die wichtigen Entscheide treffen Sie.</p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">14 Tage kostenlos testen <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/demo" className="inline-flex h-12 items-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Demo vereinbaren</Link>
           </div>
         </div>
       </section>
     </main>
+  );
+}
+
+function Eyebrow({ children, dark, center }: { children: React.ReactNode; dark?: boolean; center?: boolean }) {
+  return (
+    <p className={cn("flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.14em]", dark ? "text-brand-300" : "text-brand-600", center && "justify-center")}>
+      <span className={cn("h-px w-8", dark ? "bg-brand-300/60" : "bg-brand-600/50")} />{children}
+    </p>
   );
 }

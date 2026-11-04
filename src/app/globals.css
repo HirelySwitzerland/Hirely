@@ -52,3 +52,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Smooth jumps to the sections of the public website. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.marketing-root) { scroll-behavior: smooth; }
+}
