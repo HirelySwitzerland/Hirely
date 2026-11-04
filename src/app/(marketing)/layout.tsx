@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui";
+import { CONTACT_EMAIL, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#ablauf", label: "Ablauf" },
@@ -23,9 +24,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
           </nav>
           <div className="flex items-center gap-1 sm:gap-2">
-            <Link href="/login" className="px-3 py-2 text-[14px] font-medium text-white/75 transition hover:text-white">Anmelden</Link>
-            <Link href="/register" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3.5 text-[14px] font-semibold text-night shadow-sm transition hover:bg-brand-50">
-              <span className="hidden sm:inline">Für Unternehmen</span><span className="sm:hidden">Starten</span><ArrowRight className="h-4 w-4" />
+            {!SITE_ONLY && <Link href="/login" className="px-3 py-2 text-[14px] font-medium text-white/75 transition hover:text-white">Anmelden</Link>}
+            <Link href={SITE_ONLY ? "/demo" : "/register"} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3.5 text-[14px] font-semibold text-night shadow-sm transition hover:bg-brand-50">
+              {SITE_ONLY ? <span>Demo vereinbaren</span> : <><span className="hidden sm:inline">Für Unternehmen</span><span className="sm:hidden">Starten</span></>}<ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -38,9 +39,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ["/#preise", "Preise"], ["/careers/helvetic-engineering", "Beispiel-Karriereseite"]]} />
-          <FooterCol title="Für Unternehmen" links={[["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
-          <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"]]} />
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ["/#preise", "Preise"], ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
+          <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
+          <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>
         <div className="border-t border-slate-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-[13px] text-slate-500 sm:flex-row sm:justify-between sm:px-8">
@@ -59,7 +60,7 @@ function FooterCol({ title, links }: { title: string; links: [string, string][] 
       <p className="text-[13px] font-semibold uppercase tracking-wider text-slate-900">{title}</p>
       <ul className="mt-4 space-y-2.5 text-[15px] text-slate-600">
         {links.map(([href, label]) => (
-          <li key={href}>{href.startsWith("/#") ? <a href={href} className="hover:text-ink">{label}</a> : <Link href={href} className="hover:text-ink">{label}</Link>}</li>
+          <li key={href}>{href.startsWith("/#") || href.startsWith("mailto:") ? <a href={href} className="hover:text-ink">{label}</a> : <Link href={href} className="hover:text-ink">{label}</Link>}</li>
         ))}
       </ul>
     </div>

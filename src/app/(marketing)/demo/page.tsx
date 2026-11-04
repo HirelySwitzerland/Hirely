@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CalendarCheck, CheckCircle2 } from "lucide-react";
 import { ActionForm, SubmitButton } from "@/components/forms";
 import { Field, Input, Select, Textarea } from "@/components/ui";
@@ -36,6 +37,7 @@ export default function DemoPage() {
           <Field label="Telefon (optional)"><Input name="phone" type="tel" autoComplete="tel" /></Field>
           <Field label="Was möchten Sie sehen?"><Textarea name="message" placeholder="z. B. Wir stellen pro Jahr rund 40 Personen in der Produktion ein und nutzen Abacus." /></Field>
           <SubmitButton className="w-full" size="lg">Demo anfragen</SubmitButton>
+          <p className="text-center text-xs text-slate-500">Wir verwenden Ihre Angaben nur für diese Anfrage. Mehr in der <Link href="/datenschutz" className="link">Datenschutzerklärung</Link>.</p>
         </ActionForm>
       </div>
     </main>

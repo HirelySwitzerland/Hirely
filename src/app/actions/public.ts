@@ -11,6 +11,7 @@ import { requestCallNow, scheduleCall, InterviewError } from "@/lib/services/int
 import { bookSlot, SchedulingError } from "@/lib/services/scheduling";
 import { anonymizeCandidate } from "@/lib/services/privacy";
 import { getT } from "@/lib/i18n";
+import { CONTACT_EMAIL, SITE_ONLY } from "@/lib/site";
 
 async function ip() {
   return (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
@@ -29,10 +30,36 @@ export async function requestDemo(_: ActionState, fd: FormData): Promise<ActionS
         message: z.string().max(2000).optional(),
       })
       .parse({ name: str(fd, "name"), email: str(fd, "email"), company: str(fd, "company"), employees: str(fd, "employees"), phone: str(fd, "phone"), message: str(fd, "message") });
-    await db.lead.create({ data });
+    // Website-only deployment has no database: the request then goes out by e-mail only.
+    let saved = false;
+    if (!SITE_ONLY) {
+      await db.lead.create({ data });
+      saved = true;
+    }
+    const mailed = await notifyLead(data);
+    if (!saved && !mailed) return fail(`Die Anfrage konnte gerade nicht gesendet werden. Bitte schreiben Sie uns direkt an ${CONTACT_EMAIL}.`);
     return ok("Vielen Dank! Wir melden uns innert eines Arbeitstags für einen Demo-Termin.");
   } catch (e) {
     return toActionError(e);
+  }
+}
+
+/** E-mails a demo request to the Recruit24 team via Resend (LEAD_EMAIL_TO, RESEND_API_KEY, EMAIL_FROM). */
+async function notifyLead(d: { name: string; email: string; company: string; employees?: string; phone?: string; message?: string }) {
+  const key = process.env.RESEND_API_KEY, to = process.env.LEAD_EMAIL_TO;
+  if (!key || !to) return false;
+  const text = [`Name: ${d.name}`, `Firma: ${d.company}`, `E-Mail: ${d.email}`, `Telefon: ${d.phone || "–"}`, `Mitarbeitende: ${d.employees || "–"}`, "", d.message || "(keine Nachricht)"].join("\n");
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: process.env.EMAIL_FROM || "Recruit24 <hallo@recruit24.ch>", to: to.split(",").map((x) => x.trim()), reply_to: d.email, subject: `Demo-Anfrage: ${d.company} (${d.name})`, text }),
+    });
+    if (!res.ok) console.error("[demo] Resend", res.status, (await res.text()).slice(0, 300));
+    return res.ok;
+  } catch (e) {
+    console.error("[demo] e-mail failed", e);
+    return false;
   }
 }
 

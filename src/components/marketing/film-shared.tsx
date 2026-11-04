@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, Calendar, Check, FileText, MousePointer2, Phone, Play, Star, UserX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StartButtons } from "./cta";
 
 /* ───────────── timing helpers ───────────── */
 
@@ -547,10 +547,7 @@ export function Finale({ t }: { t: number }) {
         ))}
       </div>
       <p className="mt-6 text-[16px] text-white/60" style={{ opacity: v(0.3) }}>0 Telefonate · 0 E-Mails · 0 Terminabsprachen für Ihr Team</p>
-      <div className="pointer-events-auto mt-10 flex flex-col gap-3 sm:flex-row" style={{ opacity: v(0.4) }}>
-        <Link href="/register" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">14 Tage kostenlos testen <ArrowRight className="h-4 w-4" /></Link>
-        <Link href="/demo" className="inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Demo vereinbaren</Link>
-      </div>
+      <div className="pointer-events-auto mt-10" style={{ opacity: v(0.4) }}><StartButtons /></div>
     </div>
   );
 }

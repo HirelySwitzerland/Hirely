@@ -8,6 +8,8 @@ import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Film } from "@/components/marketing/film";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
 import { PLANS, chf } from "@/lib/billing";
+import { SITE_ONLY } from "@/lib/site";
+import { StartButtons } from "@/components/marketing/cta";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
@@ -97,14 +99,7 @@ export default function LandingPage() {
           <p className="mx-auto mt-7 max-w-2xl text-[18px] leading-relaxed text-white/70 [text-wrap:balance] sm:text-[20px]">
             Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night shadow-lg transition hover:bg-brand-50">
-              14 Tage kostenlos testen <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/demo" className="inline-flex h-12 items-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">
-              Demo vereinbaren
-            </Link>
-          </div>
+          <StartButtons className="mt-10" />
           <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/60 transition hover:text-white">
             <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
             Hörprobe: So klingt ein KI-Vorabgespräch
@@ -234,7 +229,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-3xl text-center">
           <Eyebrow center>Preise</Eyebrow>
           <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Klare Preise in Franken.</h2>
-          <p className="mt-5 text-[18px] text-slate-600">14 Tage kostenlos testen, ohne Kreditkarte. Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
+          <p className="mt-5 text-[18px] text-slate-600">{SITE_ONLY ? "Preise in CHF, exkl. MwSt." : "14 Tage kostenlos testen, ohne Kreditkarte."} Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {PLANS.map((p) => {
@@ -250,10 +245,10 @@ export default function LandingPage() {
                 </p>
                 <p className={cn("mt-1 min-h-[20px] text-[13px]", hot ? "text-white/55" : "text-slate-500")}>{p.annualMonthlyCents ? `jährlich ${chf(p.annualMonthlyCents, { decimals: false })} / Monat` : "Auf Ihr Volumen zugeschnitten"}</p>
                 <Link
-                  href={p.id === "ENTERPRISE" ? "/demo" : "/register"}
+                  href={p.id === "ENTERPRISE" || SITE_ONLY ? "/demo" : "/register"}
                   className={cn("mt-6 inline-flex h-11 items-center justify-center rounded-xl text-[15px] font-semibold transition", hot ? "bg-white text-night hover:bg-brand-50" : "border border-slate-300 text-ink hover:border-slate-400 hover:bg-slate-50")}
                 >
-                  {p.id === "ENTERPRISE" ? "Kontakt aufnehmen" : "Kostenlos testen"}
+                  {p.id === "ENTERPRISE" ? "Kontakt aufnehmen" : SITE_ONLY ? "Demo vereinbaren" : "Kostenlos testen"}
                 </Link>
                 <ul className={cn("mt-7 flex-1 space-y-2.5 border-t pt-6 text-[14px]", hot ? "border-white/10 text-white/80" : "border-slate-100 text-slate-600")}>
                   <li className={cn("font-medium", hot ? "text-white" : "text-ink")}>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
@@ -277,10 +272,16 @@ export default function LandingPage() {
             <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.45),transparent)]" />
             <p className="relative text-[13px] font-semibold uppercase tracking-[0.14em] text-brand-300">Für Unternehmen</p>
             <h3 className="relative mt-4 text-[30px] font-semibold leading-tight tracking-[-0.02em] sm:text-[36px]">Starten Sie mit Ihrer ersten Stelle – heute noch.</h3>
-            <p className="relative mt-4 max-w-lg text-[17px] leading-relaxed text-white/70">Konto erstellen, Stelle erfassen, veröffentlichen. 14 Tage kostenlos, ohne Kreditkarte.</p>
+            <p className="relative mt-4 max-w-lg text-[17px] leading-relaxed text-white/70">{SITE_ONLY ? "In 30 Minuten zeigen wir Ihnen den ganzen Ablauf – an einer Ihrer echten Stellen." : "Konto erstellen, Stelle erfassen, veröffentlichen. 14 Tage kostenlos, ohne Kreditkarte."}</p>
             <div className="relative mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">Konto erstellen <ArrowRight className="h-4 w-4" /></Link>
-              <Link href="/login" className="inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Anmelden</Link>
+              {SITE_ONLY ? (
+                <Link href="/demo" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">Demo vereinbaren <ArrowRight className="h-4 w-4" /></Link>
+              ) : (
+                <>
+                  <Link href="/register" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">Konto erstellen <ArrowRight className="h-4 w-4" /></Link>
+                  <Link href="/login" className="inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Anmelden</Link>
+                </>
+              )}
             </div>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-12 lg:col-span-2">
@@ -301,7 +302,7 @@ export default function LandingPage() {
             <p className="mt-5 text-[17px] text-slate-600">Noch etwas offen? <Link href="/demo" className="font-medium text-brand-700 underline-offset-4 hover:underline">Sprechen Sie mit uns.</Link></p>
           </div>
           <div className="divide-y divide-slate-200 border-y border-slate-200 lg:col-span-8">
-            {FAQ.map(([q, a]) => (
+            {FAQ.filter(([q]) => !(SITE_ONLY && q.includes("Testtagen"))).map(([q, a]) => (
               <details key={q} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[17px] font-medium text-ink [&::-webkit-details-marker]:hidden">
                   {q}<ChevronDown className="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180" />
@@ -319,10 +320,7 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-4xl px-4 py-28 text-center sm:px-8">
           <h2 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-[60px]">Weniger Routine.<br />Mehr Zeit für Menschen.</h2>
           <p className="mx-auto mt-6 max-w-xl text-[18px] text-white/70">Recruit24 erledigt die Routinearbeit. Die wichtigen Entscheide treffen Sie.</p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night transition hover:bg-brand-50">14 Tage kostenlos testen <ArrowRight className="h-4 w-4" /></Link>
-            <Link href="/demo" className="inline-flex h-12 items-center rounded-xl border border-white/20 px-6 text-[16px] font-medium text-white transition hover:bg-white/10">Demo vereinbaren</Link>
-          </div>
+          <StartButtons className="mt-10" />
         </div>
       </section>
     </main>
