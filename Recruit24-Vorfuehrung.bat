@@ -21,6 +21,6 @@ if errorlevel 1 (
 )
 echo.
 echo Recruit24 startet ... dieses Fenster bitte offen lassen.
-start "" cmd /c "timeout /t 5 >/dev/null && start http://localhost:3000/login"
+start "" cmd /c "timeout /t 5 >nul && start http://localhost:3000/"
 call npm start
 pause
