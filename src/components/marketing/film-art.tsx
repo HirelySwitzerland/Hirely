@@ -115,7 +115,7 @@ export function NetworkArt({ f1, f2, packet, dawn, packetLabel }: { f1: number; 
     <svg viewBox="0 0 2400 900" className="h-full w-full" aria-hidden>
       <defs>
         <linearGradient id="nsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0F0C23" /><stop offset="1" stopColor="#1B1740" /></linearGradient>
-        <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2A2160" /><stop offset=".65" stopColor="#7A4E8C" /><stop offset="1" stopColor="#F59E5B" /></linearGradient>
+        <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2A2160" /><stop offset=".65" stopColor="#7A4E8C" /><stop offset="1" stopColor="#F97A3A" /></linearGradient>
         <radialGradient id="pglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#BDB2F7" stopOpacity=".9" /><stop offset="1" stopColor="#7A68E6" stopOpacity="0" /></radialGradient>
         <radialGradient id="r24glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#7A68E6" stopOpacity=".55" /><stop offset="1" stopColor="#7A68E6" stopOpacity="0" /></radialGradient>
       </defs>
@@ -153,11 +153,7 @@ export function NetworkArt({ f1, f2, packet, dawn, packetLabel }: { f1: number; 
       {[0, 1, 2].map((i) => (
         <g key={i}><rect x="1782" y={450 + i * 52} width="136" height="36" rx="8" fill="#2E2961" /><circle cx="1898" cy={468 + i * 52} r="5" fill="#34D399" className="film-blink" style={{ animationDelay: `${i * 0.4}s` }} /></g>
       ))}
-      <g transform="translate(1818 378)">
-        <rect width="64" height="64" rx="16" fill="#5B4AD8" />
-        <path d="M21 48V16h11.5a9.2 9.2 0 0 1 0 18.4H21M31 34.4 43 48" fill="none" stroke="#fff" strokeWidth="6.4" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="48" cy="17" r="5.2" fill="#FDBA74" />
-      </g>
+      <image href="/brand/recruit24-icon-light.svg" x="1805" y="365" width="90" height="90" />
       <text x="1850" y="680" textAnchor="middle" fontSize="28" fontWeight="600" fill="#fff" opacity=".85" fontFamily="inherit">Recruit24</text>
       {/* HR office */}
       <rect x="2160" y="400" width="210" height="360" rx="10" fill="#1A1736" stroke="#2E2A50" strokeWidth="4" />
@@ -172,7 +168,7 @@ export function NetworkArt({ f1, f2, packet, dawn, packetLabel }: { f1: number; 
         <g transform={`translate(${packet.x} ${packet.y})`}>
           <circle r="70" fill="url(#pglow)" />
           <circle r="30" fill="#fff" />
-          <rect x="-11" y="-15" width="22" height="30" rx="3" fill={packetLabel === "cv" ? "#5B4AD8" : "#F59E5B"} />
+          <rect x="-11" y="-15" width="22" height="30" rx="3" fill={packetLabel === "cv" ? "#5B4AD8" : "#F97A3A"} />
           <rect x="-6" y="-7" width="12" height="3" rx="1.5" fill="#fff" />
           <rect x="-6" y="0" width="12" height="3" rx="1.5" fill="#fff" />
           <rect x="-6" y="7" width="8" height="3" rx="1.5" fill="#fff" />
@@ -187,7 +183,7 @@ export function OfficeArt() {
   return (
     <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" className="h-full w-full" aria-hidden>
       <defs>
-        <linearGradient id="sunrise" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7A68E6" /><stop offset=".6" stopColor="#F59E5B" /><stop offset="1" stopColor="#FDE7C4" /></linearGradient>
+        <linearGradient id="sunrise" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7A68E6" /><stop offset=".6" stopColor="#F97A3A" /><stop offset="1" stopColor="#FDE7C4" /></linearGradient>
         <radialGradient id="sunlight" cx="0.15" cy="0.3" r="0.9"><stop offset="0" stopColor="#FDBA74" stopOpacity=".28" /><stop offset="1" stopColor="#FDBA74" stopOpacity="0" /></radialGradient>
         <radialGradient id="screenglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#ffffff" stopOpacity=".18" /><stop offset="1" stopColor="#ffffff" stopOpacity="0" /></radialGradient>
       </defs>
@@ -200,7 +196,7 @@ export function OfficeArt() {
       <line x1="270" y1="110" x2="270" y2="570" stroke="#3E3873" strokeWidth="8" />
       {/* shelf and plant */}
       <rect x="1220" y="230" width="280" height="14" rx="7" fill="#3E3873" />
-      <rect x="1240" y="170" width="40" height="60" rx="4" fill="#5B4AD8" /><rect x="1290" y="185" width="34" height="45" rx="4" fill="#F59E5B" /><rect x="1334" y="175" width="30" height="55" rx="4" fill="#9A8AF0" />
+      <rect x="1240" y="170" width="40" height="60" rx="4" fill="#5B4AD8" /><rect x="1290" y="185" width="34" height="45" rx="4" fill="#F97A3A" /><rect x="1334" y="175" width="30" height="55" rx="4" fill="#9A8AF0" />
       <circle cx="1440" cy="190" r="34" fill="#2F9E74" /><rect x="1420" y="200" width="40" height="30" rx="6" fill="#F6F5FA" />
       {/* monitor */}
       <circle cx="800" cy="500" r="420" fill="url(#screenglow)" />

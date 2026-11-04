@@ -24,7 +24,7 @@ export function Sidebar({ items, orgName, orgs, currentOrgId, switchAction, foot
   const nav = (
     <nav className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-4">
-        <Link href="/app"><Logo className="text-white" /></Link>
+        <Link href="/app"><Logo onDark className="h-9" /></Link>
         <button className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 lg:hidden" onClick={() => setOpen(false)} aria-label="Menü schliessen">
           <X className="h-5 w-5" />
         </button>

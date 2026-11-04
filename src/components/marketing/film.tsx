@@ -160,7 +160,7 @@ export function Film({ fallback }: { fallback: StoryStep[] }) {
           )}
           <a href="#nach-film" className="absolute bottom-4 right-4 z-20 rounded-full border border-white/15 bg-night/60 px-3 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur transition hover:text-white">Überspringen ↓</a>
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/5"><div className="h-full bg-gradient-to-r from-brand-500 to-[#F59E5B]" style={{ width: `${p * 100}%` }} /></div>
+        <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/5"><div className="h-full bg-gradient-to-r from-brand-500 to-[#F97A3A]" style={{ width: `${p * 100}%` }} /></div>
       </div>
     </section>
   );

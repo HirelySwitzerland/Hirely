@@ -6,10 +6,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Recruit24 – Ihr KI-Recruiting-Mitarbeiter", template: "%s · Recruit24" },
   description: "Recruit24 übernimmt die repetitive Recruiting-Arbeit – von der Bewerbungsprüfung über KI-Interviews bis zur Terminvereinbarung –, damit sich Ihr HR-Team auf Menschen konzentrieren kann.",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon.png" },
 };
 
-export const viewport: Viewport = { themeColor: "#5B4AD8", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#1D2130", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

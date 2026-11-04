@@ -16,8 +16,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
     <div className="bg-white text-ink antialiased [scroll-behavior:smooth]">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-night/85 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-8">
-          <Link href="/" aria-label="Recruit24 Startseite" className="text-white">
-            <Logo />
+          <Link href="/" aria-label="Recruit24 Startseite">
+            <Logo onDark className="h-10" />
           </Link>
           <nav className="hidden items-center gap-7 text-[14px] text-white/65 lg:flex" aria-label="Hauptnavigation">
             {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
@@ -34,7 +34,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <footer className="border-t border-slate-200 bg-[#FAFAFC]">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-8 md:grid-cols-12">
           <div className="md:col-span-5">
-            <Logo />
+            <Logo className="h-11" />
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>

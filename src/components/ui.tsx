@@ -233,17 +233,11 @@ export function Divider({ className }: { className?: string }) {
   return <div className={cn("h-px w-full bg-slate-100", className)} />;
 }
 
-export function Logo({ className, mono }: { className?: string; mono?: boolean }) {
-  return (
-    <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>
-      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
-        <rect width="32" height="32" rx="8" fill={mono ? "currentColor" : "#5B4AD8"} />
-        <path d="M10.5 24V8h5.75a4.6 4.6 0 0 1 0 9.2H10.5M15.5 17.2 21.5 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="24" cy="8.5" r="2.6" fill="#FDBA74" />
-      </svg>
-      <span className="text-[17px]">Recruit<span className="text-[#F59E5B]">24</span></span>
-    </span>
-  );
+/** The Recruit24 logo. `onDark` uses the white version for dark backgrounds; `mark` shows only the round icon. */
+export function Logo({ className, onDark, mark }: { className?: string; onDark?: boolean; mark?: boolean }) {
+  const src = `/brand/recruit24-${mark ? "icon" : "logo"}${onDark ? "-light" : ""}.svg`;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt="Recruit24" className={cn(mark ? "h-8 w-8" : "h-9 w-auto", className)} />;
 }
 
 export function Table({ children, className }: { children: ReactNode; className?: string }) {

@@ -241,7 +241,7 @@ export default function LandingPage() {
             const hot = p.id === "GROWTH";
             return (
               <div key={p.id} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(19,17,42,0.6)]" : "border-slate-200 bg-white")}>
-                {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F59E5B] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
+                {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F97A3A] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
                 <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
                 <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
                 <p className="mt-6 flex flex-wrap items-baseline gap-x-1.5">

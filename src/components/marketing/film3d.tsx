@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, Line, PerformanceMonitor, MeshReflectorMaterial, RoundedBox, Sparkles, Stars, Trail } from "@react-three/drei";
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import {
   AppWindow, ApplyScreen, BookingScreen, CalendarCard, CallScreen, CheckPanels, DashScreen, LockScreen, PhoneFrame, ProfileScreen,
   callTime, ease, hhmm, lerp, local, minutesAt, seg,
@@ -201,26 +202,30 @@ function Network({ packetPos }: { packetPos: THREE.Vector3 | null }) {
   );
 }
 
-/** Neon "R" from the Recruit24 logo, built from tubes. */
-function NeonR() {
-  const geos = useMemo(() => {
-    const s = 0.036, o = 16;
-    const v = (x: number, y: number) => new THREE.Vector3((x - o) * s, -(y - o) * s, 0);
-    const main = new THREE.CurvePath<THREE.Vector3>();
-    main.add(new THREE.LineCurve3(v(10.5, 24), v(10.5, 8)));
-    main.add(new THREE.LineCurve3(v(10.5, 8), v(16.25, 8)));
-    const arc: THREE.Vector3[] = [];
-    for (let i = 0; i <= 24; i++) { const a = -Math.PI / 2 + (Math.PI * i) / 24; arc.push(v(16.25 + 4.6 * Math.cos(a), 12.6 + 4.6 * Math.sin(a))); }
-    main.add(new THREE.CatmullRomCurve3(arc));
-    main.add(new THREE.LineCurve3(v(16.25, 17.2), v(10.5, 17.2)));
-    const leg = new THREE.LineCurve3(v(15.5, 17.2), v(21.5, 24));
-    return [new THREE.TubeGeometry(main, 220, 0.045, 14, false), new THREE.TubeGeometry(leg, 30, 0.045, 14, false)];
+/** The Recruit24 logo as a glowing 3D object, extruded from the logo SVG. */
+function Logo3D() {
+  const [parts, setParts] = useState<{ geo: THREE.BufferGeometry; color: THREE.Color }[]>([]);
+  useEffect(() => {
+    let alive = true;
+    fetch("/brand/recruit24-icon-light.svg").then((r) => r.text()).then((svg) => {
+      if (!alive) return;
+      const data = new SVGLoader().parse(svg);
+      setParts(data.paths.map((path) => {
+        const fill = String((path.userData as { style?: { fill?: string } } | undefined)?.style?.fill ?? "#ffffff");
+        const geo = new THREE.ExtrudeGeometry(SVGLoader.createShapes(path), { depth: 6, bevelEnabled: false, curveSegments: 8 });
+        geo.translate(-49, -50, -3);
+        return { geo, color: new THREE.Color(fill).multiplyScalar(fill.toLowerCase() === "#ffffff" ? 1.2 : 1.9) };
+      }));
+    });
+    return () => { alive = false; };
   }, []);
-  const white = useMemo(() => new THREE.Color("#E4DEFF").multiplyScalar(2.6), []);
   return (
-    <group>
-      {geos.map((g, i) => <mesh key={i} geometry={g}><meshBasicMaterial color={white} toneMapped={false} /></mesh>)}
-      <mesh position={[(24 - 16) * 0.036, -(8.5 - 16) * 0.036, 0]}><sphereGeometry args={[0.08, 24, 24]} /><meshBasicMaterial color={new THREE.Color("#FDBA74").multiplyScalar(3)} toneMapped={false} /></mesh>
+    <group scale={[0.0125, -0.0125, 0.0125]}>
+      {parts.map((part, i) => (
+        <mesh key={i} geometry={part.geo}>
+          <meshBasicMaterial color={part.color} toneMapped={false} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -236,7 +241,7 @@ function Core({ active }: { active: number }) {
         </RoundedBox>
       </group>
       <mesh><sphereGeometry args={[0.75, 32, 32]} /><meshBasicMaterial color="#5B4AD8" transparent opacity={0.22} toneMapped={false} /></mesh>
-      <NeonR />
+      <Logo3D />
       <pointLight color="#7A68E6" intensity={4 + active * 10} distance={7} />
       <Sparkles count={50} scale={[3.6, 3.2, 3.6]} size={2.4} speed={0.35} color="#BDB2F7" />
     </group>
@@ -246,9 +251,9 @@ function Core({ active }: { active: number }) {
 function MonitorUI({ p }: { p: number }) {
   if (p < 0.655)
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center bg-night text-white">
-        <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-brand-600 text-[48px] font-bold">R</span>
-        <p className="mt-6 text-[28px] font-semibold">Recruit<span className="text-[#F59E5B]">24</span></p>
+      <div className="flex h-full w-full items-center justify-center bg-night">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/recruit24-logo-light.svg" alt="Recruit24" className="h-32" />
       </div>
     );
   if (p < 0.77) return <DashScreen t={seg(p, 0.69, 0.77)} tall={false} flat />;
@@ -263,7 +268,7 @@ function MonitorUI({ p }: { p: number }) {
 function Office({ p, dawn }: { p: number; dawn: number }) {
   const wood = "#3a2b24";
   const windowColor = useMemo(() => new THREE.Color(), []);
-  windowColor.set("#1a1640").lerp(new THREE.Color("#F59E5B"), dawn).multiplyScalar(0.6 + dawn * 1.6);
+  windowColor.set("#1a1640").lerp(new THREE.Color("#F97A3A"), dawn).multiplyScalar(0.6 + dawn * 1.6);
   return (
     <group>
       {/* desk */}

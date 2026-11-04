@@ -244,7 +244,8 @@ export function CallScreen({ t }: { t: number }) {
       <div className="mt-6 flex flex-col items-center">
         <span className="relative flex h-20 w-20 items-center justify-center">
           {!ended && <span className="absolute inset-0 animate-ping rounded-full bg-brand-500/30" />}
-          <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-brand-600 text-[30px] font-bold">R</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[#1D2130] ring-2 ring-[#F97A3A]/60"><img src="/brand/recruit24-icon-light.svg" alt="" className="h-14 w-14" /></span>
         </span>
         <p className="mt-4 text-[19px] font-semibold">Recruit24 · KI-Assistent</p>
         <p className="text-[14px] text-white/55">für Helvetic Engineering AG</p>
@@ -394,7 +395,8 @@ export function AppWindow({ children, tall, active, flat }: { children: ReactNod
     <div className={cn("flex h-full overflow-hidden bg-[#F6F5FA] text-ink", flat ? "" : "rounded-2xl shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)] ring-1 ring-white/10")}>
       {!tall && (
         <aside className="flex w-[230px] shrink-0 flex-col gap-1 bg-night px-4 py-6 text-[15px] text-white/60">
-          <div className="mb-6 flex items-center gap-2 px-2 text-[18px] font-semibold text-white"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-[15px]">R</span>Recruit<span className="-ml-2 text-[#F59E5B]">24</span></div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <div className="mb-6 px-2"><img src="/brand/recruit24-logo-light.svg" alt="Recruit24" className="h-9" /></div>
           {["Übersicht", "Stellen", "Kandidierende", "Gespräche", "Talent-Pool"].map((x) => (
             <span key={x} className={cn("flex items-center justify-between rounded-lg px-3 py-2.5", ((active === "dash" && x === "Übersicht") || (active === "profile" && x === "Kandidierende") || (active === "calendar" && x === "Gespräche")) && "bg-white/10 text-white")}>
               {x}{x === "Kandidierende" && active !== "calendar" && <span className="rounded-full bg-amber-400 px-2 text-[12px] font-semibold text-night">1</span>}
