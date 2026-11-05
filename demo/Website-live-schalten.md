@@ -91,7 +91,7 @@ Auf Ihrem Laptop im Ordner `Q:\hirely` die Eingabeaufforderung öffnen und nache
 Deployments → oberster Eintrag → **⋯ → Redeploy**, Haken bei «Use existing Build Cache» entfernen. Beim Bauen legt Vercel die Tabellen in der Datenbank an.
 
 **5. Demo-Daten zum ersten Mal einspielen**
-Settings → **Cron Jobs** → bei `/api/cron/demo-reset` auf **Run** klicken. Nach etwa einer Minute ist die Demo-Firma da. Ab jetzt passiert das jede Nacht um ca. 3 Uhr von selbst.
+Settings → **Cron Jobs** → bei `/api/cron/demo-reset` auf **Run** klicken. Oder im Browser öffnen: `https://recruit24.ch/api/cron/demo-reset?key=` und direkt dahinter Ihr `CRON_SECRET`. Nach etwa einer Minute erscheint `"ok":true` – die Demo-Firma ist da. Ab jetzt passiert das jede Nacht um ca. 3 Uhr von selbst.
 
 **6. Testen**
 recruit24.ch → oben rechts **Login** → **Demo öffnen** (oder Benutzername `Demo`, Passwort `demo`).
