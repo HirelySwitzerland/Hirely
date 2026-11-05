@@ -5,8 +5,9 @@ import { CONTACT_EMAIL, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#ablauf", label: "Ablauf" },
+  { href: "/#fuer-wen", label: "Für wen" },
+  { href: "/#vorteile", label: "Vorteile" },
   { href: "/#hoerprobe", label: "Hörprobe" },
-  { href: "/#funktionen", label: "Funktionen" },
   { href: "/#vertrauen", label: "Datenschutz" },
   { href: "/#preise", label: "Preise" },
   { href: "/#fragen", label: "Fragen" },
@@ -26,7 +27,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-1 sm:gap-2">
             {!SITE_ONLY && <Link href="/login" className="px-3 py-2 text-[14px] font-medium text-white/75 transition hover:text-white">Anmelden</Link>}
             <Link href={SITE_ONLY ? "/demo" : "/register"} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3.5 text-[14px] font-semibold text-night shadow-sm transition hover:bg-brand-50">
-              {SITE_ONLY ? <span>Demo vereinbaren</span> : <><span className="hidden sm:inline">Für Unternehmen</span><span className="sm:hidden">Starten</span></>}<ArrowRight className="h-4 w-4" />
+              {SITE_ONLY ? <span>Demo vereinbaren</span> : <><span className="hidden sm:inline">Jetzt starten</span><span className="sm:hidden">Starten</span></>}<ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -36,10 +37,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-8 md:grid-cols-12">
           <div className="md:col-span-5">
             <Logo className="h-11" />
-            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen.</p>
+            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für HR-Abteilungen, Personalvermittler und Headhunter.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#fuer-wen", "Für wen"], ["/#vorteile", "Vorteile"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Zeit-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
           <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
           <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>

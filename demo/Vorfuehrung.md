@@ -70,6 +70,7 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Vollbild mit **F11**, dann **langsam scrollen**. Die Kamera fliegt über die Altstadt bis zu Sandra, taucht durch Bildschirme und Handys und erzählt eine ganze Bewerbung – von Sonntagabend bis zum Handschlag am Donnerstag.
 - Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
 - Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
+- Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind), **Was Recruiter schätzen** und der **Rechner** – Regler auf die Bewerbungen des Gegenübers stellen.
 - Danach oben auf **Anmelden** und weiter mit Teil A.
 
 Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.
