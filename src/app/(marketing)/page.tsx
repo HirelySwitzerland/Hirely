@@ -4,26 +4,24 @@ import {
   ArrowRight, BarChart3, Building2, CalendarCheck, Check, ChevronDown, CircleSlash, EyeOff, FileSearch, Globe2, Library, Lock, MessagesSquare,
   PhoneCall, Play, Plug, ScrollText, ShieldCheck, UserCheck, UserRound, Video,
 } from "lucide-react";
-import { type StoryStep } from "@/components/marketing/scroll-story";
+import fs from "node:fs";
+import path from "node:path";
+import { HeroVideo, PhotoStory } from "@/components/marketing/photo-story";
 import { Film } from "@/components/marketing/film";
+import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
 import { PLANS, chf } from "@/lib/billing";
 import { SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { cn } from "@/lib/utils";
 
+/** The photo/video story switches on once its pictures are in public/story (generated with Higgsfield); until then the 3D film runs. */
+const STORY_READY = fs.existsSync(path.join(process.cwd(), "public", "story", "hero.webp"));
+
 export const metadata = {
   title: { absolute: "Recruit24 – Ihr KI-Mitarbeiter fürs Recruiting" },
   description: "Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. Entscheiden tun immer Sie. Entwickelt in der Schweiz.",
 };
-
-const TRUST = [
-  { i: Building2, t: "Entwickelt in der Schweiz" },
-  { i: ShieldCheck, t: "revDSG & DSGVO" },
-  { i: UserCheck, t: "Der Mensch entscheidet" },
-  { i: Globe2, t: "DE · FR · IT · EN" },
-  { i: Lock, t: "Verschlüsselt & protokolliert" },
-];
 
 const STEPS: StoryStep[] = [
   {
@@ -51,6 +49,15 @@ const STEPS: StoryStep[] = [
     image: "/marketing/schritt-termin.webp", alt: "Terminwahl für das persönliche Gespräch mit freien Zeiten",
   },
 ];
+
+const TRUST = [
+  { i: Building2, t: "Entwickelt in der Schweiz" },
+  { i: ShieldCheck, t: "revDSG & DSGVO" },
+  { i: UserCheck, t: "Der Mensch entscheidet" },
+  { i: Globe2, t: "DE · FR · IT · EN" },
+  { i: Lock, t: "Verschlüsselt & protokolliert" },
+];
+
 
 const FEATURES = [
   { i: FileSearch, t: "CV-Prüfung mit Belegen", d: "Erfahrung, Skills, Sprachen und Zertifikate – jede Anforderung mit Fundstelle im Lebenslauf." },
@@ -83,6 +90,63 @@ const FAQ = [
 export default function LandingPage() {
   return (
     <main className="marketing-root">
+      {STORY_READY ? (
+        <>
+      {/* Start */}
+      <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-night">
+        <Image src="/story/hero.webp" alt="Sandra, HR-Leiterin, an ihrem Schreibtisch im Morgenlicht" fill priority sizes="100vw" className="-z-10 object-cover" style={{ objectPosition: "30% 50%" }} />
+        <HeroVideo />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,rgba(14,17,26,0.94)_0%,rgba(14,17,26,0.8)_38%,rgba(14,17,26,0.25)_70%,rgba(14,17,26,0.1)_100%)] max-lg:bg-[linear-gradient(0deg,rgba(14,17,26,0.96)_0%,rgba(14,17,26,0.75)_55%,rgba(14,17,26,0.25)_100%)]" />
+        <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-8">
+          <div className="max-w-xl lg:ml-auto">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/25 px-3.5 py-1.5 text-[13px] font-medium text-white/80 backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#F97A3A]" />KI-Recruiting aus der Schweiz – für KMU
+            </p>
+            <h1 className="mt-7 text-[44px] font-semibold leading-[1.02] tracking-[-0.035em] text-white sm:text-[64px] xl:text-[76px]">
+              Ihr KI-Mitarbeiter<br /><span className="text-[#FDB48C]">fürs Recruiting.</span>
+            </h1>
+            <p className="mt-6 text-[18px] leading-relaxed text-white/80 sm:text-[20px]">
+              Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
+            </p>
+            <StartButtons className="mt-9 sm:!justify-start" />
+            <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/65 transition hover:text-white">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
+              Hörprobe: So klingt ein KI-Vorabgespräch
+            </a>
+          </div>
+        </div>
+        <a href="#menschen" className="absolute inset-x-0 bottom-6 mx-auto flex w-fit flex-col items-center gap-2 text-[13px] text-white/60 transition hover:text-white">
+          Die Geschichte einer Bewerbung<span className="h-8 w-px bg-gradient-to-b from-white/60 to-transparent" />
+        </a>
+      </section>
+
+      {/* Die zwei Menschen der Geschichte */}
+      <section id="menschen" className="scroll-mt-16 bg-night">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-24 sm:px-8 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-5">
+            <Eyebrow dark>Eine Bewerbung, vier Tage</Eyebrow>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[46px]">Das sind Sandra und Max.</h2>
+            <p className="mt-5 text-[18px] leading-relaxed text-white/70">Sandra leitet das HR einer Maschinenbaufirma in Winterthur und sucht einen Servicetechniker. Max ist Servicetechniker und sucht eine neue Stelle. Begleiten Sie die beiden – und sehen Sie, was Recruit24 dazwischen erledigt.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:col-span-7">
+            {[["/story/sandra.webp", "Sandra", "HR-Leiterin · sucht einen Servicetechniker"], ["/story/max.webp", "Max", "Servicetechniker · sucht eine neue Stelle"]].map(([src, name, role]) => (
+              <figure key={name} className="group relative aspect-[3/4] overflow-hidden rounded-2xl">
+                <Image src={src} alt={`${name}, ${role}`} fill sizes="(min-width: 1024px) 30vw, 50vw" className="object-cover transition duration-700 group-hover:scale-[1.03]" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5 pt-16">
+                  <p className="text-[22px] font-semibold text-white">{name}</p>
+                  <p className="text-[14px] text-white/75">{role}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Die Geschichte: eine Bewerbung mit Recruit24 */}
+      <PhotoStory />
+        </>
+      ) : (
+        <>
       {/* Start */}
       <section className="relative overflow-hidden bg-night">
         <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -113,7 +177,10 @@ export default function LandingPage() {
 
       {/* Film: eine Bewerbung in 24 Stunden */}
       <Film fallback={STEPS} />
+        </>
+      )}
 
+      <div id="nach-story" className="scroll-mt-16" />
       <div id="nach-film" className="scroll-mt-16" />
       {/* Vertrauensleiste */}
       <section className="border-b border-slate-200 bg-white">
