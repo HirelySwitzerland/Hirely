@@ -1,6 +1,6 @@
 # Recruit24 live vorführen – Ablauf zum Mitnehmen
 
-Dauer: etwa 25 Minuten. Alles läuft direkt in der App, ohne Präsentation.
+Dauer: etwa 30 Minuten. Alles läuft direkt auf der Website und in der App, ohne Präsentation.
 
 Zwei Wege, Recruit24 zu starten:
 - **Firmenlaptop, nichts installieren:** Recruit24 läuft bei GitHub in der Cloud (Codespaces), Sie brauchen nur den Browser. Siehe Abschnitt 0.
@@ -61,6 +61,18 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
 5. Am Beamer: in beiden Fenstern mit Strg + Plus auf 110–125 % vergrössern.
 6. Benachrichtigungen am Laptop ausschalten (Windows: „Nicht stören“).
 7. **Ton einschalten** und kurz testen: Die KI spricht im Interview mit ElevenLabs-Stimme, und Roman Eglis Telefon-Aufnahme soll man hören.
+
+---
+
+## Teil 0 – Einstieg mit der Website (3 Min.)
+
+Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, sobald die Website online ist).
+- Vollbild mit **F11**, dann **langsam scrollen**. Die Kamera fliegt über die Altstadt bis zu Sandra, taucht durch Bildschirme und Handys und erzählt eine ganze Bewerbung – von Sonntagabend bis zum Handschlag am Donnerstag.
+- Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
+- Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
+- Danach oben auf **Anmelden** und weiter mit Teil A.
+
+Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.
 
 ---
 
@@ -142,6 +154,8 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Mit KI schreiben**: Das Inserat entsteht aus den Stichworten.
 - **Weiter zu den KI-Kriterien**: Muss- und Wunschkriterien sind schon vorgeschlagen. Dann **Fragen von der KI vorschlagen lassen** und ein paar Vorschläge anklicken. Danach **KI-Kriterien speichern**.
 - Reiter **Interview-Ablauf**: jeder Schritt des KI-Interviews, Wenn-dann-Regeln, **Interview testen**.
+- Eine offene Stelle öffnen (z. B. **Servicetechniker/in**) → Reiter **Veröffentlichen**: eigener Bewerbungs-Link für LinkedIn, Indeed, jobs.ch und jobup.ch, Inserat-Text zum Kopieren, Google-Jobsuche automatisch. Die Zahlen zeigen, wie viele Bewerbungen von wo kommen.
+- Satz: „Egal wo die Stelle steht – beworben wird bei Recruit24, und Sie sehen, welcher Kanal sich lohnt.“
 
 **Kandidierende**
 - Stufen als Reiter oben, Balken = erfüllte Anforderungen.
@@ -209,3 +223,5 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Telefonanrufe** sind in der Demo simuliert. Echte Anrufe brauchen eine Schweizer Nummer (Twilio).
 - **ATS-Anbindungen** sind vorbereitet und werden mit den Zugangsdaten des Kunden eingerichtet.
 - Ohne KI-Schlüssel nutzt die Demo eine eingebaute Test-KI. Mit Schlüssel (Claude oder OpenAI) werden die Texte noch natürlicher.
+- **Sandra und Max** auf der Website sind erfundene Personen. Bilder und Kamerafahrten sind mit KI erstellt (Higgsfield).
+- **LinkedIn und Indeed:** Beworben wird über den Link auf die Recruit24-Stellenseite. Bewerben direkt in LinkedIn („Easy Apply“) braucht eine offizielle Partnerschaft – das kommt später.
