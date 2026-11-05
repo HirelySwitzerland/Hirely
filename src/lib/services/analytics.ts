@@ -2,6 +2,8 @@ import type { Prisma } from "@prisma/client";
 import { format, startOfDay, subDays } from "date-fns";
 import { db } from "@/lib/db";
 import { planById } from "@/lib/billing";
+import { refLabel } from "@/lib/job-channels";
+
 const SOURCE_NAMES: Record<string, string> = { CAREER_SITE: "Karriereseite", ATS: "ATS", CSV_IMPORT: "CSV-Import", API: "API", EMAIL: "E-Mail", MANUAL: "Manuell" };
 
 /** Minutes of manual HR work replaced per automated activity (conservative estimates, documented in the UI). */
@@ -101,7 +103,7 @@ export async function sourcePerformance(appWhere: Prisma.ApplicationWhereInput) 
   for (const a of apps) {
     const parts = (a.sourceDetail ?? "").split(" · ").filter((p) => p && !p.includes("@"));
     const key = parts.pop();
-    const label = key ? key.charAt(0).toUpperCase() + key.slice(1) : (SOURCE_NAMES[a.source] ?? a.source);
+    const label = key ? refLabel(key) : (SOURCE_NAMES[a.source] ?? a.source);
     const r = map.get(label) ?? { source: label, applications: 0, interviewed: 0, shortlisted: 0, hired: 0 };
     r.applications++;
     if (a.interviewStatus === "COMPLETED") r.interviewed++;

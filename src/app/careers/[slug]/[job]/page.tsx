@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { getT } from "@/lib/i18n";
 import { Markdown } from "@/components/markdown";
 import { ApplyForm } from "@/components/candidate/apply-form";
+import { jobPostingJsonLd } from "@/lib/services/job-ad";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; job: string }> }) {
   const { slug, job } = await params;
@@ -22,6 +23,8 @@ export default async function JobAdPage({ params, searchParams }: { params: Prom
   const t = getT(locale);
   return (
     <main className="mx-auto grid max-w-5xl gap-10 px-4 py-10 lg:grid-cols-5">
+      {/* lets Google list the job in its job search */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd(job, job.org)).replace(/</g, "\\u003c") }} />
       <article className="lg:col-span-3">
         <Link href={`/careers/${slug}`} className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-ink"><ArrowLeft className="h-3.5 w-3.5" />{t("careers.back")}</Link>
         <h1 className="text-3xl font-semibold tracking-tight text-ink">{job.title}{job.workload ? ` ${job.workload}` : ""}</h1>

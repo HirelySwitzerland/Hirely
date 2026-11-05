@@ -92,7 +92,7 @@ export async function submitApplication(_: ActionState, fd: FormData): Promise<A
       orgId: job.orgId,
       jobId: job.id,
       source: "CAREER_SITE",
-      sourceDetail: str(fd, "ref") || "Karriereseite",
+      sourceDetail: str(fd, "ref").replace(/[^\w.\- ]/g, "").slice(0, 40) || "Karriereseite",
       candidate: d,
       cv: { buffer: Buffer.from(await file.arrayBuffer()), filename: file.name, mime: file.type || "application/octet-stream" },
       coverLetter: str(fd, "coverLetter").slice(0, 4000) || undefined,

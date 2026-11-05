@@ -25,7 +25,7 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
     { done: job.requirements.some((r) => r.kind === "MUST"), label: "Muss-Kriterien festgelegt", href: `/app/jobs/${id}/ai` },
     { done: job.questions.length > 0, label: "Fragen für Formular & Interview festgelegt", href: `/app/jobs/${id}/ai` },
     { done: flowNodes > 0, label: "KI-Interview-Ablauf bereit", href: `/app/jobs/${id}/interview` },
-    { done: job.status === "OPEN", label: "Auf der Karriereseite veröffentlicht", href: `/app/jobs/${id}` },
+    { done: job.status === "OPEN", label: "Veröffentlicht – auf Karriereseite, Google & Portalen", href: `/app/jobs/${id}/publish` },
   ];
   return (
     <div className="grid gap-5 xl:grid-cols-3">
@@ -46,7 +46,8 @@ export default async function JobOverview({ params, searchParams }: { params: Pr
         <Card>
           <CardHeader title={`Kandidierende (${apps.length})`} action={<Link href={`/app/candidates?job=${id}`} className="link text-xs">Alle anzeigen</Link>} />
           {apps.length === 0 ? (
-            <EmptyState title="Noch keine Bewerbungen" description={job.status === "OPEN" ? "Bewerbungen von Karriereseite und ATS erscheinen hier." : "Veröffentlichen Sie die Stelle, um Bewerbungen zu erhalten."} />
+            <EmptyState title="Noch keine Bewerbungen" description={job.status === "OPEN" ? "Bewerbungen von Karriereseite, Stellenportalen und ATS erscheinen hier." : "Veröffentlichen Sie die Stelle, um Bewerbungen zu erhalten."}
+            action={<LinkButton href={`/app/jobs/${id}/publish`} size="sm" variant="secondary">Wo veröffentlichen?</LinkButton>} />
           ) : (
             <Table>
               <thead><tr><Th>Kandidat/in</Th><Th>Stufe</Th><Th>Anforderungen</Th><Th>KI-Interview</Th><Th>Eingegangen</Th></tr></thead>

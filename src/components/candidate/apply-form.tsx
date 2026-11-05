@@ -1,16 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ActionForm, SubmitButton } from "@/components/forms";
 import { Checkbox, Field, Input, Textarea } from "@/components/ui";
 import { submitApplication } from "@/app/actions/public";
 import { getT } from "@/lib/i18n";
+import { refFromReferrer } from "@/lib/job-channels";
 
 export function ApplyForm({ jobId, locale, refSource, knockouts, privacyHref }: { jobId: string; locale: string; refSource?: string; knockouts: { id: string; text: string }[]; privacyHref: string }) {
   const t = getT(locale);
+  // without a tagged link, recognise visitors from Google, LinkedIn, Indeed, jobs.ch … by the page they came from
+  const [ref, setRef] = useState(refSource ?? "");
+  useEffect(() => { if (!refSource) setRef(refFromReferrer(document.referrer)); }, [refSource]);
   return (
     <ActionForm action={submitApplication} className="mt-5 space-y-4">
       <input type="hidden" name="jobId" value={jobId} />
-      <input type="hidden" name="ref" value={refSource ?? ""} />
+      <input type="hidden" name="ref" value={ref} />
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label={t("careers.firstName")}><Input name="firstName" required autoComplete="given-name" /></Field>

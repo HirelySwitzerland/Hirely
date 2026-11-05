@@ -8,6 +8,7 @@ export function JobTabs({ id, canManage }: { id: string; canManage: boolean }) {
   const p = usePathname();
   const tabs = [
     { href: `/app/jobs/${id}`, label: "Übersicht" },
+    { href: `/app/jobs/${id}/publish`, label: "Veröffentlichen" },
     ...(canManage
       ? [
           { href: `/app/jobs/${id}/ai`, label: "KI-Kriterien" },
