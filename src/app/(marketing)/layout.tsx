@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { CONTACT_EMAIL, SITE_ONLY } from "@/lib/site";
+import { CONTACT_EMAIL, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#ablauf", label: "Ablauf" },
@@ -10,7 +10,7 @@ const NAV = [
   { href: "/#vertrauen", label: "Datenschutz" },
   { href: "/#preise", label: "Preise" },
   { href: "/#fragen", label: "Fragen" },
-];
+].filter((n) => SHOW_PRICES || n.href !== "/#preise");
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -39,14 +39,14 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für KMU und mittelgrosse Firmen.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ["/#preise", "Preise"], ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#hoerprobe", "Hörprobe"], ["/#funktionen", "Funktionen"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
           <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
           <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>
         <div className="border-t border-slate-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-[13px] text-slate-500 sm:flex-row sm:justify-between sm:px-8">
             <span>© {new Date().getFullYear()} Recruit24. Alle Rechte vorbehalten.</span>
-            <span>Preise in CHF, exkl. MwSt.</span>
+            {SHOW_PRICES && <span>Preise in CHF, exkl. MwSt.</span>}
           </div>
         </div>
       </footer>

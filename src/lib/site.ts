@@ -3,6 +3,8 @@
  * demo request; sign-up, login and the app are switched off until the product is ready.
  */
 export const SITE_ONLY = process.env.NEXT_PUBLIC_SITE_ONLY === "1";
+/** Prices on the public website (section, menu and footer). Hidden until NEXT_PUBLIC_SHOW_PRICES=1. */
+export const SHOW_PRICES = process.env.NEXT_PUBLIC_SHOW_PRICES === "1";
 /** Public contact address shown on the website (imprint, privacy notice, fallback for the demo form). */
 export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hallo@recruit24.ch";
 export const SITE_URL = "https://recruit24.ch";

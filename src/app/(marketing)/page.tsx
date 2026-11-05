@@ -12,7 +12,7 @@ import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
 import { PLANS, chf } from "@/lib/billing";
-import { SITE_ONLY } from "@/lib/site";
+import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { cn } from "@/lib/utils";
 
@@ -286,7 +286,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Preise */}
+      {/* Preise (hidden for now, see SHOW_PRICES) */}
+      {SHOW_PRICES && (
       <section id="preise" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8">
         <div className="sd-rise mx-auto max-w-3xl text-center">
           <Eyebrow center>Preise</Eyebrow>
@@ -326,6 +327,7 @@ export default function LandingPage() {
         </div>
         <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · zusätzliche Stelle CHF 29 / Monat.</p>
       </section>
+      )}
 
       {/* Für Unternehmen / Bewerbende */}
       <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
