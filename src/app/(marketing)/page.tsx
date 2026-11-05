@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight, BarChart3, Building2, CalendarCheck, Check, ChevronDown, CircleSlash, EyeOff, FileSearch, Globe2, Library, Lock, MessagesSquare,
-  PhoneCall, Play, Plug, ScrollText, ShieldCheck, UserCheck, UserRound, Video,
-} from "lucide-react";
+import { ArrowRight, Building2, Check, ChevronDown, CircleSlash, EyeOff, Globe2, Lock, Play, ScrollText, ShieldCheck, UserCheck, UserRound } from "lucide-react";
+import type { CSSProperties } from "react";
 import fs from "node:fs";
 import path from "node:path";
-import { HeroVideo, PhotoStory } from "@/components/marketing/photo-story";
+import { HeroVideo, StackedStory } from "@/components/marketing/photo-story";
+import { ScrollFilm } from "@/components/marketing/scroll-film";
+import { FeatureOrbit } from "@/components/marketing/feature-orbit";
+import { FEATURES } from "@/components/marketing/features";
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
@@ -59,17 +60,6 @@ const TRUST = [
 ];
 
 
-const FEATURES = [
-  { i: FileSearch, t: "CV-Prüfung mit Belegen", d: "Erfahrung, Skills, Sprachen und Zertifikate – jede Anforderung mit Fundstelle im Lebenslauf." },
-  { i: PhoneCall, t: "Telefon- & Browser-Interviews", d: "Natürliche Gespräche mit Nachfragen, auf Deutsch, Französisch, Italienisch und Englisch." },
-  { i: Video, t: "Video-Interviews", d: "Zeitversetzt und handytauglich. Bewertet wird nur der Inhalt, nie das Aussehen." },
-  { i: CalendarCheck, t: "Terminbuchung", d: "Selbstbuchung aus Ihrem Kalender, mit Bestätigung und Erinnerungen." },
-  { i: MessagesSquare, t: "Kommunikation", d: "Anpassbare Vorlagen für jeden Schritt – per E-Mail, SMS und WhatsApp." },
-  { i: Plug, t: "ATS & Karriereseite", d: "Anbindung an Personio, Abacus, SuccessFactors und weitere – oder die eigene Karriereseite." },
-  { i: BarChart3, t: "Auswertungen", d: "Zeit bis zum Interview, beste Quellen, Quoten und gesparte HR-Zeit." },
-  { i: Library, t: "Talent-Pool", d: "Mit Einwilligung, in normaler Sprache durchsuchbar: «Elektroingenieure in der Ostschweiz»." },
-];
-
 const NEVER = [
   { i: CircleSlash, t: "Sagt nie selbst ab", d: "Absagen und Einstellungen sind technisch Menschen vorbehalten." },
   { i: EyeOff, t: "Bewertet nie Aussehen oder Stimme", d: "Keine geschützten Merkmale, keine Gesichts- oder Stimmanalyse." },
@@ -92,9 +82,12 @@ export default function LandingPage() {
     <main className="marketing-root">
       {STORY_READY ? (
         <>
-      {/* Start */}
+      {/* Desktop: the whole start of the page as one scroll-driven camera journey */}
+      <div className="hidden lg:motion-safe:block"><ScrollFilm /></div>
+      {/* Phones and reduced motion: photo start, the two people and the story as a calm column */}
+      <div className="lg:motion-safe:hidden">
       <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-night">
-        <Image src="/story/hero.webp" alt="Sandra, HR-Leiterin, an ihrem Schreibtisch im Morgenlicht" fill priority sizes="100vw" className="-z-10 object-cover" style={{ objectPosition: "30% 50%" }} />
+        <Image src="/story/intro.webp" alt="Eine Schweizer Altstadt im Morgennebel von oben" fill priority sizes="100vw" className="-z-10 object-cover" />
         <HeroVideo />
         <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,rgba(14,17,26,0.94)_0%,rgba(14,17,26,0.8)_38%,rgba(14,17,26,0.25)_70%,rgba(14,17,26,0.1)_100%)] max-lg:bg-[linear-gradient(0deg,rgba(14,17,26,0.96)_0%,rgba(14,17,26,0.75)_55%,rgba(14,17,26,0.25)_100%)]" />
         <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-8">
@@ -143,7 +136,8 @@ export default function LandingPage() {
       </section>
 
       {/* Die Geschichte: eine Bewerbung mit Recruit24 */}
-      <PhotoStory />
+      <StackedStory />
+      </div>
         </>
       ) : (
         <>
@@ -184,9 +178,9 @@ export default function LandingPage() {
       <div id="nach-film" className="scroll-mt-16" />
       {/* Vertrauensleiste */}
       <section className="border-b border-slate-200 bg-white">
-        <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-4 px-4 py-7 sm:px-8 md:grid-cols-5">
-          {TRUST.map(({ i: Icon, t }) => (
-            <li key={t} className="flex items-center justify-center gap-2.5 text-[14px] font-medium text-slate-700 md:justify-start">
+        <ul className="sd-stagger mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-4 px-4 py-7 sm:px-8 md:grid-cols-5">
+          {TRUST.map(({ i: Icon, t }, k) => (
+            <li key={t} style={stagger(k)} className="flex items-center justify-center gap-2.5 text-[14px] font-medium text-slate-700 md:justify-start">
               <Icon className="h-[18px] w-[18px] shrink-0 text-brand-600" />{t}
             </li>
           ))}
@@ -196,7 +190,7 @@ export default function LandingPage() {
       {/* Hörprobe */}
       <section id="hoerprobe" className="scroll-mt-16 bg-night">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 py-28 sm:px-8 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="sd-rise lg:col-span-5">
             <Eyebrow dark>Hörprobe</Eyebrow>
             <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[48px]">So klingt ein Vorabgespräch.</h2>
             <p className="mt-6 text-[18px] leading-relaxed text-white/70">
@@ -209,22 +203,23 @@ export default function LandingPage() {
             </ul>
             <p className="mt-8 text-[13px] text-white/45">Beispielgespräch mit einer erfundenen Person. Die Stimmen sind künstlich erzeugt.</p>
           </div>
-          <div className="lg:col-span-7"><Hoerprobe /></div>
+          <div className="sd-tilt lg:col-span-7"><Hoerprobe /></div>
         </div>
       </section>
 
-      {/* Funktionen */}
-      <section id="funktionen" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8">
-        <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+      {/* Funktionen: wide screens orbit around the cards in 3D, everything else gets the grid */}
+      <div className="hidden lg:motion-safe:block"><FeatureOrbit /></div>
+      <section id="funktionen" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8 lg:motion-safe:hidden">
+        <div className="sd-rise grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <Eyebrow>Funktionen</Eyebrow>
             <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Alles, was im Recruiting anfällt.</h2>
           </div>
           <p className="text-[18px] leading-relaxed text-slate-600 lg:col-span-5">Eine Software statt fünf Werkzeuge – und Ihr Team sieht jederzeit, was gerade passiert.</p>
         </div>
-        <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map(({ i: Icon, t, d }) => (
-            <div key={t} className="bg-white p-7 transition hover:bg-[#F8F9FB]">
+        <div className="sd-stagger mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map(({ i: Icon, t, d }, k) => (
+            <div key={t} style={stagger(k % 4)} className="bg-white p-7 transition hover:bg-[#F8F9FB]">
               <Icon className="h-6 w-6 text-brand-600" strokeWidth={1.75} />
               <p className="mt-6 text-[17px] font-semibold text-ink">{t}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{d}</p>
@@ -234,8 +229,8 @@ export default function LandingPage() {
       </section>
 
       {/* Nachvollziehbar */}
-      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
-        <div className="grid items-center gap-12 rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-14 lg:grid-cols-2">
+      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8 lg:motion-safe:pt-28">
+        <div className="sd-tilt grid items-center gap-12 rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-14 lg:grid-cols-2">
           <div>
             <Eyebrow>Nachvollziehbar</Eyebrow>
             <h2 className="mt-4 text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[40px]">Keine Blackbox.<br />Keine geheime Punktzahl.</h2>
@@ -267,23 +262,23 @@ export default function LandingPage() {
       {/* Vertrauen */}
       <section id="vertrauen" className="scroll-mt-16 border-y border-slate-200 bg-[#F8F9FB]">
         <div className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
-          <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+          <div className="sd-rise grid gap-6 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
               <Eyebrow>Vertrauen & Datenschutz</Eyebrow>
               <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Was Recruit24 nie tut.</h2>
             </div>
             <p className="text-[18px] leading-relaxed text-slate-600 lg:col-span-5">Gebaut für Schweizer HR-Abteilungen, Datenschutzberatungen und Bewerbende, die wissen wollen, woran sie sind.</p>
           </div>
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {NEVER.map(({ i: Icon, t, d }) => (
-              <div key={t} className="rounded-2xl border border-slate-200 bg-white p-7">
+          <div className="sd-flip mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {NEVER.map(({ i: Icon, t, d }, k) => (
+              <div key={t} style={stagger(k)} className="rounded-2xl border border-slate-200 bg-white p-7">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><Icon className="h-5 w-5" /></span>
                 <p className="mt-6 text-[17px] font-semibold text-ink">{t}</p>
                 <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{d}</p>
               </div>
             ))}
           </div>
-          <div className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 text-[15px] sm:grid-cols-3">
+          <div className="sd-rise mt-5 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 text-[15px] sm:grid-cols-3">
             {[["revDSG & DSGVO", "Einwilligungen, Aufbewahrungsfristen, Export und Löschung auf Anfrage."], ["Sicherheit", "Verschlüsselte Speicherung und Übertragung, Rollenrechte, Zwei-Faktor-Anmeldung."], ["Getrennte Firmenbereiche", "Jede Firma sieht nur ihre eigenen Daten – strikt getrennt."]].map(([t, d]) => (
               <div key={t} className="bg-white p-6"><p className="font-semibold text-ink">{t}</p><p className="mt-1.5 text-slate-600">{d}</p></div>
             ))}
@@ -293,16 +288,16 @@ export default function LandingPage() {
 
       {/* Preise */}
       <section id="preise" className="scroll-mt-16 mx-auto max-w-7xl px-4 py-28 sm:px-8">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="sd-rise mx-auto max-w-3xl text-center">
           <Eyebrow center>Preise</Eyebrow>
           <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Klare Preise in Franken.</h2>
           <p className="mt-5 text-[18px] text-slate-600">{SITE_ONLY ? "Preise in CHF, exkl. MwSt." : "14 Tage kostenlos testen, ohne Kreditkarte."} Bei jährlicher Zahlung sparen Sie rund 17 %.</p>
         </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {PLANS.map((p) => {
+        <div className="sd-stagger mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {PLANS.map((p, k) => {
             const hot = p.id === "GROWTH";
             return (
-              <div key={p.id} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(20,24,36,0.6)]" : "border-slate-200 bg-white")}>
+              <div key={p.id} style={stagger(k)} className={cn("relative flex flex-col rounded-2xl border p-7", hot ? "border-night bg-night text-white shadow-[0_40px_80px_-40px_rgba(20,24,36,0.6)]" : "border-slate-200 bg-white")}>
                 {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F97A3A] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
                 <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
                 <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
@@ -334,8 +329,8 @@ export default function LandingPage() {
 
       {/* Für Unternehmen / Bewerbende */}
       <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
-        <div className="grid gap-5 lg:grid-cols-5">
-          <div className="relative overflow-hidden rounded-3xl bg-night p-8 text-white sm:p-12 lg:col-span-3">
+        <div className="sd-stagger grid gap-5 lg:grid-cols-5">
+          <div style={stagger(0)} className="relative overflow-hidden rounded-3xl bg-night p-8 text-white sm:p-12 lg:col-span-3">
             <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.45),transparent)]" />
             <p className="relative text-[13px] font-semibold uppercase tracking-[0.14em] text-brand-300">Für Unternehmen</p>
             <h3 className="relative mt-4 text-[30px] font-semibold leading-tight tracking-[-0.02em] sm:text-[36px]">Starten Sie mit Ihrer ersten Stelle – heute noch.</h3>
@@ -351,7 +346,7 @@ export default function LandingPage() {
               )}
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-12 lg:col-span-2">
+          <div style={stagger(1)} className="rounded-3xl border border-slate-200 bg-[#F8F9FB] p-8 sm:p-12 lg:col-span-2">
             <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-500">Für Bewerbende</p>
             <h3 className="mt-4 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">Sie haben eine Einladung erhalten?</h3>
             <p className="mt-4 text-[16px] leading-relaxed text-slate-600">Öffnen Sie einfach den Link in Ihrer E-Mail oder SMS. Sie brauchen kein Konto und keine App – und Sie sprechen immer mit einer gekennzeichneten KI.</p>
@@ -363,12 +358,12 @@ export default function LandingPage() {
       {/* Fragen */}
       <section id="fragen" className="scroll-mt-16 border-t border-slate-200 bg-[#F8F9FB]">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-28 sm:px-8 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+          <div className="sd-rise lg:col-span-4">
             <Eyebrow>Häufige Fragen</Eyebrow>
             <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[44px]">Gut zu wissen.</h2>
             <p className="mt-5 text-[17px] text-slate-600">Noch etwas offen? <Link href="/demo" className="font-medium text-brand-700 underline-offset-4 hover:underline">Sprechen Sie mit uns.</Link></p>
           </div>
-          <div className="divide-y divide-slate-200 border-y border-slate-200 lg:col-span-8">
+          <div className="sd-stagger divide-y divide-slate-200 border-y border-slate-200 lg:col-span-8">
             {FAQ.filter(([q]) => !(SITE_ONLY && q.includes("Testtagen"))).map(([q, a]) => (
               <details key={q} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[17px] font-medium text-ink [&::-webkit-details-marker]:hidden">
@@ -382,9 +377,15 @@ export default function LandingPage() {
       </section>
 
       {/* Schluss */}
-      <section className="relative overflow-hidden bg-night">
-        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.3),transparent)]" />
-        <div className="relative mx-auto max-w-4xl px-4 py-28 text-center sm:px-8">
+      <section className="relative isolate overflow-hidden bg-night">
+        {STORY_READY && (
+          <div aria-hidden className="sd-zoom absolute inset-0 -z-10">
+            <Image src="/story/handshake.webp" alt="" fill sizes="100vw" className="object-cover opacity-45" />
+          </div>
+        )}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(20,24,36,0.55),rgba(20,24,36,0.92)_75%)]" />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(249,122,58,0.3),transparent)]" />
+        <div className="sd-rise relative mx-auto max-w-4xl px-4 py-36 text-center sm:px-8">
           <h2 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-[60px]">Weniger Routine.<br />Mehr Zeit für Menschen.</h2>
           <p className="mx-auto mt-6 max-w-xl text-[18px] text-white/70">Recruit24 erledigt die Routinearbeit. Die wichtigen Entscheide treffen Sie.</p>
           <StartButtons className="mt-10" />
@@ -392,6 +393,11 @@ export default function LandingPage() {
       </section>
     </main>
   );
+}
+
+/** Delay for one item of a .sd-stagger / .sd-flip group (see globals.css). */
+function stagger(i: number) {
+  return { "--i": i } as CSSProperties;
 }
 
 function Eyebrow({ children, dark, center }: { children: React.ReactNode; dark?: boolean; center?: boolean }) {
