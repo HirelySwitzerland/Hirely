@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { CONTACT_EMAIL, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
+import { CONTACT_EMAIL, PUBLIC_DEMO, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#ablauf", label: "Ablauf" },
@@ -25,7 +25,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
           </nav>
           <div className="flex items-center gap-1 sm:gap-2">
-            {!SITE_ONLY && <Link href="/login" className="px-3 py-2 text-[14px] font-medium text-white/75 transition hover:text-white">Anmelden</Link>}
+            {(!SITE_ONLY || PUBLIC_DEMO) && <Link href="/login" className="inline-flex h-9 items-center rounded-lg border border-white/20 px-3.5 text-[14px] font-medium text-white/90 transition hover:border-white/40 hover:text-white">Login</Link>}
             <Link href={SITE_ONLY ? "/demo" : "/register"} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3.5 text-[14px] font-semibold text-night shadow-sm transition hover:bg-brand-50">
               {SITE_ONLY ? <span>Demo vereinbaren</span> : <><span className="hidden sm:inline">Jetzt starten</span><span className="sm:hidden">Starten</span></>}<ArrowRight className="h-4 w-4" />
             </Link>

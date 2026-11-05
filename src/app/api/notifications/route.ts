@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getContext } from "@/lib/auth/session";
+import { kickQueue } from "@/lib/queue/kick";
 
 export async function GET() {
   const ctx = await getContext();
+  kickQueue();
   const [items, unread] = await Promise.all([
     db.notification.findMany({ where: { userId: ctx.user.id, orgId: ctx.orgId }, orderBy: { createdAt: "desc" }, take: 25 }),
     db.notification.count({ where: { userId: ctx.user.id, orgId: ctx.orgId, readAt: null } }),

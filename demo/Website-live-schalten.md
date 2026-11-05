@@ -57,6 +57,47 @@ Im Impressum und in der Datenschutzerklärung sind Platzhalter **gelb markiert**
 
 Die Datenschutzerklärung ist auf das abgestimmt, was die Website wirklich tut (keine Cookies, kein Tracking, Hosting Vercel, E-Mail-Versand Resend). Lassen Sie sie vor dem Start trotzdem kurz von einer Fachperson prüfen.
 
+## Teil 5 – Online-Demo mit Login («Demo» / «demo»)
+
+Damit Besucher oben rechts auf **Login** klicken und Recruit24 mit der Demo-Firma ausprobieren können, braucht die App online eine Datenbank. Zeitaufwand: etwa 15 Minuten.
+
+**1. Datenbank anlegen (gratis)**
+1. In Vercel im Projekt **hirely** oben auf **Storage** → **Create Database** → **Neon** (Serverless Postgres).
+2. Region **Frankfurt (eu-central-1)**, Plan **Free** → **Create**.
+3. Bei «Connect Project» das Projekt **hirely** wählen, Production und Preview angehakt lassen → **Connect**. Vercel trägt die Verbindungsdaten selbst ein.
+
+**2. Zwei Schlüssel erzeugen**
+Auf Ihrem Laptop im Ordner `Q:\hirely` die Eingabeaufforderung öffnen und nacheinander eintippen. Jede Zeile gibt einen zufälligen Schlüssel aus – kopieren Sie ihn direkt nach Vercel, nirgendwo sonst hin:
+- `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` → für `APP_ENCRYPTION_KEY`
+- `node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"` → für `CRON_SECRET`
+
+**3. Einstellungen in Vercel** (Settings → Environment Variables, jeweils Production und Preview)
+
+| Name | Wert |
+|---|---|
+| `NEXT_PUBLIC_PUBLIC_DEMO` | `1` |
+| `DEMO_RESET` | `1` |
+| `STORAGE_PROVIDER` | `db` |
+| `AUTOMATION_TIME_SCALE` | `0.005` |
+| `APP_URL` | `https://recruit24.ch` |
+| `APP_ENCRYPTION_KEY` | Schlüssel aus Schritt 2 |
+| `CRON_SECRET` | Schlüssel aus Schritt 2 |
+
+`NEXT_PUBLIC_SITE_ONLY` bleibt auf `1` – Registrieren bleibt damit geschlossen. **`EMAIL_PROVIDER` nicht eintragen:** So landen E-Mails aus der Demo nur im internen Postausgang und gehen nie an echte Adressen.
+
+**Achtung:** `DEMO_RESET=1` heisst, dass diese Datenbank jede Nacht komplett geleert und mit der Demo-Firma neu gefüllt wird. Verwenden Sie sie nur für die Demo, nie für echte Kunden.
+
+**4. Neu deployen**
+Deployments → oberster Eintrag → **⋯ → Redeploy**, Haken bei «Use existing Build Cache» entfernen. Beim Bauen legt Vercel die Tabellen in der Datenbank an.
+
+**5. Demo-Daten zum ersten Mal einspielen**
+Settings → **Cron Jobs** → bei `/api/cron/demo-reset` auf **Run** klicken. Nach etwa einer Minute ist die Demo-Firma da. Ab jetzt passiert das jede Nacht um ca. 3 Uhr von selbst.
+
+**6. Testen**
+recruit24.ch → oben rechts **Login** → **Demo öffnen** (oder Benutzername `Demo`, Passwort `demo`).
+
+Im Demo-Zugang lassen sich Passwort und Zwei-Faktor-Anmeldung nicht ändern, damit niemand die anderen aussperrt.
+
 ## Später: die App freischalten
 
 Wenn die echte KI angebunden ist, wird aus der Website-Variante die volle App: Datenbank anlegen (z. B. bei Neon oder Supabase, Region Zürich/Frankfurt), die Einträge aus `.env.example` setzen und `NEXT_PUBLIC_SITE_ONLY` entfernen.

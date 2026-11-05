@@ -1,4 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "regions": ["fra1"]
+  "regions": ["fra1"],
+  "buildCommand": "node scripts/vercel-build.mjs",
+  "crons": [{ "path": "/api/cron/demo-reset", "schedule": "17 2 * * *" }]
 }

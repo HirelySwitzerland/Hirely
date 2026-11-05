@@ -8,6 +8,7 @@ import { ActionButton } from "@/components/forms";
 import { Alert, Avatar, LinkButton } from "@/components/ui";
 import { candidatePortalAction } from "@/app/actions/public";
 import { AutoRefresh } from "@/components/candidate/auto-refresh";
+import { kickQueue } from "@/lib/queue/kick";
 import { cn, fmtDateTime } from "@/lib/utils";
 
 export const metadata = { title: "Ihre Bewerbung", robots: { index: false } };
@@ -22,6 +23,7 @@ function publicStep(stage: Stage, interview: string) {
 }
 
 export default async function PortalPage({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<{ applied?: string }> }) {
+  kickQueue();
   const { token } = await params;
   const sp = await searchParams;
   const cand = await db.candidate.findUnique({

@@ -14,6 +14,7 @@ import { planById, PLANS, VAT_RATE } from "@/lib/billing";
 import { exportCandidateData, anonymizeCandidate, retentionSweep } from "@/lib/services/privacy";
 import { enqueue } from "@/lib/queue";
 import { fail, ok, str, toActionError, type ActionState } from "@/lib/action-state";
+import { isLockedDemoAccount } from "@/lib/site";
 
 export async function updateCompany(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
@@ -100,6 +101,7 @@ export async function changeMemberRole(_: ActionState, fd: FormData): Promise<Ac
     const ctx = await requirePermission("users.manage");
     const m = await db.membership.findFirst({ where: { id: str(fd, "membershipId"), orgId: ctx.orgId }, include: { user: true } });
     if (!m) return fail("Mitglied nicht gefunden.");
+    if (isLockedDemoAccount(m.user.email)) return fail("Der Demo-Zugang bleibt Inhaber/in.");
     const role = str(fd, "role") as Role;
     if (!assignableRoles(ctx.role).includes(role) || (m.role === "OWNER" && ctx.role !== "OWNER")) return fail("Diese Rolle können Sie nicht ändern.");
     if (m.role === "OWNER" && role !== "OWNER" && (await db.membership.count({ where: { orgId: ctx.orgId, role: "OWNER" } })) < 2) return fail("Die Firma braucht mindestens eine Inhaberin oder einen Inhaber.");
@@ -117,6 +119,7 @@ export async function removeMember(_: ActionState, fd: FormData): Promise<Action
     const m = await db.membership.findFirst({ where: { id: str(fd, "membershipId"), orgId: ctx.orgId }, include: { user: true } });
     if (!m) return fail("Mitglied nicht gefunden.");
     if (m.userId === ctx.user.id) return fail("Sie können sich nicht selbst entfernen.");
+    if (isLockedDemoAccount(m.user.email)) return fail("Der Demo-Zugang kann nicht entfernt werden.");
     if (m.role === "OWNER" && ctx.role !== "OWNER") return fail("Nur Inhaber/innen können Inhaber/innen entfernen.");
     await db.membership.delete({ where: { id: m.id } });
     await db.session.updateMany({ where: { userId: m.userId, activeOrgId: ctx.orgId }, data: { activeOrgId: null } });

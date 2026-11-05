@@ -53,7 +53,7 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
 1. Doppelklick auf **Recruit24-Vorfuehrung.bat**, wieder **J** (frische Daten), Fenster offen lassen.
 2. **Fenster A – HR** (normales Chrome-Fenster):
    - `http://localhost:3000/login`
-   - E-Mail `demo@recruit24.ch`, Passwort `Recruit24-Demo-2026`
+   - Benutzername `Demo`, Passwort `demo` (oder E-Mail `demo@recruit24.ch`, Passwort `Recruit24-Demo-2026`)
    - Sie sind dann „Sandra Keller, Leiterin HR“ und dürfen alles sehen.
 3. **Fenster B – Bewerber** (privates Fenster: Strg + Umschalt + N):
    - `http://localhost:3000/careers/helvetic-engineering`

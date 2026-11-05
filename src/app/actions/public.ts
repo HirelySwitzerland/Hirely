@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { kickQueue } from "@/lib/queue/kick";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
@@ -100,6 +101,7 @@ export async function submitApplication(_: ActionState, fd: FormData): Promise<A
       consents: { processing: true, talentPool: fd.get("consentPool") === "on" },
       actor: { type: "CANDIDATE", name: `${d.firstName} ${d.lastName}` },
     });
+    kickQueue();
     const cand = await db.candidate.findUniqueOrThrow({ where: { id: r.candidate.id } });
     return ok(r.duplicate ? "Sie haben sich bereits auf diese Stelle beworben – hier ist Ihr Status." : t("careers.submitted"), { redirect: `/portal/${cand.portalToken}?applied=1` });
   } catch (e) {

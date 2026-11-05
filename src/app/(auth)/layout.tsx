@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Logo />
         </Link>
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10">{children}</div>
-        <p className="text-center text-xs text-slate-400">Geschützt durch Verschlüsselung, 2FA und Hosting in der Schweiz.</p>
+        <p className="text-center text-xs text-slate-400">Geschützt durch Verschlüsselung und Zwei-Faktor-Anmeldung.</p>
       </div>
       <div className="relative hidden overflow-hidden bg-night lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(249,122,58,0.35),transparent_55%)]" />

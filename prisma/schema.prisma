@@ -889,3 +889,13 @@ model Lead {
   message   String?
   createdAt DateTime @default(now())
 }
+
+/// Encrypted files (CVs, recordings, video answers) when STORAGE_PROVIDER=db – for hosting without a disk, e.g. Vercel.
+model StoredObject {
+  key       String   @id
+  orgId     String
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  @@index([orgId])
+}

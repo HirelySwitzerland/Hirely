@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { decryptBuffer, encryptBuffer, randomToken } from "@/lib/crypto";
+import { db } from "@/lib/db";
 
 /**
  * Object storage abstraction. The local provider encrypts every object with
@@ -39,9 +40,28 @@ class LocalEncryptedStorage implements StorageProvider {
   }
 }
 
+/** Same encryption, kept in the database (STORAGE_PROVIDER=db): for serverless hosting where files on disk do not survive. */
+class DbEncryptedStorage implements StorageProvider {
+  name = "db-encrypted";
+  async put(orgId: string, prefix: string, data: Buffer, ext: string) {
+    const safeExt = ext.replace(/[^a-z0-9]/gi, "").slice(0, 8) || "bin";
+    const key = `${orgId}/${prefix}/${randomToken(16)}.${safeExt}.enc`;
+    await db.storedObject.create({ data: { key, orgId, data: new Uint8Array(encryptBuffer(data)) } });
+    return key;
+  }
+  async get(key: string) {
+    const o = await db.storedObject.findUnique({ where: { key } });
+    if (!o) throw new Error("File not found");
+    return decryptBuffer(Buffer.from(o.data));
+  }
+  async delete(key: string) {
+    await db.storedObject.deleteMany({ where: { key } });
+  }
+}
+
 let instance: StorageProvider | null = null;
 export function getStorage(): StorageProvider {
-  if (!instance) instance = new LocalEncryptedStorage();
+  if (!instance) instance = process.env.STORAGE_PROVIDER === "db" ? new DbEncryptedStorage() : new LocalEncryptedStorage();
   return instance;
 }
 

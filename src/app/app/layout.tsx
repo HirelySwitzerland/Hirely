@@ -7,8 +7,10 @@ import { ASSISTANT_SUGGESTIONS } from "@/lib/services/assistant";
 import { applicationScope } from "@/lib/services/scope";
 import { myNextSteps } from "@/lib/services/next-steps";
 import { planById } from "@/lib/billing";
+import { kickQueue } from "@/lib/queue/kick";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  kickQueue();
   const ctx = await getContext();
   const [memberships, reviewCount, sub] = await Promise.all([
     db.membership.findMany({ where: { userId: ctx.user.id }, include: { org: { select: { id: true, name: true } } } }),

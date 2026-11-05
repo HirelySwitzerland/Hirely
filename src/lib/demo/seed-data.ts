@@ -1,4 +1,4 @@
-import type { Persona } from "../src/lib/demo/personas";
+import type { Persona } from "./personas";
 
 export type JobSeed = {
   key: string;

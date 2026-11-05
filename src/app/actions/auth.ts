@@ -14,6 +14,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { getMessageProvider } from "@/lib/providers/messaging";
 import { appUrl } from "@/lib/services/communication";
 import { fail, ok, str, toActionError, type ActionState } from "@/lib/action-state";
+import { DEMO_EMAIL, isLockedDemoAccount } from "@/lib/site";
 
 async function clientIp() {
   return (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
@@ -68,15 +69,19 @@ export async function register(_: ActionState, fd: FormData): Promise<ActionStat
 export async function login(_: ActionState, fd: FormData): Promise<ActionState> {
   let dest = "/app";
   try {
-    const email = str(fd, "email").toLowerCase();
+    const typed = str(fd, "email").trim().toLowerCase();
     const password = String(fd.get("password") ?? "");
+    // Short demo login: «Demo» / «demo» opens the demo company (only where the demo data exists; DEMO_LOGIN=0 turns it off).
+    const demo = typed === "demo" && process.env.DEMO_LOGIN !== "0";
+    const email = demo ? DEMO_EMAIL : typed;
     const ip = await clientIp();
     const rl = rateLimit(`login:${ip}:${email}`, 8, 15 * 60_000);
     if (!rl.ok) return fail(`Zu viele Anmeldeversuche. Bitte in ${Math.ceil(rl.retryAfterMs / 60000)} Minuten erneut versuchen.`);
     const user = await db.user.findUnique({ where: { email } });
     // Constant-ish time: always run a hash verification.
     const valid = user ? await verifyPassword(password, user.passwordHash) : await verifyPassword(password, "scrypt$16384$AAAAAAAAAAAAAAAAAAAAAA==$AAAA");
-    if (!user || !valid) return fail("E-Mail oder Passwort ist falsch.");
+    const demoOk = demo && user && password.trim().toLowerCase() === "demo";
+    if (!user || !(valid || demoOk)) return fail(demo && !user ? "Der Demo-Zugang ist gerade nicht eingerichtet." : "E-Mail oder Passwort ist falsch.");
     await createSession(user.id, { twoFactorVerified: !user.totpEnabled });
     if (user.totpEnabled) dest = "/two-factor";
     else {
@@ -213,6 +218,7 @@ export async function switchOrganization(fd: FormData) {
 export async function startTotpSetup(): Promise<ActionState> {
   try {
     const s = await requireUser();
+    if (isLockedDemoAccount(s.user.email)) return fail("Im Demo-Zugang lässt sich die Zwei-Faktor-Anmeldung nicht einschalten.");
     const secret = generateTotpSecret();
     await db.user.update({ where: { id: s.userId }, data: { totpSecretEnc: encrypt(secret), totpEnabled: false } });
     const qr = await QRCode.toDataURL(otpauthUrl(secret, s.user.email), { margin: 1, width: 200 });
@@ -225,6 +231,7 @@ export async function startTotpSetup(): Promise<ActionState> {
 export async function confirmTotpSetup(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
     const s = await requireUser();
+    if (isLockedDemoAccount(s.user.email)) return fail("Im Demo-Zugang lässt sich die Zwei-Faktor-Anmeldung nicht einschalten.");
     const user = await db.user.findUniqueOrThrow({ where: { id: s.userId } });
     if (!user.totpSecretEnc) return fail("Bitte starten Sie zuerst die Einrichtung.");
     if (!verifyTotp(decrypt(user.totpSecretEnc), str(fd, "code"))) return fail("Der Code ist ungültig. Prüfen Sie, ob die Uhrzeit Ihres Geräts stimmt.");
@@ -252,6 +259,7 @@ export async function disableTotp(_: ActionState, fd: FormData): Promise<ActionS
 export async function changePassword(_: ActionState, fd: FormData): Promise<ActionState> {
   try {
     const s = await requireUser();
+    if (isLockedDemoAccount(s.user.email)) return fail("Im Demo-Zugang lässt sich das Passwort nicht ändern.");
     const user = await db.user.findUniqueOrThrow({ where: { id: s.userId } });
     if (!(await verifyPassword(String(fd.get("current") ?? ""), user.passwordHash))) return fail("Das aktuelle Passwort ist falsch.");
     const next = String(fd.get("password") ?? "");

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SITE_ONLY } from "@/lib/site";
+import { PUBLIC_DEMO, SITE_ONLY } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const PRIMARY = "inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[16px] font-semibold text-night shadow-lg transition hover:bg-brand-50";
@@ -11,7 +11,10 @@ export function StartButtons({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-3 sm:flex-row", className)}>
       {SITE_ONLY ? (
-        <Link href="/demo" className={PRIMARY}>Demo vereinbaren <ArrowRight className="h-4 w-4" /></Link>
+        <>
+          <Link href="/demo" className={PRIMARY}>Demo vereinbaren <ArrowRight className="h-4 w-4" /></Link>
+          {PUBLIC_DEMO && <Link href="/login" className={SECONDARY}>Selbst ausprobieren</Link>}
+        </>
       ) : (
         <>
           <Link href="/register" className={PRIMARY}>14 Tage kostenlos testen <ArrowRight className="h-4 w-4" /></Link>

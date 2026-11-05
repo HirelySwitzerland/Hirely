@@ -27,6 +27,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ["@prisma/client", "unpdf"],
+  // The demo reset reads the demo phone recording from prisma/demo (serverless functions only ship traced files).
+  outputFileTracingIncludes: { "/api/cron/demo-reset": ["./prisma/demo/**/*"] },
   experimental: {
     serverActions: {
       bodySizeLimit: "12mb",
