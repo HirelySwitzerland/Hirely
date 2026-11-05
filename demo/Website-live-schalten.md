@@ -1,6 +1,6 @@
 # recruit24.ch live schalten
 
-Die Website (Film, Hörprobe, Preise, Demo-Formular, Impressum, Datenschutz) läuft im **Website-Modus**:
+Die Website (Geschichte mit Kamerafahrten, Hörprobe, Preise, Demo-Formular, Impressum, Datenschutz) läuft im **Website-Modus**:
 «Konto erstellen» und «Anmelden» sind ausgeschaltet, alle Knöpfe führen zum Demo-Formular.
 Demo-Anfragen kommen per E-Mail zu Ihnen. Eine Datenbank braucht es dafür nicht.
 

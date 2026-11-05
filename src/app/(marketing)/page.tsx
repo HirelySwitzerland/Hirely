@@ -108,14 +108,14 @@ export default function LandingPage() {
             <p className="mt-6 text-[18px] leading-relaxed text-white/80 sm:text-[20px]">
               Recruit24 prüft Bewerbungen, führt das Vorabgespräch am Telefon oder online und vereinbart Termine – rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
             </p>
-            <StartButtons className="mt-9 sm:!justify-start" />
+            <StartButtons className="mt-9 !items-start sm:!justify-start" />
             <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/65 transition hover:text-white">
               <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
               Hörprobe: So klingt ein KI-Vorabgespräch
             </a>
           </div>
         </div>
-        <a href="#menschen" className="absolute inset-x-0 bottom-6 mx-auto flex w-fit flex-col items-center gap-2 text-[13px] text-white/60 transition hover:text-white">
+        <a href="#menschen" className="absolute inset-x-0 bottom-6 mx-auto hidden w-fit sm:flex flex-col items-center gap-2 text-[13px] text-white/60 transition hover:text-white">
           Die Geschichte einer Bewerbung<span className="h-8 w-px bg-gradient-to-b from-white/60 to-transparent" />
         </a>
       </section>
