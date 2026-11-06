@@ -245,10 +245,11 @@ export default function LandingPage() {
           <div className="sd-rise mx-auto max-w-3xl text-center">
             <Eyebrow center>Rechner</Eyebrow>
             <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Was Recruit24 Ihnen bringt.</h2>
-            <p className="mt-5 text-[18px] text-slate-600">Drei Regler, ein Ergebnis – vorsichtig gerechnet. Wie wir rechnen, können Sie unten aufklappen und anpassen.</p>
+            <p className="mt-5 text-[18px] text-slate-600">Zuerst, was Studien zeigen. Dann rechnen Sie selbst – vorsichtig, und jede Annahme können Sie aufklappen.</p>
           </div>
-          <div className="sd-tilt mt-14"><SavingsCalculator /></div>
-          <div className="sd-rise mt-5"><StudyFacts /></div>
+          <div className="sd-rise mt-14"><StudyFacts /></div>
+          <p className="sd-rise mt-16 text-center text-[24px] font-semibold tracking-[-0.02em] text-ink">Und was heisst das für Ihr Team?</p>
+          <div className="sd-tilt mt-6"><SavingsCalculator /></div>
         </div>
       </section>
 

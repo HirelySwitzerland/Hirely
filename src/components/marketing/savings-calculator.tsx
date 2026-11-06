@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, Clock3, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { ArrowDown, ChevronDown, Clock3, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DEFAULT_HOURLY_CHF, DEFAULT_VACANCY, SAVING_STEPS, VALUE_FACTORS, WORKDAYS_PER_YEAR,
@@ -27,6 +27,7 @@ export function SavingsCalculator() {
   const [vac, setVac] = useState(DEFAULT_VACANCY);
   const r = useMemo(() => calculateSavings({ applications: apps, interviewShare: share, hourlyChf: rate, minutes }), [apps, share, rate, minutes]);
   const v = useMemo(() => vacancyCost(vac), [vac]);
+  const weekly = (r.savedHours * 12) / 52;
   const setV = (k: keyof typeof DEFAULT_VACANCY) => (n: number) => setVac((x) => ({ ...x, [k]: n }));
   const changed = SAVING_STEPS.some((s) => minutes[s.key].manual !== s.manual || minutes[s.key].left !== s.left);
   const setMin = (key: SavingStep["key"], field: "manual" | "left", n: number) =>
@@ -48,12 +49,15 @@ export function SavingsCalculator() {
           <p className="mt-3 text-[15px] leading-relaxed text-white/75">
             <span className="font-semibold text-white">{hrs(r.savedHours)} Stunden pro Monat</span> – rund {swissOneDecimal(r.workdays)} Arbeitstage, die für Gespräche frei werden.
           </p>
+          <p className="mt-2 text-[13px] leading-relaxed text-white/55">
+            Das sind {swissOneDecimal(weekly)} Std. pro Woche. Zum Vergleich: Teams mit KI sparen laut LinkedIn rund einen Arbeitstag ({swissOneDecimal(8.4)} Std.) pro Woche{weekly < 8.4 ? " – wir rechnen vorsichtiger." : "."}
+          </p>
 
           <div className="mt-7 space-y-2.5 border-t border-white/10 pt-6 text-[13px]">
             <p className="text-[14px] text-white/60">Bis zum Vorstellungsgespräch</p>
-            <DayBar label="Heute" days={vac.todayDays} width={100} className="bg-white/25" />
+            <DayBar label={vac.todayDays === DEFAULT_VACANCY.todayDays ? "Heute (Studie)" : "Heute"} days={vac.todayDays} width={100} className="bg-white/25" />
             <DayBar label="Mit Recruit24" days={vac.r24Days} width={vac.todayDays ? (vac.r24Days / vac.todayDays) * 100 : 0} className="bg-gradient-to-r from-[#E8692A] to-[#FDB48C]" />
-            {v.calendarDays > 0 && <p className="pt-1 text-white/70"><span className="font-semibold text-white">{v.calendarDays} Tage schneller</span> – bevor gute Leute anderswo zusagen.</p>}
+            {v.calendarDays > 0 && <p className="pt-1 leading-relaxed text-white/70"><span className="font-semibold text-white">{v.calendarDays} Tage schneller.</span> Das zählt: 58 % der Arbeitnehmenden in der Schweiz verlieren das Interesse, wenn der Prozess zu lange dauert.</p>}
           </div>
           <p className="mt-auto flex items-center gap-2 pt-6 text-[13px] text-white/60"><Clock3 className="h-4 w-4 shrink-0 text-[#FDB48C]" />Erste Rückmeldung in Minuten – auch am Wochenende.</p>
         </div>
@@ -146,10 +150,10 @@ export function SavingsCalculator() {
 /* ───────────── the three study figures that matter ───────────── */
 
 type Region = "Schweiz" | "Deutschland" | "International";
-export const STUDIES: { n: string; t: string; src: string; href: string; region: Region }[] = [
-  { n: "58 %", region: "Schweiz", t: "der Arbeitnehmenden verlieren ganz das Interesse an einer Stelle, sobald der Bewerbungsprozess zu lange dauert.", src: "Robert Half, Arbeitsmarktstudie 2017, 500 Arbeitnehmende", href: "https://www.roberthalf.com/ch/en/about/press/swiss-companies-risk-their-future-viability-because-application-processes-are-too-long" },
-  { n: "20 Tage", region: "Deutschland", t: "vergehen im Schnitt von der Bewerbung bis zum Vorstellungsgespräch. Für die Schweiz gibt es keine öffentliche Zahl.", src: "SmartRecruiters, 5.1 Mio. Bewerbungen", href: "https://www.boerse-express.com/news/articles/gnw-news-laut-einer-analyse-von-smartrecruiters-dauert-es-in-deutschen-unternehmen-55-tage-um-eine-offene-stelle-zu-besetzen-750842" },
-  { n: "1 Tag", region: "International", t: "pro Woche – rund 20 % der Arbeitszeit – sparen Recruiting-Teams, die KI einsetzen.", src: "LinkedIn, Future of Recruiting 2025", href: "https://hrexecutive.com/how-to-harness-this-exciting-moment-of-change-for-ai-in-recruiting/" },
+export const STUDIES: { n: string; t: string; use: string; src: string; href: string; region: Region }[] = [
+  { n: "58 %", region: "Schweiz", t: "der Arbeitnehmenden verlieren ganz das Interesse an einer Stelle, sobald der Bewerbungsprozess zu lange dauert.", use: "Darum zeigt der Rechner die Tage bis zum Gespräch.", src: "Robert Half, Arbeitsmarktstudie 2017, 500 Arbeitnehmende", href: "https://www.roberthalf.com/ch/en/about/press/swiss-companies-risk-their-future-viability-because-application-processes-are-too-long" },
+  { n: "20 Tage", region: "Deutschland", t: "vergehen im Schnitt von der Bewerbung bis zum Vorstellungsgespräch. Für die Schweiz gibt es keine öffentliche Zahl.", use: "Im Rechner der Wert für «heute».", src: "SmartRecruiters, 5.1 Mio. Bewerbungen", href: "https://www.boerse-express.com/news/articles/gnw-news-laut-einer-analyse-von-smartrecruiters-dauert-es-in-deutschen-unternehmen-55-tage-um-eine-offene-stelle-zu-besetzen-750842" },
+  { n: "1 Tag", region: "International", t: "pro Woche – rund 20 % der Arbeitszeit – sparen Recruiting-Teams, die KI einsetzen.", use: "Im Rechner der Vergleich zu Ihrem Ergebnis.", src: "LinkedIn, Future of Recruiting 2025", href: "https://hrexecutive.com/how-to-harness-this-exciting-moment-of-change-for-ai-in-recruiting/" },
 ];
 
 export function StudyFacts() {
@@ -162,7 +166,8 @@ export function StudyFacts() {
             <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium", f.region === "Schweiz" ? "bg-[#FDECEC] text-[#B42318]" : "bg-slate-100 text-slate-500")}>{f.region === "Schweiz" && <SwissFlag />}{f.region}</span>
           </div>
           <p className="mt-3 flex-1 text-[15px] leading-relaxed text-slate-600">{f.t}</p>
-          <a href={f.href} target="_blank" rel="noopener noreferrer" className="mt-4 text-[12px] text-slate-400 underline-offset-2 hover:text-slate-600 hover:underline">Quelle: {f.src} ↗</a>
+          <p className="mt-4 flex items-center gap-1.5 text-[13px] font-medium text-[#C2551F]"><ArrowDown className="h-3.5 w-3.5 shrink-0" />{f.use}</p>
+          <a href={f.href} target="_blank" rel="noopener noreferrer" className="mt-2 text-[12px] text-slate-400 underline-offset-2 hover:text-slate-600 hover:underline">Quelle: {f.src} ↗</a>
         </div>
       ))}
     </div>
@@ -188,7 +193,7 @@ function Disclosure({ title, subtitle, children }: { title: string; subtitle: st
 
 function DayBar({ label, days, width, className }: { label: string; days: number; width: number; className: string }) {
   return (
-    <div className="grid grid-cols-[104px_minmax(0,1fr)_64px] items-center gap-3">
+    <div className="grid grid-cols-[112px_minmax(0,1fr)_64px] items-center gap-3">
       <span className="text-white/70">{label}</span>
       <span className="h-2.5 overflow-hidden rounded-full bg-white/[0.06]"><span className={cn("block h-full rounded-full transition-[width] duration-500", className)} style={{ width: `${Math.max(width, 3)}%` }} /></span>
       <span className="text-right font-medium tabular-nums text-white">{days} Tage</span>

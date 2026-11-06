@@ -71,9 +71,9 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
 - Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
 - Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind) und **Was Recruiter schätzen**.
-- **Rechner** (oben im Menü «Ersparnis»): Das Gegenüber nach Bewerbungen pro Monat fragen und den Regler einstellen. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Rund CHF 21’000 im Jahr an HR-Zeit – und Sie sind fast zwei Wochen schneller beim Vorstellungsgespräch.“
+- **Rechner** (oben im Menü «Ersparnis»): Zuerst die drei Studienzahlen. Satz: „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert – und heute dauert es im Schnitt 20 Tage bis zum Vorstellungsgespräch.“
+- Darunter der Rechner: das Gegenüber nach Bewerbungen pro Monat fragen und den Regler einstellen. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Rund CHF 21’000 im Jahr an HR-Zeit – und fast zwei Wochen schneller beim Vorstellungsgespräch. Wir rechnen dabei vorsichtiger als die LinkedIn-Studie.“
 - Wenn jemand nachfragt: **«So rechnen wir – Schritt für Schritt»** aufklappen und mit **Annahmen anpassen** die Minuten gemeinsam ändern. **«Und was kostet eine offene Stelle?»** nur bei Interesse aufklappen.
-- Darunter drei Studienzahlen. Satz: „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert.“
 - Danach oben auf **Anmelden** und weiter mit Teil A.
 
 Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.
