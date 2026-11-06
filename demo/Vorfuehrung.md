@@ -71,9 +71,9 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
 - Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
 - Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind) und **Was Recruiter schätzen**.
-- **Rechner** (oben im Menü «Ersparnis»): Fragen Sie das Gegenüber nach Bewerbungen pro Monat und stellen Sie die Regler ein. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Jeder Schritt ist offen gerechnet – Sie können jede Annahme selbst anpassen.“ Wenn jemand widerspricht, auf **Annahmen anpassen** klicken und die Minuten gemeinsam ändern.
-- Im Rechner weiter unten **«Und die offenen Stellen?»**: Stellen pro Jahr und einen typischen Jahreslohn einstellen. Satz: „Heute liegen im Schnitt 20 Tage zwischen Bewerbung und Vorstellungsgespräch, mit Recruit24 rund eine Woche. Wir ziehen sogar den Lohn ab, den Sie während der Vakanz sparen – und kommen bei zwölf Stellen trotzdem auf rund CHF 21’000 im Jahr. Zusammen mit der gesparten HR-Zeit rund CHF 43’000.“ Wenn das Gegenüber zweifelt: die Regler gemeinsam auf die eigenen Werte stellen.
-- Darunter **Bis zur Einladung** und die Studienzahlen (Schweizer Zahlen sind markiert): „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert.“
+- **Rechner** (oben im Menü «Ersparnis»): Das Gegenüber nach Bewerbungen pro Monat fragen und den Regler einstellen. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Rund CHF 21’000 im Jahr an HR-Zeit – und Sie sind fast zwei Wochen schneller beim Vorstellungsgespräch.“
+- Wenn jemand nachfragt: **«So rechnen wir – Schritt für Schritt»** aufklappen und mit **Annahmen anpassen** die Minuten gemeinsam ändern. **«Und was kostet eine offene Stelle?»** nur bei Interesse aufklappen.
+- Darunter drei Studienzahlen. Satz: „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert.“
 - Danach oben auf **Anmelden** und weiter mit Teil A.
 
 Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.

@@ -7,7 +7,7 @@ import path from "node:path";
 import { StackedStory } from "@/components/marketing/photo-story";
 import { ScrollFilm } from "@/components/marketing/scroll-film";
 import { AudienceTabs, BenefitGrid } from "@/components/marketing/recruiter-sections";
-import { SavingsCalculator, SpeedAndStudies } from "@/components/marketing/savings-calculator";
+import { SavingsCalculator, StudyFacts } from "@/components/marketing/savings-calculator";
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
@@ -244,11 +244,11 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
           <div className="sd-rise mx-auto max-w-3xl text-center">
             <Eyebrow center>Rechner</Eyebrow>
-            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Was Recruit24 Ihnen spart – in Stunden und Franken.</h2>
-            <p className="mt-5 text-[18px] text-slate-600">Stellen Sie Ihr Volumen und Ihre Stundenkosten ein. Jeder Schritt ist offen gerechnet – und Sie können jede Annahme anpassen.</p>
+            <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[48px]">Was Recruit24 Ihnen bringt.</h2>
+            <p className="mt-5 text-[18px] text-slate-600">Drei Regler, ein Ergebnis – vorsichtig gerechnet. Wie wir rechnen, können Sie unten aufklappen und anpassen.</p>
           </div>
           <div className="sd-tilt mt-14"><SavingsCalculator /></div>
-          <div className="sd-rise mt-5"><SpeedAndStudies /></div>
+          <div className="sd-rise mt-5"><StudyFacts /></div>
         </div>
       </section>
 
