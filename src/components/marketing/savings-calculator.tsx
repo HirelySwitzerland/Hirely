@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Clock3, SlidersHorizontal, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DEFAULT_HOURLY_CHF, SAVING_STEPS, calculateSavings, chfRound, swissInt, swissOneDecimal, type SavingStep } from "@/lib/savings";
+import { DEFAULT_HOURLY_CHF, DEFAULT_VACANCY, SAVING_STEPS, VALUE_FACTORS, WORKDAYS_PER_YEAR, calculateSavings, chfRound, swissInt, swissOneDecimal, vacancyCost, type SavingStep } from "@/lib/savings";
 
 type Minutes = Record<SavingStep["key"], { manual: number; left: number }>;
 const DEFAULT_MINUTES = Object.fromEntries(SAVING_STEPS.map((s) => [s.key, { manual: s.manual, left: s.left }])) as Minutes;
@@ -18,6 +18,9 @@ export function SavingsCalculator() {
   const [minutes, setMinutes] = useState<Minutes>(DEFAULT_MINUTES);
   const [edit, setEdit] = useState(false);
   const r = useMemo(() => calculateSavings({ applications: apps, interviewShare: share, hourlyChf: rate, minutes }), [apps, share, rate, minutes]);
+  const [vac, setVac] = useState(DEFAULT_VACANCY);
+  const v = useMemo(() => vacancyCost(vac), [vac]);
+  const setV = (k: keyof typeof DEFAULT_VACANCY) => (n: number) => setVac((x) => ({ ...x, [k]: n }));
   const changed = SAVING_STEPS.some((s) => minutes[s.key].manual !== s.manual || minutes[s.key].left !== s.left);
   const setMin = (key: SavingStep["key"], field: "manual" | "left", v: number) =>
     setMinutes((m) => ({ ...m, [key]: { ...m[key], [field]: Math.max(0, Math.min(240, Number.isFinite(v) ? v : 0)) } }));
@@ -99,6 +102,48 @@ export function SavingsCalculator() {
         </div>
         <p className="mt-4 text-[13px] leading-relaxed text-slate-500">
           Zum Vorabgespräch wird jede gewählte Person eingeladen, zum persönlichen Gespräch etwa jede vierte davon. «Mit Recruit24» ist die Zeit, die Ihr Team noch braucht: Bericht lesen, Fundstellen prüfen, entscheiden. Richtwerte vor Abzug der Lizenz, keine Garantie. Dieselben Werte zeigt Recruit24 in der Auswertung.
+        </p>
+      </div>
+
+      {/* cost of open positions */}
+      <div className="border-t border-slate-200 p-6 sm:p-10">
+        <p className="text-[13px] font-medium uppercase tracking-wide text-[#C2551F]">Und die offenen Stellen?</p>
+        <p className="mt-1 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">Jeder Tag ohne die richtige Person kostet.</p>
+        <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-14">
+          <div className="space-y-8">
+            <Slider label="Stellen, die Sie pro Jahr besetzen" value={vac.hires} min={1} max={200} step={1} onChange={setV("hires")} />
+            <Slider label="Jahreslohn einer typischen Stelle" hint="Brutto – Schweizer Medianlohn rund CHF 87’000" value={vac.salary} min={50_000} max={250_000} step={5_000} onChange={setV("salary")} prefix="CHF " />
+            <Slider label="Arbeitstage früher besetzt" hint="Recruit24 prüft und spricht am Tag der Bewerbung statt nach rund 8 Tagen" value={vac.daysFaster} min={0} max={30} step={1} onChange={setV("daysFaster")} />
+            <div>
+              <p className="text-[15px] font-medium text-ink">Was eine Person erwirtschaftet</p>
+              <p className="text-[13px] text-slate-500">im Verhältnis zu ihrem Lohn – üblich ist das 1- bis 3-Fache</p>
+              <div className="mt-3 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5" role="group" aria-label="Was eine Person erwirtschaftet">
+                {VALUE_FACTORS.map((f) => (
+                  <button key={f} type="button" onClick={() => setV("factor")(f)} aria-pressed={vac.factor === f} className={cn("rounded-md px-3.5 py-1.5 text-[14px] tabular-nums", vac.factor === f ? "bg-white font-semibold text-ink shadow-sm" : "text-slate-600 hover:text-ink")}>
+                    {String(f)}×
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center gap-5">
+            <div className="rounded-2xl border border-[#F6D3BF] bg-[#FFF7F2] p-6 sm:p-8">
+              <p className="text-[14px] text-slate-600">Eine offene Stelle kostet Sie pro Arbeitstag etwa</p>
+              <p className="mt-2 text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">{chfRound(v.perDay)}</p>
+              <div className="mt-6 space-y-2 border-t border-[#F6D3BF] pt-5 text-[14px] text-slate-700">
+                <p className="flex justify-between gap-4"><span>{vac.daysFaster} Arbeitstage früher besetzt</span><span className="whitespace-nowrap font-medium tabular-nums text-ink">{chfRound(v.perHire)} pro Stelle</span></p>
+                <p className="flex justify-between gap-4"><span>× {swissInt(vac.hires)} Stellen pro Jahr</span><span className="whitespace-nowrap font-semibold tabular-nums text-[#C2551F]">{chfRound(v.perYear)} pro Jahr</span></p>
+              </div>
+            </div>
+            <div className="rounded-2xl bg-night p-6 text-white sm:p-8">
+              <p className="text-[14px] text-white/60">Zusammen pro Jahr etwa</p>
+              <p className="mt-2 text-[44px] font-semibold leading-none tracking-[-0.03em] text-[#FDB48C] tabular-nums">{chfRound(r.savedChfYear + v.perYear)}</p>
+              <p className="mt-3 text-[14px] text-white/70">{chfRound(r.savedChfYear)} gesparte HR-Zeit + {chfRound(v.perYear)}, weil Stellen früher besetzt sind</p>
+            </div>
+          </div>
+        </div>
+        <p className="mt-6 text-[13px] leading-relaxed text-slate-500">
+          So gerechnet: Jahreslohn ÷ {WORKDAYS_PER_YEAR} Arbeitstage × {String(vac.factor)}. Zum Vergleich: In der Schweiz ist eine Stelle im Schnitt 43 Tage ausgeschrieben, jede zehnte über 100 Tage. Zu lange Vakanzen kosten bis zu 0.7 % der Wertschöpfung, in der Informatik bis zu 3.4 % (<a href="https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">BSS/KOF für den Arbeitgeberverband, 2023</a>). In Deutschland kostet ein offener Tag im Schnitt EUR 624 (<a href="https://www.stepstone.de/e-recruiting/hr-wissen/recruiting/vakanzkosten" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">StepStone</a>). Richtwerte, keine Garantie.
         </p>
       </div>
     </div>

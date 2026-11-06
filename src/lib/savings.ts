@@ -62,3 +62,20 @@ export const swissInt = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3
 /** «0.4» – one decimal, Swiss decimal point. */
 export const swissOneDecimal = (n: number) => String(Math.round(n * 10) / 10);
 export const chfRound = (n: number) => `CHF ${swissInt(n >= 1000 ? Math.round(n / 10) * 10 : n)}`;
+
+/* ───────────── cost of an open position ───────────── */
+
+/** Working days per year in Switzerland (52 weeks × 5 − 5 weeks holiday − ~9 public holidays, rounded down). */
+export const WORKDAYS_PER_YEAR = 220;
+/**
+ * Defaults: 12 hires a year, a salary near the Swiss median (~CHF 87’000, BFS), a person creating 1.5× their salary,
+ * and 5 working days earlier – Recruit24 checks and talks on the day of the application instead of after ~8 days.
+ */
+export const DEFAULT_VACANCY = { hires: 12, salary: 85_000, factor: 1.5, daysFaster: 5 };
+export const VALUE_FACTORS = [1, 1.5, 2, 3];
+
+export function vacancyCost({ hires, salary, factor, daysFaster }: typeof DEFAULT_VACANCY) {
+  const perDay = (salary / WORKDAYS_PER_YEAR) * factor;
+  const perHire = perDay * daysFaster;
+  return { perDay, perHire, perYear: perHire * hires };
+}

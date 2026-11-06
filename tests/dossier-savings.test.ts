@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { dossierRef, makeScrubber } from "../src/lib/dossier";
-import { SAVED_MIN, calculateSavings, chfRound, swissInt } from "../src/lib/savings";
+import { DEFAULT_VACANCY, SAVED_MIN, calculateSavings, chfRound, swissInt, vacancyCost } from "../src/lib/savings";
 
 test("the anonymised dossier hides names, employers, places and contact data", () => {
   const scrub = makeScrubber([
@@ -28,4 +28,12 @@ test("the savings calculator counts only the time HR no longer spends", () => {
   assert.equal(custom.rows.find((x) => x.key === "interview")!.savedHours, 0);
   assert.equal(swissInt(30620), "30’620");
   assert.equal(chfRound(2547), "CHF 2’550");
+});
+
+test("an open position costs salary per working day times the value a person creates", () => {
+  const v = vacancyCost({ ...DEFAULT_VACANCY, hires: 10, salary: 88_000, factor: 2, daysFaster: 5 });
+  assert.equal(Math.round(v.perDay), 800); // 88’000 ÷ 220 × 2
+  assert.equal(Math.round(v.perHire), 4000);
+  assert.equal(Math.round(v.perYear), 40000);
+  assert.equal(vacancyCost({ ...DEFAULT_VACANCY, daysFaster: 0 }).perYear, 0);
 });
