@@ -216,7 +216,7 @@ function ChapterScreen({ shot, t, W, H, px, py }: { shot: Shot; t: number; W: nu
     ? { opacity: o, transform: `translate3d(${px * 18 - ease(gone) * W * 0.3}px, ${py * 12}px, ${lerp(-520, 0, inn) + ease(gone) * 900}px) rotateY(${turn * (1 - gone)}deg) rotateX(${tilt}deg)`, filter: gone > 0.05 ? `blur(${(gone * 10).toFixed(1)}px) brightness(${(1 + gone).toFixed(2)})` : undefined }
     : { opacity: o, transform: `translate3d(${px * 18}px, ${lerp(50, 0, inn) + py * 12}px, ${lerp(-520, 0, inn) + ease(gone) * 420}px) rotateY(${turn}deg) rotateX(${tilt}deg)` };
   return (
-    <div className="absolute inset-0 flex items-center justify-end [transform-style:preserve-3d]" style={style}>
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-end [transform-style:preserve-3d]" style={style}>
       <div className="drop-shadow-[0_50px_90px_rgba(0,0,0,0.6)]"><ChapterUI ui={shot.ui} t={uiT} W={W} H={H} /></div>
     </div>
   );
@@ -373,7 +373,7 @@ export function ScrollFilm() {
           </div>
         </div>
         <div className="pointer-events-none absolute inset-0 z-10 mx-auto grid max-w-7xl grid-cols-12 items-center gap-8 px-8 pb-24 [perspective:1400px]">
-          <div ref={uiBox} className="pointer-events-auto relative col-span-7 col-start-6 flex h-[74%] items-center justify-end [transform-style:preserve-3d]">
+          <div ref={uiBox} className="relative col-span-7 col-start-6 flex h-[74%] items-center justify-end [transform-style:preserve-3d]">
             <ChapterScreen shot={shot} t={t} W={UW} H={UH} px={px} py={py} />
           </div>
         </div>

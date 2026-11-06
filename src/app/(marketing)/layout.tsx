@@ -42,7 +42,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           </div>
           <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#vorteile", "Vorteile"], ["/#fuer-wen", "Für wen"], ["/#funktionen", "Funktionen"], ["/#mobil", "Auf dem Handy"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Ersparnis-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
           <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], ...(PUBLIC_DEMO ? [["/login", "Online-Demo öffnen"] as [string, string]] : [])] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
-          <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
+          <FooterCol title="Vertrauen" links={[["/#vertrauen", "Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>
         <div className="border-t border-slate-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-[13px] text-slate-500 sm:flex-row sm:justify-between sm:px-8">
