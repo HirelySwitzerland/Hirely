@@ -29,7 +29,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     ...(ctx.can("integrations.manage") ? [{ href: "/app/integrations", label: "Integrationen", icon: "integrations" as const, section: "Verwaltung" }] : []),
     { href: "/app/settings", label: "Einstellungen", icon: "settings", section: "Verwaltung" },
   ];
-  const demo = Boolean((ctx.org.settings as Record<string, unknown>).demo);
   const trialDays = sub?.status === "TRIALING" && sub.trialEndsAt ? Math.max(0, Math.ceil((sub.trialEndsAt.getTime() - Date.now()) / 86400_000)) : null;
   return (
     <div className="min-h-screen">
@@ -56,11 +55,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <UserMenu name={ctx.user.name} email={ctx.user.email} role={ctx.role} logoutAction={logout} />
           </div>
         </header>
-        {demo && (
-          <div data-demo-banner className="border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-xs text-amber-900 sm:px-6">
-            Demo-Firma mit erfundenen Daten. Telefonanrufe werden simuliert, bis Twilio verbunden ist.
-          </div>
-        )}
         {!ctx.user.emailVerifiedAt && (
           <div className="border-b border-brand-200 bg-brand-50 px-4 py-1.5 text-center text-xs text-brand-900 sm:px-6">
             Bitte bestätigen Sie Ihre E-Mail-Adresse. <Link href="/app/settings/profile" className="font-semibold underline">Bestätigungs-E-Mail erneut senden</Link>

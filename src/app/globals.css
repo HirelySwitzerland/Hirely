@@ -75,11 +75,11 @@ body {
       animation-fill-mode: both;
       animation-timeline: view();
     }
-    .sd-rise { animation-name: sd-rise; animation-range: entry 0% cover 32%; }
-    .sd-stagger > * { animation-name: sd-rise; animation-range: entry calc(var(--i, 0) * 7%) cover calc(30% + var(--i, 0) * 7%); }
+    .sd-rise { animation-name: sd-rise; animation-range: entry 0% entry 70%; }
+    .sd-stagger > * { animation-name: sd-rise; animation-range: entry calc(var(--i, 0) * 5%) entry calc(55% + var(--i, 0) * 5%); }
     .sd-flip { perspective: 1400px; }
-    .sd-flip > * { animation-name: sd-flip; animation-range: entry calc(var(--i, 0) * 8%) cover calc(34% + var(--i, 0) * 8%); transform-origin: 50% 50% -80px; }
-    .sd-tilt { animation-name: sd-tilt; animation-range: entry 0% cover 45%; transform-origin: 50% 100%; }
+    .sd-flip > * { animation-name: sd-flip; animation-range: entry calc(var(--i, 0) * 5%) entry calc(60% + var(--i, 0) * 5%); transform-origin: 50% 50% -80px; }
+    .sd-tilt { animation-name: sd-tilt; animation-range: entry 0% entry 45%; transform-origin: 50% 100%; }
     .sd-zoom { animation-name: sd-zoom; animation-range: cover 0% cover 100%; }
   }
 }

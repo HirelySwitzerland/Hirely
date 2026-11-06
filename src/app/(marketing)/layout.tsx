@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { CONTACT_EMAIL, PUBLIC_DEMO, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
+import { PUBLIC_DEMO, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#vorteile", label: "Vorteile" },
@@ -41,7 +41,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
           <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#vorteile", "Vorteile"], ["/#fuer-wen", "Für wen"], ["/#funktionen", "Funktionen"], ["/#mobil", "Auf dem Handy"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Ersparnis-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
-          <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
+          <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], ...(PUBLIC_DEMO ? [["/login", "Online-Demo öffnen"] as [string, string]] : [])] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
           <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>
         <div className="border-t border-slate-200">

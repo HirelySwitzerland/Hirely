@@ -20,15 +20,12 @@ export const SHOW_PRICES = process.env.NEXT_PUBLIC_SHOW_PRICES === "1";
 export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hallo@recruit24.ch";
 export const SITE_URL = "https://recruit24.ch";
 
-/**
- * Company details for the imprint and privacy notice. Values in [brackets] are placeholders
- * and are highlighted on the page until they are filled in.
- */
+/** Company details for the imprint and privacy notice. */
 export const COMPANY = {
-  name: "[Firmenname, z. B. Recruit24 GmbH]",
-  street: "[Strasse und Nummer]",
-  city: "[PLZ Ort]",
+  name: "Duranovic Digital Services",
+  street: "Büchelstrasse 8",
+  city: "9464 Rüthi",
   country: "Schweiz",
-  uid: "[UID, z. B. CHE-123.456.789]",
-  representative: "[Vor- und Nachname, Funktion]",
+  uid: "CHE-292.949.232",
+  representative: "Kevin Duranovic",
 };
