@@ -70,7 +70,9 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Vollbild mit **F11**, dann **langsam scrollen**. Die Kamera fliegt über die Altstadt bis zu Sandra, taucht durch Bildschirme und Handys und erzählt eine ganze Bewerbung – von Sonntagabend bis zum Handschlag am Donnerstag.
 - Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
 - Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
-- Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind), **Was Recruiter schätzen** und der **Rechner** – Regler auf die Bewerbungen des Gegenübers stellen.
+- Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind) und **Was Recruiter schätzen**.
+- **Rechner** (oben im Menü «Ersparnis»): Fragen Sie das Gegenüber nach Bewerbungen pro Monat und stellen Sie die Regler ein. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Jeder Schritt ist offen gerechnet – Sie können jede Annahme selbst anpassen.“ Wenn jemand widerspricht, auf **Annahmen anpassen** klicken und die Minuten gemeinsam ändern.
+- Darunter **Bis zur Einladung** und die vier Studienzahlen: „Heute dauert es im Schnitt 20 Tage bis zum ersten Gespräch – und 57 % der Leute verlieren nach 10 Arbeitstagen das Interesse.“
 - Danach oben auf **Anmelden** und weiter mit Teil A.
 
 Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.
@@ -134,6 +136,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Re
    - Runterscrollen: **jede Anforderung mit Beleg** – aus Lebenslauf, Arbeitszeugnis, Anschreiben, Formular oder Interview.
    - Bei «Erfahrung mit Kundenschulungen» auf **«Z. 11 ↗»** klicken: Der Reiter **Unterlagen** öffnet das Arbeitszeugnis, die Stelle ist markiert. Satz: „Diese Anforderung steht nicht im Lebenslauf – Recruit24 hat sie im Zeugnis gefunden und zeigt genau, wo.“
    - Reiter **KI-Interview**: das ganze Gespräch als Text.
+   - Oben rechts **Dossier als PDF**: das Kurzprofil für Linienvorgesetzte oder Kunden. Auf **Anonymisiert** klicken – Name, Kontakt, Wohnort und Arbeitgeber verschwinden, auch in Zitaten. Satz für Vermittler: „Das schicken Sie dem Kunden als ersten Vorschlag. Mit einem Klick auf «Als PDF speichern» haben Sie die Datei.“ Danach mit **Zum Profil** zurück.
 8. **Zum Gespräch einladen** → Gesprächsleitung, Dauer und Ort sind schon ausgefüllt → **Terminlink senden**.
 
 ### Wieder als Bewerber (Fenster B)

@@ -29,6 +29,27 @@ Der Befehl erzeugt nur die zwei fehlenden Dateien. Von Hand (Weg B):
 | `09d687cec23f79.mp3` | Grüezi Max Muster, hier ist der Recruiting-Assistent von Helvetic Engineering AG. Sie haben sich für die Stelle als Servicetechniker beworben. Ich bin ein automatisierter KI-Interview-Assistent – das Gespräch dauert etwa 10 Minuten, und die Entscheidung über das weitere Vorgehen trifft immer ein Mensch aus unserem HR-Team. |
 
 
+## Schweizer Stimme für die KI
+
+ElevenLabs spricht kein echtes Schweizerdeutsch (Dialekt), aber Hochdeutsch mit Schweizer Akzent. Das klingt für Bewerbende vertraut und bleibt für alle verständlich.
+
+**1. Stimme aussuchen** (eine der drei Möglichkeiten)
+- **Voice Library:** elevenlabs.io → **Voices** → **Explore**, Sprache **German**, im Suchfeld `Swiss` oder `Schweiz` eingeben. Probe hören, dann **Add to my voices**.
+- **Eigene Stimme klonen:** **Voices** → **Add a new voice** → **Instant Voice Clone**, 1–2 Minuten ruhig auf Hochdeutsch vorlesen. Nur mit Ihrer eigenen Stimme oder mit schriftlichem Einverständnis der Person.
+- **Voice Design:** **Voices** → **Add a new voice** → **Voice Design**, zum Beispiel beschreiben: „Freundliche Frau, Mitte 30, Hochdeutsch mit leichtem Schweizer Akzent, ruhig und professionell“.
+
+**2. Stimmen-ID eintragen:** bei der Stimme **…** → **Copy voice ID**, dann in `Q:\hirely\.env` bei `ELEVENLABS_VOICE_AI="…"` einfügen und speichern.
+
+**3. Alle KI-Sätze neu aufnehmen** (Eingabeaufforderung im Ordner `Q:\hirely`):
+```
+git pull
+npm run demo:voice -- elevenlabs neu
+git add public/voice
+git commit -m "Schweizer KI-Stimme"
+git push
+```
+Das braucht rund 3'000 Zeichen von Ihrem ElevenLabs-Kontingent. Danach Bescheid geben: Die Telefon-Aufnahme von Roman Egli und die Hörprobe auf der Website werden dann mit der neuen Stimme neu zusammengesetzt.
+
 ## Weg A – automatisch mit API-Schlüssel (empfohlen)
 
 **1. In ElevenLabs: API-Schlüssel holen**

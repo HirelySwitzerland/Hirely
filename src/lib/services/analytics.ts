@@ -3,16 +3,17 @@ import { format, startOfDay, subDays } from "date-fns";
 import { db } from "@/lib/db";
 import { planById } from "@/lib/billing";
 import { refLabel } from "@/lib/job-channels";
+import { SAVED_MIN } from "@/lib/savings";
 
 const SOURCE_NAMES: Record<string, string> = { CAREER_SITE: "Karriereseite", ATS: "ATS", CSV_IMPORT: "CSV-Import", API: "API", EMAIL: "E-Mail", MANUAL: "Manuell" };
 
-/** Minutes of manual HR work replaced per automated activity (conservative estimates, documented in the UI). */
+/** Minutes of manual HR work replaced per automated activity – the same values as the website calculator. */
 export const TIME_SAVED_MINUTES = {
-  cvScreened: 8,
-  aiInterview: 25,
+  cvScreened: SAVED_MIN.screen,
+  aiInterview: SAVED_MIN.interview,
   videoInterview: 20,
-  messageSent: 3,
-  interviewBooked: 15,
+  messageSent: SAVED_MIN.message,
+  interviewBooked: SAVED_MIN.booking,
 };
 
 export async function timeSavedHours(orgId: string, since?: Date) {

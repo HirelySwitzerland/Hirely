@@ -38,6 +38,7 @@ export function userActor(user: { id: string; name: string }): Actor {
 export const AUDIT_LABELS: Record<string, string> = {
   "candidate.created": "Kandidat/in erfasst",
   "candidate.viewed": "Profil angesehen",
+  "candidate.dossier": "Dossier erstellt",
   "candidate.deleted": "Kandidat/in gelöscht",
   "candidate.anonymized": "Kandidat/in anonymisiert",
   "candidate.exported": "Daten exportiert",

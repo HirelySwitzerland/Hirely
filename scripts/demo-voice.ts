@@ -7,7 +7,9 @@
  *   npm run demo:voice -- recording    Join clips into phone recordings (ffmpeg) → prisma/demo/recordings/
  *
  * ElevenLabs settings (.env): ELEVENLABS_API_KEY, optional ELEVENLABS_VOICE_AI and ELEVENLABS_VOICE_CANDIDATE
- * (voice IDs, for example your own cloned voice for the AI interviewer).
+ * (voice IDs, for example your own cloned voice for the AI interviewer) and ELEVENLABS_MODEL.
+ *   npm run demo:voice -- elevenlabs neu    Record every AI sentence again (after switching the AI voice)
+ *   npm run demo:voice -- elevenlabs alle   Record every sentence again
  */
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -94,14 +96,18 @@ async function elevenlabs() {
   const voice = { ai: process.env.ELEVENLABS_VOICE_AI || "21m00Tcm4TlvDq8ikWAM", candidate: process.env.ELEVENLABS_VOICE_CANDIDATE || "pNInz6obpgDQGcFmaJgB" };
   await fs.mkdir(CLIPS, { recursive: true });
   const all = await readLines();
+  // "neu": record every AI sentence again (e.g. after switching to a Swiss voice); "alle": every sentence
+  const redo = process.argv[3] === "alle" ? "all" : process.argv[3] === "neu" ? "ai" : null;
+  const model = process.env.ELEVENLABS_MODEL || "eleven_multilingual_v2";
   let made = 0;
   for (const [n, l] of all.entries()) {
     const file = path.join(CLIPS, `${l.id}.mp3`);
-    if (await exists(file)) continue;
+    const again = redo === "all" || (redo === "ai" && l.speaker === "ai");
+    if (!again && (await exists(file))) continue;
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice[l.speaker]}?output_format=mp3_44100_64`, {
       method: "POST",
       headers: { "xi-api-key": key, "content-type": "application/json", accept: "audio/mpeg" },
-      body: JSON.stringify({ text: l.say ?? sayText(l.text), model_id: "eleven_multilingual_v2", voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
+      body: JSON.stringify({ text: l.say ?? sayText(l.text), model_id: model, voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
     });
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 300);

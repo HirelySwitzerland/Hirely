@@ -8,6 +8,7 @@ const NAV = [
   { href: "/#fuer-wen", label: "Für wen" },
   { href: "/#vorteile", label: "Vorteile" },
   { href: "/#hoerprobe", label: "Hörprobe" },
+  { href: "/#rechner", label: "Ersparnis" },
   { href: "/#vertrauen", label: "Datenschutz" },
   { href: "/#preise", label: "Preise" },
   { href: "/#fragen", label: "Fragen" },
@@ -40,7 +41,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für HR-Abteilungen, Personalvermittler und Headhunter.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#fuer-wen", "Für wen"], ["/#vorteile", "Vorteile"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Zeit-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#fuer-wen", "Für wen"], ["/#vorteile", "Vorteile"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Ersparnis-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
           <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
           <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>

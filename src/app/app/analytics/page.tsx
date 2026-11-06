@@ -4,6 +4,7 @@ import { pageContext } from "@/lib/auth/session";
 import { applicationScope } from "@/lib/services/scope";
 import { applicationsOverTime, fullAnalytics, funnel, sourcePerformance, TIME_SAVED_MINUTES } from "@/lib/services/analytics";
 import { chf } from "@/lib/billing";
+import { DEFAULT_HOURLY_CHF, chfRound } from "@/lib/savings";
 import { Card, CardHeader, PageHeader, Select, StatCard, Table, Td, Th } from "@/components/ui";
 import { FunnelChart, GroupedBars, TrendChart } from "@/components/charts";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         <StatCard label="Bewerbungen" value={k.applications} sub={`letzte ${days} Tage`} />
         <StatCard label="Interview-Abschluss" value={`${k.interviewCompletion}%`} sub="der Eingeladenen" />
         <StatCard label="Ø Tage bis Einstellung" value={k.avgTimeToHire != null ? `${k.avgTimeToHire}` : "—"} sub={`${k.hires} Einstellung(en)`} />
-        <StatCard label="Gesparte HR-Zeit" value={`${k.timeSaved} Std.`} sub={`letzte ${days} Tage`} accent="bg-emerald-50 text-emerald-700" />
+        <StatCard label="Gesparte HR-Zeit" value={`${k.timeSaved} Std.`} sub={`≈ ${chfRound(k.timeSaved * DEFAULT_HOURLY_CHF)} · letzte ${days} Tage`} accent="bg-emerald-50 text-emerald-700" />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Ø Tage bis KI-Interview" value={k.avgTimeToInterview != null ? `${k.avgTimeToInterview}` : "—"} sub="ab Bewerbungseingang" />
@@ -93,6 +94,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           <Card className="p-5 text-sm text-slate-600">
             <p className="font-semibold text-ink">So wird die „gesparte HR-Zeit“ berechnet</p>
             <p className="mt-1">{a.savedBreakdown.cv} CV-Prüfungen × {TIME_SAVED_MINUTES.cvScreened} Min. + {a.savedBreakdown.ai} KI-Interviews × {TIME_SAVED_MINUTES.aiInterview} Min. + {a.savedBreakdown.video} Video-Interviews × {TIME_SAVED_MINUTES.videoInterview} Min. + {a.savedBreakdown.msgs} automatische Nachrichten × {TIME_SAVED_MINUTES.messageSent} Min. + {a.savedBreakdown.booked} selbst gebuchte Gespräche × {TIME_SAVED_MINUTES.interviewBooked} Min.</p>
+            <p className="mt-1">Bei CHF {DEFAULT_HOURLY_CHF} Vollkosten pro HR-Stunde (Lohn, Sozialabgaben, Arbeitsplatz) entspricht das rund {chfRound(k.timeSaved * DEFAULT_HOURLY_CHF)}. Gezählt wird nur die Zeit, die Ihr Team nicht mehr selbst aufwendet – Bericht lesen und entscheiden ist bereits abgezogen.</p>
           </Card>
         </div>
       </div>

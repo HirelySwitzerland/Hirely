@@ -14,7 +14,7 @@ import { langLabel } from "@/lib/stages";
 import type { ParsedCv } from "@/lib/services/cv-heuristics";
 import type { Evidence } from "@/lib/services/evaluation";
 import type { VideoQuestion } from "@/lib/services/video";
-import { Alert, Avatar, Badge, Card, CardHeader, EmptyState, Tabs, Textarea } from "@/components/ui";
+import { Alert, Avatar, Badge, Card, CardHeader, EmptyState, LinkButton, Tabs, Textarea } from "@/components/ui";
 import { ActionButton, ActionForm, SubmitButton } from "@/components/forms";
 import { EVIDENCE_META, EvidenceBadge, RequirementsMeter, StageBadge, SOURCE_LABEL } from "@/components/status";
 import { Markdown } from "@/components/markdown";
@@ -84,7 +84,10 @@ export default async function CandidateProfile({ params, searchParams }: { param
 
   return (
     <div>
-      <p className="mb-3 text-[13px] text-slate-500"><Link href="/app/candidates" className="hover:text-ink">Kandidierende</Link> / <Link href={`/app/jobs/${app.jobId}`} className="hover:text-ink">{app.job.title}</Link></p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[13px] text-slate-500"><Link href="/app/candidates" className="hover:text-ink">Kandidierende</Link> / <Link href={`/app/jobs/${app.jobId}`} className="hover:text-ink">{app.job.title}</Link></p>
+        <LinkButton href={`/dossier/${app.id}`} variant="secondary" size="sm" title="Kurzprofil für Linienvorgesetzte oder Kunden – auch anonymisiert"><FileText className="h-3.5 w-3.5" />Dossier als PDF</LinkButton>
+      </div>
       <Card className="mb-5 p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex min-w-0 gap-4">

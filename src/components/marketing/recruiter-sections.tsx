@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { Building2, Check, Clock3, Search, Users } from "lucide-react";
+import { Building2, Check, Search, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -105,7 +105,7 @@ export function BenefitGrid() {
         <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4">
           <div className="flex items-center justify-between text-[12px] text-white/60"><span>KI-Vorabgespräch</span><span className="font-mono tabular-nums text-[#FDB48C]">04:12</span></div>
           <div aria-hidden className="mt-3 flex h-12 items-center gap-[3px]">
-            {Array.from({ length: 34 }, (_, k) => <span key={k} className="w-[3px] rounded-full bg-[#F97A3A]" style={{ height: `${18 + Math.abs(Math.sin(k * 1.7) * 30) + (k % 5) * 4}%`, opacity: 0.45 + (k % 3) * 0.2 }} />)}
+            {Array.from({ length: 34 }, (_, k) => <span key={k} className="w-[3px] rounded-full bg-[#F97A3A]" style={{ height: `${Math.round(18 + Math.abs(Math.sin(k * 1.7) * 30) + (k % 5) * 4)}%`, opacity: [0.45, 0.65, 0.85][k % 3] }} />)}
           </div>
           <div className="mt-3 flex flex-wrap gap-1.5 text-[12px]">
             {["Führerausweis B ✓", "Pikett ✓", "ab 1. Januar", "CHF 86'000"].map((c) => <span key={c} className="rounded-md bg-white/[0.07] px-2 py-1 text-white/80">{c}</span>)}
@@ -165,58 +165,5 @@ export function BenefitGrid() {
         </div>
       </Tile>
     </div>
-  );
-}
-
-/* ───────────── time savings calculator ───────────── */
-
-/** Minutes per step – the same assumptions Recruit24 uses for «gesparte HR-Zeit» in its analytics. */
-const MIN = { cv: 8, interview: 25, booking: 15, message: 3 };
-
-export function SavingsCalculator() {
-  const [apps, setApps] = useState(120);
-  const [share, setShare] = useState(40);
-  const interviews = Math.round((apps * share) / 100);
-  const bookings = Math.round(interviews * 0.25);
-  const minutes = apps * MIN.cv + interviews * MIN.interview + bookings * MIN.booking + apps * 2 * MIN.message;
-  const hours = Math.round(minutes / 60);
-  const days = Math.round((minutes / 60 / 8.4) * 10) / 10;
-  return (
-    <div className="grid gap-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_40px_80px_-50px_rgba(20,24,36,0.35)] sm:p-10 lg:grid-cols-2 lg:gap-14">
-      <div className="space-y-8">
-        <Slider label="Bewerbungen pro Monat" value={apps} min={10} max={1000} step={10} onChange={setApps} />
-        <Slider label="Davon mit Vorabgespräch" value={share} min={10} max={100} step={5} onChange={setShare} unit="%" />
-        <p className="text-[13px] leading-relaxed text-slate-500">
-          Annahmen pro Schritt: Lebenslauf sichten {MIN.cv} Min., Vorabgespräch inkl. Terminfindung {MIN.interview} Min., Gesprächstermin vereinbaren {MIN.booking} Min. (für jede vierte Person nach dem Vorabgespräch), zwei Nachrichten pro Bewerbung à {MIN.message} Min. Dieselben Werte zeigt Recruit24 in der Auswertung. Richtwerte, keine Garantie.
-        </p>
-      </div>
-      <div className="flex flex-col justify-center rounded-2xl bg-night p-8 text-white">
-        <p className="text-[14px] text-white/60">Ihr Team gewinnt pro Monat etwa</p>
-        <p className="mt-2 text-[64px] font-semibold leading-none tracking-[-0.04em] tabular-nums">{hours}<span className="ml-2 text-[24px] font-medium text-white/60">Stunden</span></p>
-        <p className="mt-3 text-[17px] text-[#FDB48C]">≈ {days.toLocaleString("de-CH")} Arbeitstage für Gespräche, die zählen</p>
-        <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6 text-[13px]">
-          <Fact n={apps} l="Lebensläufe geprüft" />
-          <Fact n={interviews} l="Vorabgespräche geführt" />
-          <Fact n={bookings} l="Termine selbst gebucht" />
-        </div>
-        <p className="mt-6 flex items-center gap-2 text-[13px] text-white/60"><Clock3 className="h-4 w-4 text-[#FDB48C]" />Erstkontakt in Minuten statt Tagen – auch am Wochenende.</p>
-      </div>
-    </div>
-  );
-}
-
-function Fact({ n, l }: { n: number; l: string }) {
-  return <div><p className="text-[22px] font-semibold tabular-nums">{n.toLocaleString("de-CH")}</p><p className="mt-0.5 leading-snug text-white/55">{l}</p></div>;
-}
-
-function Slider({ label, value, min, max, step, onChange, unit = "" }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; unit?: string }) {
-  return (
-    <label className="block">
-      <span className="flex items-baseline justify-between">
-        <span className="text-[15px] font-medium text-ink">{label}</span>
-        <span className="text-[26px] font-semibold tabular-nums text-ink">{value.toLocaleString("de-CH")}{unit}</span>
-      </span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="mt-3 w-full accent-[#E8692A]" />
-    </label>
   );
 }
