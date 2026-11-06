@@ -4,13 +4,12 @@ import { Logo } from "@/components/ui";
 import { CONTACT_EMAIL, PUBLIC_DEMO, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
-  { href: "/#ablauf", label: "Ablauf" },
-  { href: "/#fuer-wen", label: "Für wen" },
   { href: "/#vorteile", label: "Vorteile" },
-  { href: "/#hoerprobe", label: "Hörprobe" },
+  { href: "/#fuer-wen", label: "Für wen" },
+  { href: "/#funktionen", label: "Funktionen" },
   { href: "/#rechner", label: "Ersparnis" },
-  { href: "/#vertrauen", label: "Datenschutz" },
   { href: "/#preise", label: "Preise" },
+  { href: "/#vertrauen", label: "Datenschutz" },
   { href: "/#fragen", label: "Fragen" },
 ].filter((n) => SHOW_PRICES || n.href !== "/#preise");
 
@@ -22,7 +21,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <Link href="/" aria-label="Recruit24 Startseite">
             <Logo onDark className="h-10" />
           </Link>
-          <nav className="hidden items-center gap-7 text-[14px] text-white/65 lg:flex" aria-label="Hauptnavigation">
+          <nav className="hidden items-center gap-8 text-[14px] font-medium text-white/70 lg:flex" aria-label="Hauptnavigation">
             {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
           </nav>
           <div className="flex items-center gap-1 sm:gap-2">
@@ -38,10 +37,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-8 md:grid-cols-12">
           <div className="md:col-span-5">
             <Logo className="h-11" />
-            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Ihr KI-Mitarbeiter fürs Recruiting. Entwickelt in der Schweiz für HR-Abteilungen, Personalvermittler und Headhunter.</p>
+            <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-slate-600">Recruiting rund um die Uhr – automatisiert. Entwickelt in der Schweiz für HR-Abteilungen, Personalvermittler und Headhunter.</p>
             <p className="mt-6 text-[13px] text-slate-500">revDSG- & DSGVO-konform · Jeden Entscheid trifft ein Mensch.</p>
           </div>
-          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#fuer-wen", "Für wen"], ["/#vorteile", "Vorteile"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Ersparnis-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
+          <FooterCol title="Produkt" links={[["/#ablauf", "So funktioniert's"], ["/#vorteile", "Vorteile"], ["/#fuer-wen", "Für wen"], ["/#funktionen", "Funktionen"], ["/#mobil", "Auf dem Handy"], ["/#hoerprobe", "Hörprobe"], ["/#rechner", "Ersparnis-Rechner"], ...(SHOW_PRICES ? [["/#preise", "Preise"] as [string, string]] : []), ...(SITE_ONLY ? [] : [["/careers/helvetic-engineering", "Beispiel-Karriereseite"] as [string, string]])]} />
           <FooterCol title="Für Unternehmen" links={SITE_ONLY ? [["/demo", "Demo vereinbaren"], [`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL]] : [["/register", "Konto erstellen"], ["/login", "Anmelden"], ["/demo", "Demo vereinbaren"]]} />
           <FooterCol title="Vertrauen" links={[["/#vertrauen", "Datenschutz & Sicherheit"], ["/#fragen", "Häufige Fragen"], ["/datenschutz", "Datenschutzerklärung"], ["/impressum", "Impressum"]]} />
         </div>

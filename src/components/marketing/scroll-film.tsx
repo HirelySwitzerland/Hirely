@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, Play } from "lucide-react";
+import { ArrowDown, Check, Play, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StartButtons } from "./cta";
 import { ChapterUI, type UI } from "./photo-story";
-import { STORY } from "./story-texts";
+import { HERO, STORY } from "./story-texts";
 import { clamp, ease, lerp, out, seg, useFilmProgress, useSize } from "./film-shared";
 
 /*
@@ -230,16 +230,18 @@ function IntroOverlay({ t }: { t: number }) {
       {hero.o > 0.002 && (
         <div className="absolute left-0 top-1/2 max-w-[660px]" style={{ opacity: hero.o, transform: `translate3d(0, calc(-50% - ${hero.gone * 60}px), ${hero.gone * 420}px)`, pointerEvents: hero.o > 0.4 ? "auto" : "none" }}>
           <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/25 px-3.5 py-1.5 text-[13px] font-medium text-white/85 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F97A3A]" />Für HR-Abteilungen und Personalvermittler in der Schweiz
+            <span className="h-1.5 w-1.5 rounded-full bg-[#F97A3A]" />{HERO.pill}
           </p>
-          <h1 className="mt-7 text-[64px] font-semibold leading-[1.0] tracking-[-0.035em] text-white xl:text-[80px]">
-            Ihr KI-Mitarbeiter<br /><span className="text-[#FDB48C]">fürs Recruiting.</span>
+          <h1 className="mt-[clamp(14px,2.8vh,28px)] text-[length:clamp(46px,min(7.4vh,5.6vw),80px)] font-semibold leading-[1.0] tracking-[-0.035em] text-white">
+            {HERO.title}<br /><span className="text-[#FDB48C]">{HERO.accent}</span>
           </h1>
-          <p className="mt-6 max-w-[560px] text-[20px] leading-relaxed text-white/85">
-            Recruit24 liest jede Bewerbung komplett, führt das Vorabgespräch und plant den Termin – in Minuten, rund um die Uhr. Jede Aussage mit Fundstelle. <span className="text-white">Entscheiden tun Sie.</span>
-          </p>
-          <StartButtons className="mt-9 !justify-start" />
-          <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/70 transition hover:text-white">
+          <p className="mt-[clamp(14px,2.6vh,24px)] max-w-[580px] text-[length:clamp(17px,2.25vh,20px)] leading-relaxed text-white/85">{HERO.text}</p>
+          <p className="mt-[clamp(10px,1.8vh,16px)] flex items-center gap-2.5 text-[16px] text-white"><Smartphone className="h-[18px] w-[18px] shrink-0 text-[#FDB48C]" />{HERO.mobile}</p>
+          <StartButtons className="mt-[clamp(18px,4vh,36px)] !justify-start" />
+          <ul className="mt-[clamp(14px,3vh,32px)] flex flex-wrap gap-x-5 gap-y-2 text-[14px] text-white/70">
+            {HERO.facts.map((f) => <li key={f} className="flex items-center gap-2"><Check className="h-4 w-4 text-[#FDB48C]" />{f}</li>)}
+          </ul>
+          <a href="#hoerprobe" className="mt-[clamp(10px,2vh,20px)] inline-flex items-center gap-2 text-[14px] text-white/70 transition hover:text-white">
             <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/25"><Play className="ml-px h-3 w-3" /></span>
             Hörprobe: So klingt ein KI-Vorabgespräch
           </a>
@@ -272,9 +274,9 @@ function Finale({ t }: { t: number }) {
   if (cta.o <= 0.002) return null;
   return (
     <div className="absolute inset-x-0 top-1/2 mx-auto max-w-3xl text-center" style={{ opacity: cta.o, transform: `translate3d(0, calc(-50% + ${lerp(50, 0, cta.inn)}px), ${lerp(-320, 0, cta.inn)}px)`, pointerEvents: cta.o > 0.5 ? "auto" : "none" }}>
-      <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#FDB48C]">Recruit24 · Entwickelt in der Schweiz</p>
+      <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#FDB48C]">Recruit24 · 24/7 Recruiting aus der Schweiz</p>
       <h2 className="mt-5 text-[56px] font-semibold leading-[1.02] tracking-[-0.035em] text-white xl:text-[72px]">Ihr Aufwand:<br /><span className="text-[#FDB48C]">ein Entscheid.</span></h2>
-      <p className="mx-auto mt-6 max-w-xl text-[19px] leading-relaxed text-white/85">Recruit24 liest, fragt nach und plant – rund um die Uhr. Sie entscheiden, wen Sie kennenlernen.</p>
+      <p className="mx-auto mt-6 max-w-xl text-[19px] leading-relaxed text-white/85">Recruit24 prüft, fragt nach und plant – rund um die Uhr. Sie entscheiden, wen Sie kennenlernen: im Büro oder unterwegs.</p>
       <StartButtons className="mt-9" />
     </div>
   );
@@ -382,7 +384,7 @@ export function ScrollFilm() {
           <a href="#nach-story" className="shrink-0 rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur transition hover:text-white">Überspringen ↓</a>
         </div>
         {u < 0.08 && (
-          <p className="pointer-events-none absolute inset-x-0 bottom-20 z-20 flex items-center justify-center gap-2 text-[14px] text-white/75"><ArrowDown className="h-4 w-4 animate-bounce" />Scrollen Sie – die Kamera folgt einer Bewerbung</p>
+          <p className="pointer-events-none absolute inset-x-0 bottom-20 z-20 flex items-center justify-center gap-2 text-[14px] text-white/75 [@media(max-height:820px)]:hidden"><ArrowDown className="h-4 w-4 animate-bounce" />Scrollen Sie – die Kamera folgt einer Bewerbung</p>
         )}
         <div className="absolute inset-x-0 bottom-0 z-30 h-[3px] bg-white/5"><div className="h-full bg-gradient-to-r from-[#C84F14] to-[#F97A3A]" style={{ width: `${p * 100}%` }} /></div>
       </div>

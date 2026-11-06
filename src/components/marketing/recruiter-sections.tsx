@@ -11,8 +11,8 @@ const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
 const AUDIENCES = [
   {
     id: "hr", icon: Building2, tab: "HR-Abteilungen",
-    title: "Weniger Routine. Schneller besetzt.",
-    lead: "Für Firmen, die selbst rekrutieren: Recruit24 erledigt die Vorarbeit, Ihr Team entscheidet.",
+    title: "Stellen schneller besetzen.",
+    lead: "Für Firmen, die selbst rekrutieren: Recruit24 erledigt die Vorarbeit rund um die Uhr – Ihr Team entscheidet, auch unterwegs.",
     points: [
       ["Jede Bewerbung komplett gelesen", "Lebenslauf, Anschreiben, Zeugnisse und Diplome – auch bei 300 Bewerbungen auf eine Stelle."],
       ["Jede Aussage mit Fundstelle", "Ein Klick zeigt die markierte Stelle im Dokument. Keine Blackbox, keine geheime Punktzahl."],
@@ -40,6 +40,7 @@ export function AudienceTabs() {
   const a = AUDIENCES[on];
   return (
     <div>
+      <div className="flex justify-center">
       <div role="tablist" aria-label="Für wen" className="grid w-full grid-cols-2 rounded-xl border border-slate-200 bg-white p-1 shadow-sm sm:inline-grid sm:w-auto">
         {AUDIENCES.map((x, i) => (
           <button key={x.id} role="tab" type="button" aria-selected={on === i} onClick={() => setOn(i)}
@@ -48,7 +49,8 @@ export function AudienceTabs() {
           </button>
         ))}
       </div>
-      <div key={a.id} role="tabpanel" className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-14 [animation:fade-up_.5s_ease_both]">
+      </div>
+      <div key={a.id} role="tabpanel" className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-14 [animation:fade-up_.5s_ease_both]">
         <div className="lg:col-span-5">
           <h3 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[42px]">{a.title}</h3>
           <p className="mt-5 text-[18px] leading-relaxed text-slate-600">{a.lead}</p>
