@@ -30,13 +30,13 @@ test("the savings calculator counts only the time HR no longer spends", () => {
   assert.equal(chfRound(2547), "CHF 2’550");
 });
 
-test("an open position costs salary per working day times the value a person creates", () => {
+test("an open position costs what the person would create minus the salary saved", () => {
   // 20 days to the interview today, 6 with Recruit24: 14 calendar days = 10 working days earlier
   const v = vacancyCost({ ...DEFAULT_VACANCY, hires: 10, salary: 88_000, factor: 2, todayDays: 20, r24Days: 6 });
-  assert.equal(Math.round(v.perDay), 800); // 88’000 ÷ 220 × 2
+  assert.equal(Math.round(v.perDay), 400); // 88’000 ÷ 220 × (2 − 1)
   assert.equal(v.calendarDays, 14);
   assert.equal(v.workdays, 10);
-  assert.equal(Math.round(v.perHire), 8000);
-  assert.equal(Math.round(v.perYear), 80000);
+  assert.equal(Math.round(v.perHire), 4000);
+  assert.equal(Math.round(v.perYear), 40000);
   assert.equal(vacancyCost({ ...DEFAULT_VACANCY, todayDays: 5, r24Days: 9 }).perYear, 0);
 });

@@ -70,21 +70,22 @@ export const WORKDAYS_PER_YEAR = 220;
 /**
  * Days from the application to the personal interview.
  * Today: Ø 20 days (SmartRecruiters, 5.1 million applications in Germany – there is no public Swiss figure).
- * With Recruit24: check and pre-screening on the day of the application, HR decides the next working day,
- * the person books the first free slot – about 5 days.
+ * With Recruit24: check and pre-screening within a day, HR decides within a working day or two, the person books
+ * a free slot in the HR calendar – we count a full week.
  */
-export const DAYS_TO_INTERVIEW = { today: 20, withRecruit24: 5 };
+export const DAYS_TO_INTERVIEW = { today: 20, withRecruit24: 7 };
 
 /** Defaults: 12 hires a year, a salary near the Swiss median (~CHF 87’000, BFS), a person creating 1.5× their salary. */
 export const DEFAULT_VACANCY = { hires: 12, salary: 85_000, factor: 1.5, todayDays: DAYS_TO_INTERVIEW.today, r24Days: DAYS_TO_INTERVIEW.withRecruit24 };
-export const VALUE_FACTORS = [1, 1.5, 2, 3];
+export const VALUE_FACTORS = [1.5, 2, 3];
 
 /**
- * Cost of an open position: salary per working day × value factor.
+ * Net cost of an open position per working day: what the person would create (salary × factor)
+ * minus the salary the company saves while the position is open – i.e. salary per day × (factor − 1).
  * Reaching the interview earlier fills the position earlier by the same time, if everything after the interview stays the same.
  */
 export function vacancyCost({ hires, salary, factor, todayDays, r24Days }: typeof DEFAULT_VACANCY) {
-  const perDay = (salary / WORKDAYS_PER_YEAR) * factor;
+  const perDay = (salary / WORKDAYS_PER_YEAR) * Math.max(0, factor - 1);
   const calendarDays = Math.max(0, todayDays - r24Days);
   const workdays = (calendarDays * 5) / 7;
   const perHire = perDay * workdays;

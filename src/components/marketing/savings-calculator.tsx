@@ -13,7 +13,7 @@ const hrs = (h: number) => (h < 10 ? swissOneDecimal(h) : swissInt(h));
 
 export function SavingsCalculator() {
   const [apps, setApps] = useState(120);
-  const [share, setShare] = useState(30);
+  const [share, setShare] = useState(20);
   const [rate, setRate] = useState(DEFAULT_HOURLY_CHF);
   const [minutes, setMinutes] = useState<Minutes>(DEFAULT_MINUTES);
   const [edit, setEdit] = useState(false);
@@ -114,10 +114,10 @@ export function SavingsCalculator() {
             <Slider label="Stellen, die Sie pro Jahr besetzen" value={vac.hires} min={1} max={200} step={1} onChange={setV("hires")} />
             <Slider label="Jahreslohn einer typischen Stelle" hint="Brutto – Schweizer Medianlohn rund CHF 87’000" value={vac.salary} min={50_000} max={250_000} step={5_000} onChange={setV("salary")} prefix="CHF " />
             <Slider label="Tage bis zum Vorstellungsgespräch – heute" hint="Studie: Ø 20 Tage nach der Bewerbung" value={vac.todayDays} min={5} max={60} step={1} onChange={setV("todayDays")} />
-            <Slider label="Tage bis zum Vorstellungsgespräch – mit Recruit24" hint="Vorabgespräch am selben Tag, Ihr Entscheid am nächsten Arbeitstag, Termin aus Ihrem Kalender" value={vac.r24Days} min={1} max={30} step={1} onChange={setV("r24Days")} />
+            <Slider label="Tage bis zum Vorstellungsgespräch – mit Recruit24" hint="Vorabgespräch innert eines Tages, Ihr Entscheid, dann ein freier Termin in Ihrem Kalender – wir rechnen mit einer Woche" value={vac.r24Days} min={1} max={30} step={1} onChange={setV("r24Days")} />
             <div>
               <p className="text-[15px] font-medium text-ink">Was eine Person erwirtschaftet</p>
-              <p className="text-[13px] text-slate-500">im Verhältnis zu ihrem Lohn – üblich ist das 1- bis 3-Fache</p>
+              <p className="text-[13px] text-slate-500">im Verhältnis zu ihrem Lohn. Den Lohn, den Sie während der Vakanz sparen, ziehen wir ab.</p>
               <div className="mt-3 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5" role="group" aria-label="Was eine Person erwirtschaftet">
                 {VALUE_FACTORS.map((f) => (
                   <button key={f} type="button" onClick={() => setV("factor")(f)} aria-pressed={vac.factor === f} className={cn("rounded-md px-3.5 py-1.5 text-[14px] tabular-nums", vac.factor === f ? "bg-white font-semibold text-ink shadow-sm" : "text-slate-600 hover:text-ink")}>
@@ -129,7 +129,7 @@ export function SavingsCalculator() {
           </div>
           <div className="flex flex-col justify-center gap-5">
             <div className="rounded-2xl border border-[#F6D3BF] bg-[#FFF7F2] p-6 sm:p-8">
-              <p className="text-[14px] text-slate-600">Eine offene Stelle kostet Sie pro Arbeitstag etwa</p>
+              <p className="text-[14px] text-slate-600">Jeder offene Arbeitstag kostet Sie netto etwa</p>
               <p className="mt-2 text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">{chfRound(v.perDay)}</p>
               <div className="mt-6 space-y-2 border-t border-[#F6D3BF] pt-5 text-[14px] text-slate-700">
                 <p className="flex justify-between gap-4"><span>{v.calendarDays} Tage früher ≈ {swissOneDecimal(v.workdays)} Arbeitstage</span><span className="whitespace-nowrap font-medium tabular-nums text-ink">{chfRound(v.perHire)} pro Stelle</span></p>
@@ -144,7 +144,7 @@ export function SavingsCalculator() {
           </div>
         </div>
         <p className="mt-6 text-[13px] leading-relaxed text-slate-500">
-          So gerechnet: Jahreslohn ÷ {WORKDAYS_PER_YEAR} Arbeitstage × {String(vac.factor)} = Kosten pro offenem Arbeitstag. Wer das Vorstellungsgespräch früher führt, besetzt die Stelle um dieselbe Zeit früher – sofern danach alles gleich schnell läuft wie heute. Zum Vergleich: In der Schweiz ist eine Stelle im Schnitt 43 Tage ausgeschrieben, jede zehnte über 100 Tage. Zu lange Vakanzen kosten bis zu 0.7 % der Wertschöpfung, in der Informatik bis zu 3.4 % (<a href="https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">BSS/KOF für den Arbeitgeberverband, 2023</a>). In Deutschland kostet ein offener Tag im Schnitt EUR 624 (<a href="https://www.stepstone.de/e-recruiting/hr-wissen/recruiting/vakanzkosten" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">StepStone</a>). Richtwerte, keine Garantie.
+          So gerechnet: Jahreslohn ÷ {WORKDAYS_PER_YEAR} Arbeitstage × ({String(vac.factor)} − 1) – also was die Person erwirtschaften würde, minus den Lohn, den Sie in der Zeit sparen. Wer das Vorstellungsgespräch früher führt, besetzt die Stelle um dieselbe Zeit früher – sofern danach alles gleich schnell läuft wie heute. Zum Vergleich: In der Schweiz ist eine Stelle im Schnitt 43 Tage ausgeschrieben, jede zehnte über 100 Tage. Zu lange Vakanzen kosten bis zu 0.7 % der Wertschöpfung, in der Informatik bis zu 3.4 % (<a href="https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">BSS/KOF für den Arbeitgeberverband, 2023</a>). StepStone rechnet für Deutschland ohne diesen Abzug mit EUR 624 pro offenem Tag – wir rechnen bewusst vorsichtiger (<a href="https://www.stepstone.de/e-recruiting/hr-wissen/recruiting/vakanzkosten" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">StepStone</a>). Richtwerte, keine Garantie.
         </p>
       </div>
     </div>
@@ -205,7 +205,7 @@ export function SpeedAndStudies() {
     <div className="grid gap-5 lg:grid-cols-12">
       <div className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 lg:col-span-5">
         <p className="text-[13px] font-medium uppercase tracking-wide text-[#C2551F]">Bis zur Einladung</p>
-        <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">Drei Wochen heute. Wenige Tage mit Recruit24.</p>
+        <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">Drei Wochen heute. Eine Woche mit Recruit24.</p>
         <div className="mt-7 space-y-7">
           {SPEED.map((s) => (
             <div key={s.label}>
@@ -223,7 +223,7 @@ export function SpeedAndStudies() {
           ))}
         </div>
         <ul className="mt-7 space-y-1.5 text-[13px] text-slate-600">
-          {["Bewerbung geprüft und Vorabgespräch: am Tag der Bewerbung, auch am Sonntag", "Ihr Entscheid: am nächsten Arbeitstag – der Bericht ist fertig", "Termin: Die Person bucht selbst einen freien Platz in Ihrem Kalender"].map((x) => (
+          {["Bewerbung geprüft: sofort. Vorabgespräch: meist am selben Tag, auch am Sonntag", "Ihr Entscheid: sobald Sie den fertigen Bericht lesen", "Termin: Die Person bucht selbst einen freien Platz in Ihrem Kalender"].map((x) => (
             <li key={x} className="flex gap-2"><span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#E8692A]" />{x}</li>
           ))}
         </ul>
