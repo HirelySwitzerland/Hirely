@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Clock3, SlidersHorizontal, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DEFAULT_HOURLY_CHF, DEFAULT_VACANCY, SAVING_STEPS, VALUE_FACTORS, WORKDAYS_PER_YEAR, calculateSavings, chfRound, swissInt, swissOneDecimal, vacancyCost, type SavingStep } from "@/lib/savings";
+import { DAYS_TO_INTERVIEW, DEFAULT_HOURLY_CHF, DEFAULT_VACANCY, SAVING_STEPS, VALUE_FACTORS, WORKDAYS_PER_YEAR, calculateSavings, chfRound, swissInt, swissOneDecimal, vacancyCost, type SavingStep } from "@/lib/savings";
 
 type Minutes = Record<SavingStep["key"], { manual: number; left: number }>;
 const DEFAULT_MINUTES = Object.fromEntries(SAVING_STEPS.map((s) => [s.key, { manual: s.manual, left: s.left }])) as Minutes;
@@ -113,7 +113,8 @@ export function SavingsCalculator() {
           <div className="space-y-8">
             <Slider label="Stellen, die Sie pro Jahr besetzen" value={vac.hires} min={1} max={200} step={1} onChange={setV("hires")} />
             <Slider label="Jahreslohn einer typischen Stelle" hint="Brutto – Schweizer Medianlohn rund CHF 87’000" value={vac.salary} min={50_000} max={250_000} step={5_000} onChange={setV("salary")} prefix="CHF " />
-            <Slider label="Arbeitstage früher besetzt" hint="Recruit24 prüft und spricht am Tag der Bewerbung statt nach rund 8 Tagen" value={vac.daysFaster} min={0} max={30} step={1} onChange={setV("daysFaster")} />
+            <Slider label="Tage bis zum Vorstellungsgespräch – heute" hint="Studie: Ø 20 Tage nach der Bewerbung" value={vac.todayDays} min={5} max={60} step={1} onChange={setV("todayDays")} />
+            <Slider label="Tage bis zum Vorstellungsgespräch – mit Recruit24" hint="Vorabgespräch am selben Tag, Ihr Entscheid am nächsten Arbeitstag, Termin aus Ihrem Kalender" value={vac.r24Days} min={1} max={30} step={1} onChange={setV("r24Days")} />
             <div>
               <p className="text-[15px] font-medium text-ink">Was eine Person erwirtschaftet</p>
               <p className="text-[13px] text-slate-500">im Verhältnis zu ihrem Lohn – üblich ist das 1- bis 3-Fache</p>
@@ -131,7 +132,7 @@ export function SavingsCalculator() {
               <p className="text-[14px] text-slate-600">Eine offene Stelle kostet Sie pro Arbeitstag etwa</p>
               <p className="mt-2 text-[44px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">{chfRound(v.perDay)}</p>
               <div className="mt-6 space-y-2 border-t border-[#F6D3BF] pt-5 text-[14px] text-slate-700">
-                <p className="flex justify-between gap-4"><span>{vac.daysFaster} Arbeitstage früher besetzt</span><span className="whitespace-nowrap font-medium tabular-nums text-ink">{chfRound(v.perHire)} pro Stelle</span></p>
+                <p className="flex justify-between gap-4"><span>{v.calendarDays} Tage früher ≈ {swissOneDecimal(v.workdays)} Arbeitstage</span><span className="whitespace-nowrap font-medium tabular-nums text-ink">{chfRound(v.perHire)} pro Stelle</span></p>
                 <p className="flex justify-between gap-4"><span>× {swissInt(vac.hires)} Stellen pro Jahr</span><span className="whitespace-nowrap font-semibold tabular-nums text-[#C2551F]">{chfRound(v.perYear)} pro Jahr</span></p>
               </div>
             </div>
@@ -143,7 +144,7 @@ export function SavingsCalculator() {
           </div>
         </div>
         <p className="mt-6 text-[13px] leading-relaxed text-slate-500">
-          So gerechnet: Jahreslohn ÷ {WORKDAYS_PER_YEAR} Arbeitstage × {String(vac.factor)}. Zum Vergleich: In der Schweiz ist eine Stelle im Schnitt 43 Tage ausgeschrieben, jede zehnte über 100 Tage. Zu lange Vakanzen kosten bis zu 0.7 % der Wertschöpfung, in der Informatik bis zu 3.4 % (<a href="https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">BSS/KOF für den Arbeitgeberverband, 2023</a>). In Deutschland kostet ein offener Tag im Schnitt EUR 624 (<a href="https://www.stepstone.de/e-recruiting/hr-wissen/recruiting/vakanzkosten" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">StepStone</a>). Richtwerte, keine Garantie.
+          So gerechnet: Jahreslohn ÷ {WORKDAYS_PER_YEAR} Arbeitstage × {String(vac.factor)} = Kosten pro offenem Arbeitstag. Wer das Vorstellungsgespräch früher führt, besetzt die Stelle um dieselbe Zeit früher – sofern danach alles gleich schnell läuft wie heute. Zum Vergleich: In der Schweiz ist eine Stelle im Schnitt 43 Tage ausgeschrieben, jede zehnte über 100 Tage. Zu lange Vakanzen kosten bis zu 0.7 % der Wertschöpfung, in der Informatik bis zu 3.4 % (<a href="https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">BSS/KOF für den Arbeitgeberverband, 2023</a>). In Deutschland kostet ein offener Tag im Schnitt EUR 624 (<a href="https://www.stepstone.de/e-recruiting/hr-wissen/recruiting/vakanzkosten" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-700">StepStone</a>). Richtwerte, keine Garantie.
         </p>
       </div>
     </div>
@@ -182,50 +183,73 @@ function Slider({ label, hint, value, min, max, step, onChange, unit = "", prefi
   );
 }
 
-/* ───────────── speed until the first conversation, with study figures ───────────── */
+/* ───────────── speed until the interview, with study figures ───────────── */
 
 const SPEED = [
-  { label: "Bewerbung geprüft", today: "nach Ø 8 Tagen", todayDays: 8, r24: "nach 1 Minute" },
-  { label: "Erstes Gespräch", today: "nach Ø 20 Tagen", todayDays: 20, r24: "Vorabgespräch nach Minuten – auch am Sonntag" },
+  { label: "Bewerbung geprüft", today: "nach Ø 8 Tagen", todayDays: 8, r24: "nach 1 Minute", r24Days: 0 },
+  { label: "Vorstellungsgespräch", today: `nach Ø ${DAYS_TO_INTERVIEW.today} Tagen`, todayDays: DAYS_TO_INTERVIEW.today, r24: `nach rund ${DAYS_TO_INTERVIEW.withRecruit24} Tagen`, r24Days: DAYS_TO_INTERVIEW.withRecruit24 },
 ];
 
-export const STUDIES = [
-  { n: "7.4 Sek.", t: "schaut ein Recruiter beim ersten Durchgang auf einen Lebenslauf. Recruit24 liest jede Bewerbung ganz – mit Anschreiben und Zeugnissen.", src: "Ladders, Eye-Tracking-Studie 2018", href: "https://www.recruiter.com/i/theladders-reveals-research-reporting-that-resumes-spend-six-seconds-with-a-recruiter/" },
-  { n: "20 Tage", t: "vergehen in Deutschland im Schnitt von der Bewerbung bis zum Vorstellungsgespräch. Geprüft wird nach rund 8 Tagen.", src: "SmartRecruiters, Analyse von 5.1 Mio. Bewerbungen", href: "https://www.boerse-express.com/news/articles/gnw-news-laut-einer-analyse-von-smartrecruiters-dauert-es-in-deutschen-unternehmen-55-tage-um-eine-offene-stelle-zu-besetzen-750842" },
-  { n: "57 %", t: "der Angestellten verlieren das Interesse an einer Stelle, wenn sie 10 Arbeitstage nach der Bewerbung nichts hören.", src: "Robert Half, Umfrage unter 1’000 Angestellten, 2024", href: "https://www.staffingindustry.com/news/global-daily-news/after-10-days-a-majority-of-job-candidates-lose-interest" },
-  { n: "1 Tag", t: "pro Woche – rund 20 % der Arbeitszeit – sparen Recruiting-Teams, die KI einsetzen.", src: "LinkedIn, Future of Recruiting 2025", href: "https://hrexecutive.com/how-to-harness-this-exciting-moment-of-change-for-ai-in-recruiting/" },
+type Region = "Schweiz" | "Deutschland" | "DACH" | "International";
+export const STUDIES: { n: string; t: string; src: string; href: string; region: Region }[] = [
+  { n: "58 %", region: "Schweiz", t: "der Arbeitnehmenden verlieren ganz das Interesse an einer Stelle, sobald der Bewerbungsprozess zu lange dauert.", src: "Robert Half, Arbeitsmarktstudie 2017, 500 Arbeitnehmende", href: "https://www.roberthalf.com/ch/en/about/press/swiss-companies-risk-their-future-viability-because-application-processes-are-too-long" },
+  { n: "43 Tage", region: "Schweiz", t: "ist eine Stelle im Schnitt ausgeschrieben – jede zehnte länger als 100 Tage.", src: "BSS/KOF ETH für den Arbeitgeberverband, 2023", href: "https://cdn.arbeitgeber.ch/production/uploads/2023/06/2023-06-16_BSS_KOF_Vakanzdauer_Schlussbericht_NEU.pdf" },
+  { n: "70 Tage", region: "DACH", t: "vergehen im Schnitt von der Ausschreibung bis zur Unterschrift – mit 19 Bewerbungen und 4 Gesprächen pro Stelle.", src: "XING Bewerbungsreport 2025, 2.5 Mio. Bewerbungen", href: "https://www.lebensmittelzeitung.net/handel/karriere/xing-studie-70-tage-dauert-es-bis-zur-einstellung-185983" },
+  { n: "20 Tage", region: "Deutschland", t: "vergehen im Schnitt von der Bewerbung bis zum Vorstellungsgespräch. Geprüft wird nach rund 8 Tagen.", src: "SmartRecruiters, 5.1 Mio. Bewerbungen", href: "https://www.boerse-express.com/news/articles/gnw-news-laut-einer-analyse-von-smartrecruiters-dauert-es-in-deutschen-unternehmen-55-tage-um-eine-offene-stelle-zu-besetzen-750842" },
+  { n: "7.4 Sek.", region: "International", t: "schaut ein Recruiter beim ersten Durchgang auf einen Lebenslauf. Recruit24 liest jede Bewerbung ganz.", src: "Ladders, Eye-Tracking-Studie 2018", href: "https://www.recruiter.com/i/theladders-reveals-research-reporting-that-resumes-spend-six-seconds-with-a-recruiter/" },
+  { n: "1 Tag", region: "International", t: "pro Woche – rund 20 % der Arbeitszeit – sparen Recruiting-Teams, die KI einsetzen.", src: "LinkedIn, Future of Recruiting 2025", href: "https://hrexecutive.com/how-to-harness-this-exciting-moment-of-change-for-ai-in-recruiting/" },
 ];
 
 export function SpeedAndStudies() {
   return (
     <div className="grid gap-5 lg:grid-cols-12">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 lg:col-span-5">
+      <div className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 lg:col-span-5">
         <p className="text-[13px] font-medium uppercase tracking-wide text-[#C2551F]">Bis zur Einladung</p>
-        <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">Wochen heute. Minuten mit Recruit24.</p>
+        <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">Drei Wochen heute. Wenige Tage mit Recruit24.</p>
         <div className="mt-7 space-y-7">
           {SPEED.map((s) => (
             <div key={s.label}>
               <p className="text-[15px] font-semibold text-ink">{s.label}</p>
-              <div className="mt-3 grid grid-cols-[92px_minmax(0,1fr)] items-center gap-x-3 gap-y-2 text-[13px]">
+              <div className="mt-3 grid grid-cols-[84px_minmax(0,1fr)] items-center gap-x-3 gap-y-2 text-[13px]">
                 <span className="text-slate-500">Heute</span>
-                <span className="flex items-center gap-2"><span className="h-2.5 rounded-full bg-slate-300" style={{ width: `${(s.todayDays / 20) * 70}%` }} /><span className="whitespace-nowrap font-medium text-slate-700">{s.today}</span></span>
+                <span className="flex items-center gap-2"><span className="h-2.5 rounded-full bg-slate-300" style={{ width: `${(s.todayDays / DAYS_TO_INTERVIEW.today) * 62}%` }} /><span className="whitespace-nowrap font-medium text-slate-700">{s.today}</span></span>
                 <span className="text-slate-500">Recruit24</span>
-                <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#E8692A]" /><span className="font-medium text-[#C2551F]">{s.r24}</span></span>
+                <span className="flex items-center gap-2">
+                  {s.r24Days ? <span className="h-2.5 rounded-full bg-[#E8692A]" style={{ width: `${(s.r24Days / DAYS_TO_INTERVIEW.today) * 62}%` }} /> : <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#E8692A]" />}
+                  <span className="whitespace-nowrap font-medium text-[#C2551F]">{s.r24}</span>
+                </span>
               </div>
             </div>
           ))}
         </div>
-        <p className="mt-7 text-[13px] leading-relaxed text-slate-500">«Heute»: Durchschnitt in Deutschland laut SmartRecruiters – für die Schweiz gibt es keine aktuelle öffentliche Zahl. Den Termin fürs persönliche Gespräch wählt die Person selbst aus Ihrem Kalender.</p>
+        <ul className="mt-7 space-y-1.5 text-[13px] text-slate-600">
+          {["Bewerbung geprüft und Vorabgespräch: am Tag der Bewerbung, auch am Sonntag", "Ihr Entscheid: am nächsten Arbeitstag – der Bericht ist fertig", "Termin: Die Person bucht selbst einen freien Platz in Ihrem Kalender"].map((x) => (
+            <li key={x} className="flex gap-2"><span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#E8692A]" />{x}</li>
+          ))}
+        </ul>
+        <p className="mt-auto pt-6 text-[12px] leading-relaxed text-slate-500">«Heute»: Durchschnitt in Deutschland (SmartRecruiters). Für die Schweiz gibt es keine öffentliche Zahl bis zum Vorstellungsgespräch.</p>
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
         {STUDIES.map((f) => (
           <div key={f.n} className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6">
-            <p className="text-[34px] font-semibold leading-none tracking-[-0.03em] text-ink">{f.n}</p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[32px] font-semibold leading-none tracking-[-0.03em] text-ink">{f.n}</p>
+              <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium", f.region === "Schweiz" ? "bg-[#FDECEC] text-[#B42318]" : "bg-slate-100 text-slate-500")}>{f.region === "Schweiz" && <SwissFlag />}{f.region}</span>
+            </div>
             <p className="mt-3 flex-1 text-[15px] leading-relaxed text-slate-600">{f.t}</p>
             <a href={f.href} target="_blank" rel="noopener noreferrer" className="mt-4 text-[12px] text-slate-400 underline-offset-2 hover:text-slate-600 hover:underline">Quelle: {f.src} ↗</a>
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function SwissFlag() {
+  return (
+    <svg viewBox="0 0 32 32" className="h-3 w-3 rounded-[2px]" aria-hidden>
+      <rect width="32" height="32" fill="#DA291C" />
+      <path d="M13 6h6v7h7v6h-7v7h-6v-7H6v-6h7z" fill="#fff" />
+    </svg>
   );
 }

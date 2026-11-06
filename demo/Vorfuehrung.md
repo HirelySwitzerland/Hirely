@@ -72,8 +72,8 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Satz: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
 - Weiter scrollen: **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind) und **Was Recruiter schätzen**.
 - **Rechner** (oben im Menü «Ersparnis»): Fragen Sie das Gegenüber nach Bewerbungen pro Monat und stellen Sie die Regler ein. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Jeder Schritt ist offen gerechnet – Sie können jede Annahme selbst anpassen.“ Wenn jemand widerspricht, auf **Annahmen anpassen** klicken und die Minuten gemeinsam ändern.
-- Im Rechner weiter unten **«Und die offenen Stellen?»**: Stellen pro Jahr und einen typischen Jahreslohn einstellen. Satz: „Eine offene Stelle kostet Sie rund CHF 580 pro Arbeitstag. Wenn Recruit24 nur fünf Tage schneller ist, sind das bei zwölf Stellen über CHF 34’000 im Jahr.“
-- Darunter **Bis zur Einladung** und die vier Studienzahlen: „Heute dauert es im Schnitt 20 Tage bis zum ersten Gespräch – und 57 % der Leute verlieren nach 10 Arbeitstagen das Interesse.“
+- Im Rechner weiter unten **«Und die offenen Stellen?»**: Stellen pro Jahr und einen typischen Jahreslohn einstellen. Satz: „Eine offene Stelle kostet Sie rund CHF 580 pro Arbeitstag. Heute liegen im Schnitt 20 Tage zwischen Bewerbung und Vorstellungsgespräch, mit Recruit24 rund 5. Bei zwölf Stellen sind das rund CHF 74’000 im Jahr – zusammen mit der gesparten HR-Zeit rund CHF 100’000.“ Wenn das Gegenüber zweifelt: die Regler «heute» und «mit Recruit24» gemeinsam auf die eigenen Werte stellen.
+- Darunter **Bis zur Einladung** und die Studienzahlen (Schweizer Zahlen sind markiert): „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert.“
 - Danach oben auf **Anmelden** und weiter mit Teil A.
 
 Am besten in Chrome oder Edge. Auf dem Handy und mit „Bewegung reduzieren“ zeigt die Website eine ruhigere Version.
