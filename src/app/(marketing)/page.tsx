@@ -11,7 +11,7 @@ import { SavingsCalculator, SpeedAndStudies } from "@/components/marketing/savin
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
-import { PLANS, chf } from "@/lib/billing";
+import { PLANS, chf, setupLabel } from "@/lib/billing";
 import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { cn } from "@/lib/utils";
@@ -297,10 +297,11 @@ export default function LandingPage() {
                 <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
                 <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
                 <p className="mt-6 flex flex-wrap items-baseline gap-x-1.5">
-                  <span className={cn("whitespace-nowrap text-[36px] font-semibold tracking-[-0.03em]", hot ? "text-white" : "text-ink")}>{p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Individuell"}</span>
+                  <span className={cn("whitespace-nowrap text-[36px] font-semibold tracking-[-0.03em]", hot ? "text-white" : "text-ink")}>{p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Auf Anfrage"}</span>
                   {p.monthlyCents && <span className={cn("text-[14px]", hot ? "text-white/60" : "text-slate-500")}>/ Monat</span>}
                 </p>
                 <p className={cn("mt-1 min-h-[20px] text-[13px]", hot ? "text-white/55" : "text-slate-500")}>{p.annualMonthlyCents ? `jährlich ${chf(p.annualMonthlyCents, { decimals: false })} / Monat` : "Auf Ihr Volumen zugeschnitten"}</p>
+                <p className={cn("min-h-[20px] text-[13px] font-medium", hot ? "text-white/75" : "text-slate-600")}>{setupLabel(p)}</p>
                 <Link
                   href={p.id === "ENTERPRISE" || SITE_ONLY ? "/demo" : "/register"}
                   className={cn("mt-6 inline-flex h-11 items-center justify-center rounded-xl text-[15px] font-semibold transition", hot ? "bg-white text-night hover:bg-brand-50" : "border border-slate-300 text-ink hover:border-slate-400 hover:bg-slate-50")}
@@ -309,8 +310,8 @@ export default function LandingPage() {
                 </Link>
                 <ul className={cn("mt-7 flex-1 space-y-2.5 border-t pt-6 text-[14px]", hot ? "border-white/10 text-white/80" : "border-slate-100 text-slate-600")}>
                   <li className={cn("font-medium", hot ? "text-white" : "text-ink")}>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
-                  <li>{p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten</li>
-                  <li>{p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews</li>
+                  <li>{p.monthlyCents ? `${p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten` : "KI-Telefonminuten nach Bedarf"}</li>
+                  <li>{p.monthlyCents ? `${p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews` : "Video-Interviews nach Bedarf"}</li>
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2.5"><Check className={cn("mt-0.5 h-4 w-4 shrink-0", hot ? "text-brand-300" : "text-brand-600")} />{f}</li>
                   ))}
@@ -319,7 +320,7 @@ export default function LandingPage() {
             );
           })}
         </div>
-        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · zusätzliche Stelle CHF 29 / Monat.</p>
+        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · zusätzliche Stelle CHF 29 / Monat.</p>
       </section>
       )}
 

@@ -1,7 +1,7 @@
 import { CheckCircle2, CreditCard } from "lucide-react";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
-import { chf, computeOverage, OVERAGE_CENTS, planById, PLANS } from "@/lib/billing";
+import { chf, computeOverage, OVERAGE_CENTS, planById, PLANS, setupLabel } from "@/lib/billing";
 import { usageThisPeriod } from "@/lib/services/usage";
 import { ActionButton, ActionForm, SubmitButton } from "@/components/forms";
 import { Alert, Badge, Card, CardHeader, Progress, Table, Td, Th } from "@/components/ui";
@@ -34,7 +34,7 @@ export default async function BillingPage() {
           <CardHeader title="Aktueller Plan" action={<Badge tone={sub.status === "ACTIVE" ? "green" : sub.status === "TRIALING" ? "brand" : "red"}>{({ ACTIVE: "aktiv", TRIALING: "Testphase", PAST_DUE: "überfällig", CANCELED: "gekündigt" } as Record<string, string>)[sub.status] ?? sub.status}</Badge>} />
           <div className="grid gap-5 p-5 sm:grid-cols-3">
             <div><p className="text-xs text-slate-500">Plan</p><p className="mt-1 text-xl font-semibold text-ink">{plan.name}</p><p className="text-xs text-slate-500">{sub.interval === "ANNUAL" ? "Jährliche Abrechnung" : "Monatliche Abrechnung"}</p></div>
-            <div><p className="text-xs text-slate-500">Grundpreis</p><p className="mt-1 text-xl font-semibold text-ink">{plan.monthlyCents ? chf(base, { decimals: false }) : "Individuell"}<span className="text-sm font-normal text-slate-500"> / Monat</span></p></div>
+            <div><p className="text-xs text-slate-500">Grundpreis</p><p className="mt-1 text-xl font-semibold text-ink">{plan.monthlyCents ? chf(base, { decimals: false }) : "Auf Anfrage"}<span className="text-sm font-normal text-slate-500"> / Monat</span></p></div>
             <div><p className="text-xs text-slate-500">Geschätzt für diese Periode</p><p className="mt-1 text-xl font-semibold text-ink">{chf(estimate)}</p><p className="text-xs text-slate-500">exkl. MwSt. · Periode endet {fmtDate(sub.currentPeriodEnd)}</p></div>
           </div>
           <div className="grid gap-4 border-t border-slate-100 p-5 sm:grid-cols-2">
@@ -62,11 +62,12 @@ export default async function BillingPage() {
             <div key={p.id} className={`flex flex-col rounded-xl border p-4 ${p.id === sub.plan ? "border-brand-500 ring-1 ring-brand-500" : "border-slate-200"}`}>
               <div className="flex items-center justify-between"><p className="font-semibold text-ink">{p.name}</p>{p.id === sub.plan && <Badge tone="brand">Aktuell</Badge>}</div>
               <p className="mt-1 text-xs text-slate-500">{p.tagline}</p>
-              <p className="mt-3 text-lg font-semibold text-ink">{p.monthlyCents ? `${chf(p.monthlyCents, { decimals: false })}/Monat` : "Individuell"}</p>
+              <p className="mt-3 text-lg font-semibold text-ink">{p.monthlyCents ? `${chf(p.monthlyCents, { decimals: false })}/Monat` : "Auf Anfrage"}</p>
               {p.annualMonthlyCents && <p className="text-xs text-slate-500">oder {chf(p.annualMonthlyCents, { decimals: false })}/Monat bei jährlicher Zahlung</p>}
+              <p className="text-xs text-slate-500">{setupLabel(p)}</p>
               <ul className="mt-3 flex-1 space-y-1 text-xs text-slate-600">
                 <li>{p.seats ?? "Unbegrenzt"} Benutzer · {p.positions ?? "unbegrenzt"} Stellen</li>
-                <li>{p.included.VOICE_MINUTES} KI-Telefonminuten · {p.included.VIDEO_INTERVIEWS} Video-Interviews</li>
+                <li>{p.monthlyCents ? `${p.included.VOICE_MINUTES} KI-Telefonminuten · ${p.included.VIDEO_INTERVIEWS} Video-Interviews` : "Telefonminuten und Video-Interviews nach Bedarf"}</li>
                 {p.features.slice(0, 3).map((f) => <li key={f} className="flex gap-1"><CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-brand-600" />{f}</li>)}
               </ul>
               {(p.id !== sub.plan || sub.status === "TRIALING") && (

@@ -11,6 +11,8 @@ export type Plan = {
   tagline: string;
   monthlyCents: number | null;
   annualMonthlyCents: number | null;
+  /** One-time setup: jobs, questions, calendar, templates and training. null = on request. */
+  setupCents: number | null;
   seats: number | null;
   positions: number | null;
   included: Record<string, number>;
@@ -24,6 +26,7 @@ export const PLANS: Plan[] = [
     tagline: "Für kleine Firmen, die gelegentlich einstellen.",
     monthlyCents: 29000,
     annualMonthlyCents: 24000,
+    setupCents: 150000,
     seats: 3,
     positions: 3,
     included: { VOICE_MINUTES: 100, VIDEO_INTERVIEWS: 20, SMS: 100, CV_ANALYSES: 300 },
@@ -35,6 +38,7 @@ export const PLANS: Plan[] = [
     tagline: "Für wachsende Firmen mit regelmässigen Einstellungen.",
     monthlyCents: 69000,
     annualMonthlyCents: 57500,
+    setupCents: 300000,
     seats: 10,
     positions: 10,
     included: { VOICE_MINUTES: 500, VIDEO_INTERVIEWS: 100, SMS: 500, CV_ANALYSES: 1500 },
@@ -46,6 +50,7 @@ export const PLANS: Plan[] = [
     tagline: "Für Firmen mit vielen Einstellungen.",
     monthlyCents: 149000,
     annualMonthlyCents: 124000,
+    setupCents: 450000,
     seats: 25,
     positions: 30,
     included: { VOICE_MINUTES: 2000, VIDEO_INTERVIEWS: 500, SMS: 2000, CV_ANALYSES: 6000 },
@@ -57,6 +62,7 @@ export const PLANS: Plan[] = [
     tagline: "Individuelle Abläufe, Integrationen und SLAs.",
     monthlyCents: null,
     annualMonthlyCents: null,
+    setupCents: null,
     seats: null,
     positions: null,
     included: { VOICE_MINUTES: 10000, VIDEO_INTERVIEWS: 2000, SMS: 10000, CV_ANALYSES: 30000 },
@@ -85,6 +91,11 @@ export const USAGE_METRICS: Record<string, { label: string; unit: string }> = {
 };
 
 export const VAT_RATE = 0.081; // Swiss VAT 8.1%
+
+/** «Einrichtung einmalig CHF 1’500» or «Einrichtung auf Anfrage». */
+export function setupLabel(p: Plan) {
+  return p.setupCents ? `Einrichtung einmalig ${chf(p.setupCents, { decimals: false })}` : "Einrichtung auf Anfrage";
+}
 
 export function planById(id: string): Plan {
   return PLANS.find((p) => p.id === id) ?? PLANS[1];
