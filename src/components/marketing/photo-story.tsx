@@ -7,6 +7,7 @@ import {
   ApplyScreen, BookingScreen, CalendarCard, CallScreen, CheckPanels, DashScreen, PhoneFrame, ProfileScreen,
   callTime, lerp, out, seg, useSize,
 } from "./film-shared";
+import { STORY } from "./story-texts";
 
 /* ───────────── the chapters ───────────── */
 
@@ -16,51 +17,39 @@ type Chapter = { id: string; image: string; alt: string; day: string; time: stri
 const CHAPTERS: Chapter[] = [
   {
     id: "problem", image: "/story/problem.webp", alt: "Eine HR-Leiterin abends im Büro zwischen Stapeln von Lebensläufen",
-    day: "Heute", time: "18:40", title: "Gute Leute warten nicht.",
-    text: "Lebensläufe lesen, zurückrufen, Termine schieben – Recruiting ist zu einem grossen Teil Routine. Bis sich HR meldet, hat die beste Kandidatin oft schon woanders zugesagt.",
     ui: "notes", focus: "50% 40%",
+    ...STORY.problem,
   },
   {
-    id: "apply", image: "/story/sofa.webp", alt: "Max sitzt am Sonntagabend auf dem Sofa und schaut auf sein Handy",
-    day: "Sonntag", time: "21:14", title: "Max bewirbt sich – vom Sofa aus.",
-    text: "Er sieht Ihre Stelle als Servicetechniker und bewirbt sich in zwei Minuten: ohne Konto, ohne App, mit Lebenslauf und zwei Ja/Nein-Fragen.",
-    points: ["Karriereseite oder Ihr bestehendes ATS", "Funktioniert auf jedem Handy"], ui: "apply", focus: "60% 45%",
+    id: "apply", image: "/story/sofa.webp", alt: "Max sitzt am Sonntagabend auf dem Sofa und schaut auf sein Handy", ui: "apply", focus: "60% 45%",
+    ...STORY.apply,
   },
   {
-    id: "check", image: "/story/core.webp", alt: "Ein leuchtender Glaswürfel, in den orange Datenströme fliessen",
-    day: "Sonntag", time: "21:15", title: "Recruit24 prüft den Lebenslauf.",
-    text: "Jede Anforderung der Stelle wird geprüft – mit Beleg aus dem Lebenslauf. Keine geheime Punktzahl: Sie sehen, was erfüllt ist und warum.",
-    points: ["Muss- und Kann-Kriterien", "Fakten getrennt von Vermutungen"], ui: "check", focus: "50% 50%",
+    id: "check", image: "/story/core.webp", alt: "Ein leuchtender Glaswürfel, in den orange Datenströme fliessen", ui: "check", focus: "50% 50%",
+    ...STORY.check,
   },
   {
-    id: "call", image: "/story/call.webp", alt: "Max telefoniert am Abend in seiner Küche",
-    day: "Sonntag", time: "21:16", title: "Das Vorabgespräch – sofort.",
-    text: "Eine Minute später lädt Recruit24 Max zum kurzen Gespräch ein. Er lässt sich gleich anrufen. Die KI stellt sich als KI vor und fragt nach Führerausweis, Motivation, Verfügbarkeit und Lohn.",
-    points: ["Am Telefon oder im Browser, rund um die Uhr", "Bei zu kurzen Antworten fragt sie nach"], ui: "call", focus: "45% 45%",
+    id: "call", image: "/story/call.webp", alt: "Max telefoniert am Abend in seiner Küche", ui: "call", focus: "45% 45%",
+    ...STORY.call,
   },
   {
     id: "dash", image: "/story/morning.webp", alt: "Sandra kommt am Montagmorgen mit Kaffee ins Büro",
-    day: "Montag", time: "08:02", title: "Sandra sieht sofort, wo sie dran ist.",
-    text: "Über Nacht ist alles erledigt: Lebenslauf geprüft, Gespräch geführt, Bericht geschrieben. In der Übersicht wartet nur noch ihr Entscheid.",
     ui: "dash", focus: "40% 45%",
+    ...STORY.dash,
   },
   {
     id: "profile", image: "/story/hero.webp", alt: "Sandra an ihrem Schreibtisch im Morgenlicht",
-    day: "Montag", time: "08:04", title: "Ein Klick: einladen.",
-    text: "Zusammenfassung, Antworten, Aufnahme und Lohnvorstellung auf einer Seite. Sandra lädt Max zum Gespräch ein – Absagen trifft immer ein Mensch, nie die KI.",
     ui: "profile", focus: "30% 50%",
+    ...STORY.profile,
   },
   {
-    id: "booking", image: "/story/lunch.webp", alt: "Max sitzt in der Mittagspause beim Servicewagen und tippt auf sein Handy",
-    day: "Montag", time: "12:15", title: "Der Termin bucht sich selbst.",
-    text: "In der Mittagspause wählt Max einen freien Termin aus Sandras Kalender. Kalendereintrag, Bestätigung und Erinnerung entstehen automatisch.",
-    points: ["Google Kalender und Microsoft 365", "Kein Hin und Her per E-Mail"], ui: "booking", focus: "55% 45%",
+    id: "booking", image: "/story/lunch.webp", alt: "Max sitzt in der Mittagspause beim Servicewagen und tippt auf sein Handy", ui: "booking", focus: "55% 45%",
+    ...STORY.booking,
   },
   {
     id: "meet", image: "/story/handshake.webp", alt: "Sandra und Max geben sich im Sitzungszimmer die Hand",
-    day: "Donnerstag", time: "09:00", title: "Kennenlernen tun Sie selbst.",
-    text: "Recruit24 hat die Routine erledigt. Das Gespräch, das zählt, führen Sie – gut vorbereitet und mit einer Kandidatin oder einem Kandidaten, der sich ernst genommen fühlt.",
     ui: "finale", focus: "50% 40%",
+    ...STORY.meet,
   },
 ];
 

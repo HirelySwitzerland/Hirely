@@ -6,6 +6,7 @@ import { ArrowDown, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StartButtons } from "./cta";
 import { ChapterUI, type UI } from "./photo-story";
+import { STORY } from "./story-texts";
 import { clamp, ease, lerp, out, seg, useFilmProgress, useSize } from "./film-shared";
 
 /*
@@ -33,54 +34,50 @@ const SHOTS: Shot[] = [
   {
     id: "problem", image: "/story/problem.webp", alt: "Eine HR-Leiterin abends im Büro zwischen Stapeln von Lebensläufen", len: 1.35,
     cam: [{ x: 0.6, y: 0.45, s: 1.04 }, { x: 0.4, y: 0.3, s: 1.14 }], exit: [0.22, 0.2],
-    day: "Heute", time: "18:40", title: "Gute Leute warten nicht.", ui: "notes",
-    text: "Lebensläufe lesen, zurückrufen, Termine schieben – Recruiting ist zu einem grossen Teil Routine. Bis sich HR meldet, hat die beste Kandidatin oft schon woanders zugesagt.",
+    ui: "notes",
+    ...STORY.problem,
   },
   {
     id: "apply", image: "/story/sofa.webp", alt: "Max sitzt am Sonntagabend auf dem Sofa und schaut auf sein Handy", len: 1.6,
     cam: [{ x: 0.55, y: 0.5, s: 1.04 }, { x: 0.62, y: 0.62, s: 1.16 }], exit: [0.64, 0.7],
-    day: "Sonntag", time: "21:14", title: "Max bewirbt sich – vom Sofa aus.", ui: "apply",
-    text: "Er sieht Ihre Stelle als Servicetechniker und bewirbt sich in zwei Minuten: ohne Konto, ohne App, mit Lebenslauf und zwei Ja/Nein-Fragen.",
-    points: ["Karriereseite, Stellenportale oder Ihr ATS", "Funktioniert auf jedem Handy"],
+    ui: "apply",
+    ...STORY.apply,
   },
   {
     id: "check", image: "/story/core.webp", alt: "Ein leuchtender Glaswürfel, in den orange Datenströme fliessen", len: 1.35,
     cam: [{ x: 0.5, y: 0.5, s: 1.06 }, { x: 0.5, y: 0.5, s: 1.16 }], exit: [0.5, 0.5],
-    day: "Sonntag", time: "21:15", title: "Recruit24 prüft den Lebenslauf.", ui: "check",
-    text: "Jede Anforderung der Stelle wird geprüft – mit Beleg aus dem Lebenslauf. Keine geheime Punktzahl: Sie sehen, was erfüllt ist und warum.",
-    points: ["Muss- und Kann-Kriterien", "Fakten getrennt von Vermutungen"],
+    ui: "check",
+    ...STORY.check,
   },
   {
     id: "call", image: "/story/call.webp", alt: "Max telefoniert am Abend in seiner Küche", len: 1.35,
     cam: [{ x: 0.5, y: 0.5, s: 1.04 }, { x: 0.55, y: 0.36, s: 1.14 }], exit: [0.53, 0.33],
-    day: "Sonntag", time: "21:16", title: "Das Vorabgespräch – sofort.", ui: "call",
-    text: "Eine Minute später lädt Recruit24 Max zum kurzen Gespräch ein. Er lässt sich gleich anrufen. Die KI stellt sich als KI vor und fragt nach Führerausweis, Motivation, Verfügbarkeit und Lohn.",
-    points: ["Am Telefon oder im Browser, rund um die Uhr", "Bei zu kurzen Antworten fragt sie nach"],
+    ui: "call",
+    ...STORY.call,
   },
   {
     id: "dash", image: "/story/morning.webp", alt: "Sandra kommt am Montagmorgen mit Kaffee ins Büro", len: 1.25,
     cam: [{ x: 0.45, y: 0.55, s: 1.04 }, { x: 0.6, y: 0.28, s: 1.14 }], exit: [0.6, 0.18],
-    day: "Montag", time: "08:02", title: "Sandra sieht sofort, wo sie dran ist.", ui: "dash",
-    text: "Über Nacht ist alles erledigt: Lebenslauf geprüft, Gespräch geführt, Bericht geschrieben. In der Übersicht wartet nur noch ihr Entscheid.",
+    ui: "dash",
+    ...STORY.dash,
   },
   {
     id: "profile", image: "/story/hero.webp", alt: "Sandra an ihrem Schreibtisch im Morgenlicht", len: 1.25,
     cam: [{ x: 0.4, y: 0.5, s: 1.04 }, { x: 0.55, y: 0.53, s: 1.14 }], exit: [0.55, 0.53],
-    day: "Montag", time: "08:04", title: "Ein Klick: einladen.", ui: "profile",
-    text: "Zusammenfassung, Antworten, Aufnahme und Lohnvorstellung auf einer Seite. Sandra lädt Max zum Gespräch ein – Absagen trifft immer ein Mensch, nie die KI.",
+    ui: "profile",
+    ...STORY.profile,
   },
   {
     id: "booking", image: "/story/lunch.webp", alt: "Max sitzt in der Mittagspause beim Servicewagen und tippt auf sein Handy", len: 1.35,
     cam: [{ x: 0.55, y: 0.5, s: 1.04 }, { x: 0.62, y: 0.56, s: 1.14 }], exit: [0.64, 0.58],
-    day: "Montag", time: "12:15", title: "Der Termin bucht sich selbst.", ui: "booking",
-    text: "In der Mittagspause wählt Max einen freien Termin aus Sandras Kalender. Kalendereintrag, Bestätigung und Erinnerung entstehen automatisch.",
-    points: ["Google Kalender und Microsoft 365", "Kein Hin und Her per E-Mail"],
+    ui: "booking",
+    ...STORY.booking,
   },
   {
     id: "meet", image: "/story/handshake.webp", alt: "Sandra und Max geben sich im Sitzungszimmer die Hand", len: 1.45,
     cam: [{ x: 0.45, y: 0.5, s: 1.04 }, { x: 0.55, y: 0.36, s: 1.14 }], exit: [0.55, 0.3],
-    day: "Donnerstag", time: "09:00", title: "Kennenlernen tun Sie selbst.", ui: "finale",
-    text: "Recruit24 hat die Routine erledigt. Das Gespräch, das zählt, führen Sie – gut vorbereitet und mit einer Kandidatin oder einem Kandidaten, der sich ernst genommen fühlt.",
+    ui: "finale",
+    ...STORY.meet,
   },
   {
     id: "outro", image: "/story/intro.webp", alt: "Die Altstadt von oben", len: 1.6,
@@ -239,7 +236,7 @@ function IntroOverlay({ t }: { t: number }) {
             Ihr KI-Mitarbeiter<br /><span className="text-[#FDB48C]">fürs Recruiting.</span>
           </h1>
           <p className="mt-6 max-w-[560px] text-[20px] leading-relaxed text-white/85">
-            Recruit24 prüft jede Bewerbung, führt das Vorabgespräch und vereinbart Termine – in Minuten, rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
+            Recruit24 liest jede Bewerbung komplett, führt das Vorabgespräch und plant den Termin – in Minuten, rund um die Uhr. Jede Aussage mit Fundstelle. <span className="text-white">Entscheiden tun Sie.</span>
           </p>
           <StartButtons className="mt-9 !justify-start" />
           <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/70 transition hover:text-white">
@@ -277,7 +274,7 @@ function Finale({ t }: { t: number }) {
     <div className="absolute inset-x-0 top-1/2 mx-auto max-w-3xl text-center" style={{ opacity: cta.o, transform: `translate3d(0, calc(-50% + ${lerp(50, 0, cta.inn)}px), ${lerp(-320, 0, cta.inn)}px)`, pointerEvents: cta.o > 0.5 ? "auto" : "none" }}>
       <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#FDB48C]">Recruit24 · Entwickelt in der Schweiz</p>
       <h2 className="mt-5 text-[56px] font-semibold leading-[1.02] tracking-[-0.035em] text-white xl:text-[72px]">Ihr Aufwand:<br /><span className="text-[#FDB48C]">ein Entscheid.</span></h2>
-      <p className="mx-auto mt-6 max-w-xl text-[19px] leading-relaxed text-white/85">Recruit24 prüft, fragt nach und plant – rund um die Uhr. Sie entscheiden, wen Sie kennenlernen.</p>
+      <p className="mx-auto mt-6 max-w-xl text-[19px] leading-relaxed text-white/85">Recruit24 liest, fragt nach und plant – rund um die Uhr. Sie entscheiden, wen Sie kennenlernen.</p>
       <StartButtons className="mt-9" />
     </div>
   );

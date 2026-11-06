@@ -25,6 +25,7 @@ export function ApplyForm({ jobId, locale, refSource, knockouts, privacyHref }: 
       <Field label={t("careers.phone")}><Input name="phone" type="tel" autoComplete="tel" placeholder="+41 79 …" /></Field>
       <Field label={t("careers.location")}><Input name="location" autoComplete="address-level2" placeholder="8400 Winterthur" /></Field>
       <Field label={t("careers.cv")}><Input name="cv" type="file" required accept=".pdf,.docx,.txt,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1 file:text-sm" /></Field>
+      <Field label={t("careers.documents")} hint={t("careers.documentsHint")}><Input name="documents" type="file" multiple accept=".pdf,.docx,.txt,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1 file:text-sm" /></Field>
       {knockouts.length > 0 && (
         <fieldset className="space-y-3 rounded-lg border border-slate-200 p-3">
           <legend className="px-1 text-[13px] font-medium text-slate-700">{t("careers.questions")}</legend>

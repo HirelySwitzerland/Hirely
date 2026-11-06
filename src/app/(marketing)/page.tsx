@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, Check, ChevronDown, CircleSlash, EyeOff, Globe2, Lock, Play, ScrollText, ShieldCheck, UserCheck, UserRound } from "lucide-react";
+import { ArrowRight, Building2, Check, ChevronDown, CircleSlash, EyeOff, FileSearch, Globe2, Play, ScrollText, ShieldCheck, UserCheck, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 import fs from "node:fs";
 import path from "node:path";
@@ -20,7 +20,7 @@ const STORY_READY = fs.existsSync(path.join(process.cwd(), "public", "story", "h
 
 export const metadata = {
   title: { absolute: "Recruit24 – Ihr KI-Mitarbeiter fürs Recruiting" },
-  description: "Der KI-Mitarbeiter fürs Recruiting – für HR-Abteilungen, Personalvermittler und Headhunter: Recruit24 prüft jede Bewerbung, führt das Vorabgespräch und vereinbart Termine, rund um die Uhr. Entscheiden tun immer Sie. Entwickelt in der Schweiz.",
+  description: "Der KI-Mitarbeiter fürs Recruiting – für HR-Abteilungen, Personalvermittler und Headhunter: Recruit24 liest jede Bewerbung komplett, führt das Vorabgespräch und plant den Termin, rund um die Uhr. Jede Aussage mit Fundstelle. Entwickelt in der Schweiz.",
 };
 
 const STEPS: StoryStep[] = [
@@ -55,7 +55,7 @@ const TRUST = [
   { i: ShieldCheck, t: "revDSG & DSGVO" },
   { i: UserCheck, t: "Der Mensch entscheidet" },
   { i: Globe2, t: "DE · FR · IT · EN" },
-  { i: Lock, t: "Verschlüsselt & protokolliert" },
+  { i: FileSearch, t: "Jede Aussage mit Fundstelle" },
 ];
 
 
@@ -67,6 +67,8 @@ const NEVER = [
 ];
 
 const FAQ = [
+  ["Was liest Recruit24 aus einer Bewerbung?", "Alles, was eingereicht wird: Lebenslauf, Anschreiben, Arbeitszeugnisse und Diplome, dazu die Antworten im Formular und das Vorabgespräch. Jede Aussage, die Recruit24 daraus ableitet, ist mit Dokument und Zeile verknüpft – ein Klick zeigt die markierte Stelle."],
+  ["Deutet Recruit24 die Zeugnissprache?", "Nein. Recruit24 übernimmt aus Zeugnissen nur Fakten mit Fundstelle – etwa Aufgaben, Abschlüsse oder den Führerausweis. Wie eine Formulierung gemeint ist, beurteilen Sie."],
   ["Entscheidet die KI, wen wir einstellen?", "Nein. Recruit24 prüft, fragt nach und fasst zusammen. Wer eingeladen, eingestellt oder abgesagt wird, entscheidet immer eine Person aus Ihrem Team – das ist technisch so eingebaut."],
   ["Wissen Bewerbende, dass sie mit einer KI sprechen?", "Ja, immer. Die KI stellt sich zu Beginn als KI vor, erklärt, dass am Schluss ein Mensch entscheidet, und fragt nach dem Einverständnis zur Aufnahme."],
   ["Wie steht es um den Datenschutz?", "Recruit24 ist auf das Schweizer Datenschutzgesetz (revDSG) und die DSGVO ausgelegt: Einwilligungen, Aufbewahrungsfristen, Export und Löschung auf Anfrage, lückenloses Protokoll. Daten werden verschlüsselt gespeichert und übertragen; im Business-Plan liegen sie ausschliesslich in der Schweiz."],
@@ -100,7 +102,7 @@ export default function LandingPage() {
               Ihr KI-Mitarbeiter<br /><span className="text-[#FDB48C]">fürs Recruiting.</span>
             </h1>
             <p className="mt-6 text-[18px] leading-relaxed text-white/80 sm:text-[20px]">
-              Recruit24 prüft jede Bewerbung, führt das Vorabgespräch und vereinbart Termine – in Minuten, rund um die Uhr. <span className="text-white">Entscheiden tun immer Sie.</span>
+              Recruit24 liest jede Bewerbung komplett, führt das Vorabgespräch und plant den Termin – in Minuten, rund um die Uhr. Jede Aussage mit Fundstelle. <span className="text-white">Entscheiden tun Sie.</span>
             </p>
             <StartButtons className="mt-9 !items-start sm:!justify-start" />
             <a href="#hoerprobe" className="mt-6 inline-flex items-center gap-2 text-[14px] text-white/65 transition hover:text-white">
@@ -207,9 +209,9 @@ export default function LandingPage() {
           <div className="sd-rise grid gap-6 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
               <Eyebrow dark>Was Recruiter schätzen</Eyebrow>
-              <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[48px]">Die Routine erledigt. Die besten Leute bleiben.</h2>
+              <h2 className="mt-4 text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[48px]">Was Recruit24 Ihrem Team abnimmt.</h2>
             </div>
-            <p className="text-[18px] leading-relaxed text-white/65 lg:col-span-5">Eine Software statt fünf Werkzeuge – vom Inserat bis zum gebuchten Gespräch, und Ihr Team sieht jederzeit, was passiert.</p>
+            <p className="text-[18px] leading-relaxed text-white/65 lg:col-span-5">Vom Eingang der Bewerbung bis zum gebuchten Gespräch – nachvollziehbar bis zur einzelnen Zeile im Arbeitszeugnis.</p>
           </div>
           <div className="mt-14"><BenefitGrid /></div>
         </div>

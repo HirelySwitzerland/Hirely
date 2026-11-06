@@ -52,6 +52,77 @@ export function buildCv(p: Persona, email = emailFor(p)): string {
     .join("\n");
 }
 
+const skillList = (p: Persona) => p.skills.split(",").map((x) => x.trim()).filter(Boolean);
+const langNames = (p: Persona) => p.languages.split(",").map((x) => x.replace(/\(.*\)/, "").trim()).filter(Boolean);
+
+/** Demo: a Swiss reference letter (Arbeitszeugnis, or interim reference while still employed) from the latest employer. */
+export function buildReference(p: Persona): string | null {
+  const e = p.experience[0];
+  if (!e) return null;
+  const name = `${p.first} ${p.last}`;
+  const skills = skillList(p).slice(0, 3);
+  const langs = langNames(p);
+  const current = /heute|present/i.test(e.to);
+  if (p.lang === "en") {
+    return [
+      e.company, e.city, "", current ? "INTERIM REFERENCE" : "REFERENCE", "",
+      current ? `${name} has been working for ${e.company} as ${e.title} since ${e.from}.` : `${name} worked for ${e.company} as ${e.title} from ${e.from} to ${e.to}.`,
+      "", "Main responsibilities:", ...e.bullets.map((b) => `- ${b}`), "",
+      skills.length ? `${p.first} has in-depth knowledge of ${skills.join(", ")} and applies it confidently.` : "",
+      langs.length > 1 ? `${p.first} communicates with clients and colleagues in ${langs.join(" and ")}.` : "",
+      p.certs?.length ? `During this time, ${p.first} obtained the ${p.certs[0]}.` : "",
+      "", `We have always been very satisfied with ${p.first}'s performance and conduct.`,
+      current ? "This interim reference is issued at the employee's request." : `${p.first} is leaving at their own request. We thank them for their valuable work and wish them every success.`,
+      "", `${e.city}`, `${e.company}, Human Resources`,
+    ].filter((l) => l !== "").join("\n").replace(/\n(Main responsibilities:)/, "\n\n$1");
+  }
+  return [
+    e.company, e.city, "", current ? "ZWISCHENZEUGNIS" : "ARBEITSZEUGNIS", "",
+    current ? `${name} ist seit ${e.from} als ${e.title} bei der ${e.company} tätig.` : `${name} war von ${e.from} bis ${e.to} als ${e.title} bei der ${e.company} tätig.`,
+    "",
+    "Zu den Hauptaufgaben gehören:",
+    ...e.bullets.map((b) => `- ${b}`),
+    "",
+    skills.length ? `${name} verfügt über fundierte Fachkenntnisse in ${skills.join(", ")} und setzt diese sicher und selbständig ein.` : "",
+    langs.length > 1 ? `Mit Kundinnen, Kunden und im Team kommuniziert ${p.first} sicher auf ${langs.join(" und ")}.` : "",
+    p.certs?.length ? `Während der Anstellung wurde zudem folgender Abschluss erworben: ${p.certs[0]}.` : "",
+    p.license ? `Für die Einsätze stand der Führerausweis ${p.license} zur Verfügung.` : "",
+    "",
+    `Mit den Leistungen und dem Verhalten von ${name} waren wir stets sehr zufrieden.`,
+    current ? "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt." : `${name} verlässt uns auf eigenen Wunsch. Wir danken für die wertvolle Mitarbeit und wünschen für die Zukunft alles Gute.`,
+    "",
+    e.city,
+    `${e.company}, Personalabteilung`,
+  ].filter((l, i, a) => l !== "" || (a[i - 1] !== "" && i > 0)).join("\n");
+}
+
+/** Demo: a short cover letter as typed into the application form. */
+export function buildCoverLetter(p: Persona, jobTitle: string): string {
+  const e = p.experience[0];
+  const skills = skillList(p).slice(0, 2);
+  if (p.lang === "en") {
+    return [
+      "Dear Sir or Madam",
+      "",
+      `I am applying for the position of ${jobTitle}.${e ? ` Since ${e.from} I have been working as ${e.title} at ${e.company}.` : ""}`,
+      skills.length ? `I am particularly experienced in ${skills.join(" and ")}.` : "",
+      "I look forward to hearing from you.",
+      "",
+      `Kind regards, ${p.first} ${p.last}`,
+    ].filter((l, i) => l !== "" || i === 1 || i === 5).join("\n");
+  }
+  return [
+    "Sehr geehrte Damen und Herren",
+    "",
+    `Mit grossem Interesse bewerbe ich mich als ${jobTitle}.${e ? ` Seit ${e.from} arbeite ich als ${e.title} bei der ${e.company}.` : ""}`,
+    skills.length ? `Besonders gut kenne ich mich mit ${skills.join(" und ")} aus.` : "",
+    p.license ? `Den Führerausweis ${p.license} besitze ich.` : "",
+    "Ich freue mich auf ein Gespräch.",
+    "",
+    `Freundliche Grüsse, ${p.first} ${p.last}`,
+  ].filter((l, i) => l !== "" || i === 1 || i === 6).join("\n");
+}
+
 /** Extra personas used by ATS demo sync to simulate newly arriving applications. */
 const POOL: Persona[] = [
   {

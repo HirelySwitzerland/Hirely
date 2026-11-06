@@ -2,6 +2,7 @@ import zlib from "node:zlib";
 import { db } from "@/lib/db";
 import { sha256 } from "@/lib/crypto";
 import { ALLOWED_UPLOADS, getStorage, sniffMime } from "@/lib/providers/storage";
+import { guessDocKind } from "./document-kinds";
 
 export const MAX_CV_BYTES = 10 * 1024 * 1024;
 
@@ -43,14 +44,18 @@ export async function extractText(buf: Buffer, mime: string): Promise<string> {
   if (mime === "application/pdf") {
     const { extractText: pdfText, getDocumentProxy } = await import("unpdf");
     const pdf = await getDocumentProxy(new Uint8Array(buf));
-    const { text } = await pdfText(pdf, { mergePages: true });
-    return Array.isArray(text) ? text.join("\n") : text;
+    // pages separated by a form feed on its own line, so evidence can name the page
+    const { text } = await pdfText(pdf, { mergePages: false });
+    return Array.isArray(text) ? text.join("\n\f\n") : text;
   }
   if (mime.includes("wordprocessingml")) return docxToText(buf);
   return "";
 }
 
-/** Validates (size + magic bytes), encrypts, stores and extracts text from a candidate document. */
+/**
+ * Validates (size + magic bytes), encrypts, stores and extracts text from a candidate document.
+ * kind "AUTO" recognises cover letters, references and diplomas from the file name and first lines.
+ */
 export async function storeCandidateDocument(orgId: string, candidateId: string, file: { buffer: Buffer; filename: string; mime: string }, kind = "CV") {
   if (file.buffer.length === 0) throw new UploadError("Die hochgeladene Datei ist leer.");
   if (file.buffer.length > MAX_CV_BYTES) throw new UploadError("Die Datei ist zu gross (max. 10 MB).");
@@ -62,6 +67,10 @@ export async function storeCandidateDocument(orgId: string, candidateId: string,
     text = (await extractText(file.buffer, mime)).replace(/\u0000/g, "").slice(0, 100_000);
   } catch (e) {
     console.error("[documents] text extraction failed", e);
+  }
+  if (kind === "AUTO") {
+    const guess = guessDocKind(file.filename, text);
+    kind = guess === "CV" ? "DOCUMENT" : guess; // the CV comes through its own field
   }
   const key = await getStorage().put(orgId, `candidates/${candidateId}`, file.buffer, ALLOWED_UPLOADS[mime]);
   return db.document.create({

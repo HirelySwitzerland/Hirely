@@ -96,6 +96,10 @@ export async function submitApplication(_: ActionState, fd: FormData): Promise<A
       sourceDetail: str(fd, "ref").replace(/[^\w.\- ]/g, "").slice(0, 40) || "Karriereseite",
       candidate: d,
       cv: { buffer: Buffer.from(await file.arrayBuffer()), filename: file.name, mime: file.type || "application/octet-stream" },
+      documents: await Promise.all(
+        fd.getAll("documents").filter((f): f is File => f instanceof File && f.size > 0).slice(0, 6)
+          .map(async (f) => ({ buffer: Buffer.from(await f.arrayBuffer()), filename: f.name, mime: f.type || "application/octet-stream" })),
+      ),
       coverLetter: str(fd, "coverLetter").slice(0, 4000) || undefined,
       screeningAnswers: answers,
       consents: { processing: true, talentPool: fd.get("consentPool") === "on" },

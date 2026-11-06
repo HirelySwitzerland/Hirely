@@ -331,58 +331,106 @@ const CV_LINES: { text?: string; req?: number; head?: boolean; bar?: number }[] 
   { text: "Führerausweis Kat. B", req: 0 },
   { text: "SPS-Grundkenntnisse (Siemens S7)", req: 5 },
 ];
-const REQS = [["Führerausweis Kat. B", "Muss"], ["Deutsch B2", "Muss"], ["2 Jahre Service", "Muss"], ["Ausbildung EFZ", "Muss"], ["Englisch B1", "Kann"], ["SPS-Kenntnisse", "Kann"]];
+const REF_LINES: { text?: string; req?: number; head?: boolean; bar?: number }[] = [
+  { head: true, text: "Zwischenzeugnis" },
+  { text: "Max Muster ist seit 2019 als Servicetechniker bei der Kardex AG tätig." },
+  { bar: 78 },
+  { head: true, text: "Hauptaufgaben" },
+  { text: "Wartung und Inbetriebnahme von Förderanlagen" },
+  { text: "Schulung von Kundinnen und Kunden in der Bedienung", req: 6 },
+  { bar: 66 }, { bar: 72 },
+  { text: "Mit seinen Leistungen waren wir stets sehr zufrieden." },
+];
+const REQS = [["Führerausweis Kat. B", "Muss"], ["Deutsch B2", "Muss"], ["2 Jahre Service", "Muss"], ["Ausbildung EFZ", "Muss"], ["Englisch B1", "Kann"], ["SPS-Kenntnisse", "Kann"], ["Kundenschulungen", "Kann"]];
 
-/** The CV being scanned and the requirements ticking off. `layout` "row" for wide, "col" for tall. */
+function DocLines({ lines, beam, tall }: { lines: typeof CV_LINES; beam: number; tall: boolean }) {
+  const at = (i: number) => (i + 0.5) / lines.length;
+  return (
+    <div className={cn("mt-4", tall ? "space-y-[9px]" : "space-y-[13px]")}>
+      {lines.map((l, i) => {
+        const hit = l.req !== undefined && beam > at(i);
+        if (l.bar) return <div key={i} className="h-[9px] rounded-full bg-slate-100" style={{ width: `${l.bar}%` }} />;
+        return (
+          <p key={i} className={cn(l.head ? "pt-1 text-[12px] font-semibold uppercase tracking-wider text-slate-400" : "text-[15px] text-slate-700")}>
+            <span className={cn("rounded px-1 transition-colors duration-300", hit && "bg-brand-100 text-brand-900 ring-1 ring-brand-300")}>{l.text}</span>
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+function Beam({ at }: { at: number }) {
+  if (at <= 0 || at >= 1) return null;
+  return (
+    <div className="pointer-events-none absolute inset-x-0 h-24" style={{ top: `${at * 100}%`, transform: "translateY(-50%)", background: "linear-gradient(to bottom, transparent, rgba(249,122,58,0.18), transparent)" }}>
+      <div className="absolute inset-x-0 top-1/2 h-[2px] bg-brand-500 shadow-[0_0_20px_4px_rgba(249,122,58,0.7)]" />
+    </div>
+  );
+}
+
+/** The whole application being read – CV first, then the reference – and the requirements ticking off with their source. */
 export function CheckPanels({ t, tall }: { t: number; tall: boolean }) {
-  const beam = seg(t, 0.06, 0.78);
-  const lineAt = (i: number) => (i + 0.5) / CV_LINES.length;
-  const found = (req: number) => beam > lineAt(CV_LINES.findIndex((l) => l.req === req));
-  const count = REQS.filter((_, i) => found(i)).length;
-  const done = t > 0.82;
+  const beamCv = seg(t, 0.05, 0.52);
+  const refIn = seg(t, 0.52, 0.6);
+  const beamRef = seg(t, 0.6, 0.8);
+  const cvAt = (i: number) => (i + 0.5) / CV_LINES.length;
+  const refAt = (i: number) => (i + 0.5) / REF_LINES.length;
+  const where = (req: number) => {
+    const c = CV_LINES.findIndex((l) => l.req === req);
+    if (c >= 0) return { found: beamCv > cvAt(c), place: `Lebenslauf · Z. ${c + 1}` };
+    const r = REF_LINES.findIndex((l) => l.req === req);
+    return { found: beamRef > refAt(r), place: `Zeugnis · Z. ${r + 1}` };
+  };
+  const count = REQS.filter((_, i) => where(i).found).length;
+  const done = t > 0.84;
+  const card = cn("relative overflow-hidden rounded-2xl bg-white p-8 text-ink shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)]", tall ? "h-[560px] w-full" : "h-[640px] w-[560px]");
   return (
     <div className={cn("flex h-full gap-6", tall ? "flex-col" : "flex-row items-center")}>
-      <div className={cn("relative overflow-hidden rounded-2xl bg-white p-8 text-ink shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)]", tall ? "h-[560px] w-full" : "h-[640px] w-[560px]")}>
-        <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-[18px] font-semibold text-brand-700">MM</span>
-          <div><p className="text-[22px] font-semibold">Max Muster</p><p className="text-[14px] text-slate-500">Servicetechniker · 8400 Winterthur</p></div>
+      <div className="relative">
+        <div className="absolute -top-9 left-0 flex gap-1.5 text-[13px] font-medium">
+          {["Lebenslauf", "Arbeitszeugnis", "Anschreiben"].map((x, i) => (
+            <span key={x} className={cn("rounded-t-lg px-3 py-1.5", (i === 0 && refIn < 0.5) || (i === 1 && refIn >= 0.5) ? "bg-white text-ink" : "bg-white/15 text-white/70")}>{x}</span>
+          ))}
         </div>
-        <div className={cn("mt-4", tall ? "space-y-[9px]" : "space-y-[13px]")}>
-          {CV_LINES.map((l, i) => {
-            const hit = l.req !== undefined && beam > lineAt(i);
-            if (l.bar) return <div key={i} className="h-[9px] rounded-full bg-slate-100" style={{ width: `${l.bar}%` }} />;
-            return (
-              <p key={i} className={cn(l.head ? "pt-1 text-[12px] font-semibold uppercase tracking-wider text-slate-400" : "text-[15px] text-slate-700")}>
-                <span className={cn("rounded px-1 transition-colors duration-300", hit && "bg-brand-100 text-brand-900")}>{l.text}</span>
-              </p>
-            );
-          })}
-        </div>
-        {beam > 0 && beam < 1 && (
-          <div className="pointer-events-none absolute inset-x-0 h-24" style={{ top: `${beam * 100}%`, transform: "translateY(-50%)", background: "linear-gradient(to bottom, transparent, rgba(249,122,58,0.18), transparent)" }}>
-            <div className="absolute inset-x-0 top-1/2 h-[2px] bg-brand-500 shadow-[0_0_20px_4px_rgba(249,122,58,0.7)]" />
+        <div className={card}>
+          <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-[18px] font-semibold text-brand-700">MM</span>
+            <div><p className="text-[22px] font-semibold">Max Muster</p><p className="text-[14px] text-slate-500">Servicetechniker · 8400 Winterthur</p></div>
           </div>
-        )}
+          <DocLines lines={CV_LINES} beam={beamCv} tall={tall} />
+          <Beam at={beamCv} />
+          {refIn > 0 && (
+            <div className="absolute inset-0 bg-white p-8" style={{ opacity: refIn, transform: `translateX(${lerp(40, 0, out(refIn))}px)` }}>
+              <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+                <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-[13px] font-semibold text-slate-600">PDF</span>
+                <div><p className="text-[22px] font-semibold">Arbeitszeugnis</p><p className="text-[14px] text-slate-500">Kardex AG, Dürnten</p></div>
+              </div>
+              <DocLines lines={REF_LINES} beam={beamRef} tall={tall} />
+              <Beam at={beamRef} />
+            </div>
+          )}
+        </div>
       </div>
       <div className={cn("rounded-2xl border border-white/10 bg-[#1A1E2C]/90 p-7 text-white backdrop-blur", tall ? "w-full" : "w-[520px]")}>
         <div className="flex items-center justify-between">
           <p className="text-[18px] font-semibold">Anforderungen · Servicetechniker/in</p>
-          <span className="font-mono text-[15px] tabular-nums text-brand-200">{count}/6</span>
+          <span className="font-mono text-[15px] tabular-nums text-brand-200">{count}/{REQS.length}</span>
         </div>
-        <ul className="mt-5 space-y-3">
+        <ul className="mt-5 space-y-2.5">
           {REQS.map(([r, kind], i) => {
-            const ok = found(i);
+            const { found: ok, place } = where(i);
             return (
-              <li key={r} className={cn("flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-300", ok ? "bg-emerald-400/10" : "bg-white/[0.03]")}>
+              <li key={r} className={cn("flex items-center gap-3 rounded-xl px-4 py-2.5 transition-colors duration-300", ok ? "bg-emerald-400/10" : "bg-white/[0.03]")}>
                 <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300", ok ? "scale-100 bg-emerald-400 text-night" : "scale-90 border border-white/20")}>{ok && <Check className="h-4 w-4" strokeWidth={3} />}</span>
                 <span className="flex-1 text-[16px]">{r}</span>
-                <span className={cn("text-[12px] font-medium uppercase tracking-wider", kind === "Muss" ? "text-white/60" : "text-white/35")}>{kind}</span>
+                {ok ? <span className="font-mono text-[12px] text-brand-200">{place}</span> : <span className={cn("text-[12px] font-medium uppercase tracking-wider", kind === "Muss" ? "text-white/60" : "text-white/35")}>{kind}</span>}
               </li>
             );
           })}
         </ul>
-        <div className="mt-6 flex items-center gap-3 rounded-xl bg-brand-600 px-4 py-3.5 text-[15px] font-semibold" style={{ opacity: done ? seg(t, 0.82, 0.88) : 0 }}>
-          <Check className="h-5 w-5" />6 von 6 erfüllt · Einladung zum Vorabgespräch
+        <div className="mt-5 flex items-center gap-3 rounded-xl bg-brand-600 px-4 py-3.5 text-[15px] font-semibold" style={{ opacity: done ? seg(t, 0.84, 0.9) : 0 }}>
+          <Check className="h-5 w-5" />7 von 7 belegt · Einladung zum Vorabgespräch
         </div>
       </div>
     </div>

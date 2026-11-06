@@ -6,7 +6,7 @@ import { addDays, addMinutes, setHours, setMinutes, subDays } from "date-fns";
 import { db } from "@/lib/db";
 import { encrypt, randomToken } from "@/lib/crypto";
 import { hashPassword } from "@/lib/auth/password";
-import { buildCv, emailFor } from "@/lib/demo/personas";
+import { buildCoverLetter, buildCv, buildReference, emailFor } from "@/lib/demo/personas";
 import { storeCandidateDocument } from "@/lib/services/documents";
 import { analyzeApplication, reevaluate } from "@/lib/services/screening";
 import { defaultFlow, startFlow, answerFlow, type FlowNode } from "@/lib/services/interview-flow";
@@ -271,9 +271,14 @@ export async function seedDemo() {
     });
     await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(buildCv(p, email), "utf8"), filename: `CV_${p.first}_${p.last}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" });
     const job = JOBS.find((j) => j.key === cs.job)!;
+    // most people send more than a CV: a reference letter from their latest employer and a few lines in the form
+    const fullApplication = p.last.length % 3 !== 0 || p.last === "Egli";
+    const reference = fullApplication ? buildReference(p) : null;
+    if (reference) await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(reference, "utf8"), filename: `${/heute|present/i.test(p.experience[0].to) ? "Zwischenzeugnis" : "Arbeitszeugnis"}_${p.experience[0].company}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" }, "REFERENCE");
     const app = await db.application.create({
       data: {
         orgId: O, candidateId: cand.id, jobId: jobIds[cs.job], source: cs.source, sourceDetail: cs.sourceDetail, appliedAt, stageChangedAt: appliedAt, createdAt: appliedAt,
+        coverLetter: fullApplication ? buildCoverLetter(p, job.title) : null,
         assignedToId: job.hiringManager ? daniel.id : laura.id, screeningStatus: "PENDING",
         stageHistory: { create: { orgId: O, toStage: "NEW", actorType: cs.source === "ATS" ? "INTEGRATION" : "CANDIDATE", reason: `Bewerbung eingegangen über ${cs.sourceDetail}`, createdAt: appliedAt } },
       },

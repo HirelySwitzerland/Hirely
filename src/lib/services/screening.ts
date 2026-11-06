@@ -3,15 +3,17 @@ import { audit } from "@/lib/audit";
 import { detectInjection, quoteIsGrounded, wrapUntrusted } from "@/lib/ai-safety";
 import { generate, getLLM, parseJsonLoose } from "@/lib/providers/llm";
 import { parseCvHeuristic, type ParsedCv } from "./cv-heuristics";
-import { aggregate, evaluateRequirement, type AnswerInput } from "./evaluation";
+import { aggregate, evaluateRequirement, type AnswerInput, type SourceDoc } from "./evaluation";
+import { DOC_KIND_LABEL, FORM_LETTER_ID } from "./document-kinds";
 import { interpretYesNo, type FlowState } from "./interview-flow";
 import { notify } from "./notifications";
 import { recordUsage } from "./usage";
 import { fireTrigger } from "./automation";
 
 /**
- * CV analysis: parse → structured profile (confirmed vs inferred) → evaluate
- * every configured requirement with evidence → factual summary.
+ * Application analysis: parse the CV → structured profile (confirmed vs inferred) → evaluate every
+ * configured requirement against the whole application (CV, cover letter, references, diplomas,
+ * form answers, interview) with marked evidence → factual summary.
  */
 export async function analyzeApplication(applicationId: string, opts: { force?: boolean } = {}) {
   const app = await db.application.findUnique({
@@ -57,6 +59,13 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
     parsed.warnings = warnings;
   }
 
+  // the further documents are only ever read as data – flag attempts to instruct the AI
+  for (const d of app.candidate.documents) {
+    if (d.kind === "CV" || !d.extractedText) continue;
+    const inj = detectInjection(d.extractedText);
+    if (inj.length) warnings.push(`Möglicher Manipulationsversuch in «${d.filename}» gefunden („${inj[0]}“). Der Text wird nur als Daten behandelt.`);
+  }
+
   await db.cvAnalysis.create({
     data: { orgId: app.orgId, applicationId: app.id, status: cvText ? "COMPLETED" : "FAILED", provider, data: (parsed ?? { warnings }) as object, error: cvText ? null : warnings[0] },
   });
@@ -98,15 +107,27 @@ export async function reevaluate(applicationId: string) {
   const app = await db.application.findUniqueOrThrow({
     where: { id: applicationId },
     include: {
-      candidate: { include: { documents: { where: { kind: "CV" }, orderBy: { createdAt: "desc" }, take: 1 } } },
+      candidate: { include: { documents: { orderBy: { createdAt: "desc" } } } },
       job: { include: { requirements: { orderBy: { order: "asc" } }, questions: true } },
       screeningAnswers: true,
       interviews: { where: { status: "COMPLETED" }, include: { videoResponses: true } },
       evaluations: true,
     },
   });
-  const cvText = app.candidate.documents[0]?.extractedText ?? "";
+  const cvDoc = app.candidate.documents.find((d) => d.kind === "CV");
+  const cvText = cvDoc?.extractedText ?? "";
   const cv = cvText ? parseCvHeuristic(cvText) : null;
+  // the rest of the application: the cover letter from the form and every further document
+  const docs: SourceDoc[] = [];
+  if (app.coverLetter?.trim()) docs.push({ id: FORM_LETTER_ID, kind: "COVER_LETTER", label: "Anschreiben (Formular)", text: app.coverLetter });
+  for (const d of app.candidate.documents) {
+    if (d.kind === "CV" || !d.extractedText?.trim()) continue;
+    const kind = (["COVER_LETTER", "REFERENCE", "CERTIFICATE"].includes(d.kind) ? d.kind : "DOCUMENT") as SourceDoc["kind"];
+    docs.push({ id: d.id, kind, label: `${DOC_KIND_LABEL[kind]} · ${d.filename}`, text: d.extractedText });
+  }
+  // third-party documents (references, diplomas) count first, then what the person wrote about themselves
+  const weight: Record<string, number> = { REFERENCE: 0, CERTIFICATE: 1, DOCUMENT: 2, COVER_LETTER: 3 };
+  docs.sort((a, b) => weight[a.kind] - weight[b.kind]);
   const qById = new Map(app.job.questions.map((q) => [q.id, q]));
   const answers: AnswerInput[] = [];
   let knockoutFailed = false;
@@ -136,7 +157,7 @@ export async function reevaluate(applicationId: string) {
       results.push({ kind: req.kind, label: req.label, status: existing.status });
       continue;
     }
-    const r = evaluateRequirement({ id: req.id, kind: req.kind, category: req.category, label: req.label, keywords: req.keywords, minYears: req.minYears, minLevel: req.minLevel }, { cv, cvText, answers });
+    const r = evaluateRequirement({ id: req.id, kind: req.kind, category: req.category, label: req.label, keywords: req.keywords, minYears: req.minYears, minLevel: req.minLevel }, { cv, cvText, answers, cvDocId: cvDoc?.id, docs });
     results.push({ kind: req.kind, label: req.label, status: r.status });
     if (r.status === "CONFIRMED") highlights.push(req.label);
     await db.requirementEvaluation.upsert({

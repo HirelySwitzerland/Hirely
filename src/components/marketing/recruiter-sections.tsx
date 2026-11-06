@@ -14,20 +14,20 @@ const AUDIENCES = [
     title: "Weniger Routine. Schneller besetzt.",
     lead: "Für Firmen, die selbst rekrutieren: Recruit24 erledigt die Vorarbeit, Ihr Team entscheidet.",
     points: [
-      ["Jede Bewerbung wird geprüft", "Mit Beleg pro Anforderung – auch bei 300 Bewerbungen auf eine Stelle."],
-      ["Kein Telefon-Ping-Pong mehr", "Das Vorabgespräch läuft automatisch, auch abends und am Wochenende."],
-      ["Termine buchen sich selbst", "Kandidierende wählen einen freien Termin aus Ihrem Kalender."],
-      ["Gute Leute springen nicht ab", "Rückmeldung in Minuten statt nach Tagen – ein Eindruck, der bleibt."],
+      ["Jede Bewerbung komplett gelesen", "Lebenslauf, Anschreiben, Zeugnisse und Diplome – auch bei 300 Bewerbungen auf eine Stelle."],
+      ["Jede Aussage mit Fundstelle", "Ein Klick zeigt die markierte Stelle im Dokument. Keine Blackbox, keine geheime Punktzahl."],
+      ["Kein Telefon-Ping-Pong", "Das Vorabgespräch läuft automatisch – auch abends und am Wochenende."],
+      ["Termine buchen sich selbst", "Kandidierende wählen einen freien Termin aus Ihrem Kalender. Gute Leute springen nicht mehr ab."],
     ],
     chips: ["Arbeitet mit Ihrem ATS", "Rollen für HR, Linie und Geschäftsleitung", "revDSG & DSGVO"],
   },
   {
     id: "agency", icon: Users, tab: "Personalvermittler & Headhunter",
-    title: "Mehr Mandate mit dem gleichen Team.",
-    lead: "Für Vermittler, Temporärbüros und Headhunter: Recruit24 übernimmt die Erstqualifikation, Ihre Beraterinnen und Berater die Beziehungen.",
+    title: "Mehr Mandate mit demselben Team.",
+    lead: "Für Personalvermittler, Temporärbüros und Headhunter: Recruit24 übernimmt die Erstqualifikation – Ihre Beraterinnen und Berater die Beziehungen.",
     points: [
-      ["Erstqualifikation auf Autopilot", "Lebenslauf prüfen, Vorabgespräch führen, Verfügbarkeit, Kündigungsfrist und Lohn erfassen – rund um die Uhr."],
-      ["Schneller zur Shortlist", "Kandidierende nebeneinander vergleichen, jede Aussage mit Beleg – bereit für das Gespräch mit Ihrem Kunden."],
+      ["Erstqualifikation auf Autopilot", "Unterlagen prüfen, Vorabgespräch führen, Verfügbarkeit, Kündigungsfrist und Lohn erfassen – rund um die Uhr."],
+      ["Belegt statt behauptet", "Jede Aussage über eine Person verweist auf die Stelle in Lebenslauf, Zeugnis oder Gespräch – stark im Gespräch mit Ihrem Kunden."],
       ["Ihre Datenbank wird lebendig", "Den Talent-Pool in normaler Sprache durchsuchen – «Elektroingenieure in der Ostschweiz» – und Treffer mit einem Klick einer Stelle zuordnen."],
       ["Pro Kunde ein eigener Bereich", "Getrennte Daten, eigene Stellen und Interviewfragen pro Mandat – ein Login, schneller Wechsel."],
     ],
@@ -90,10 +90,10 @@ const Row = ({ children, className }: { children: ReactNode; className?: string 
 export function BenefitGrid() {
   return (
     <div className="sd-stagger grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-      <Tile i={0} className="lg:col-span-2" title="Antwort in Minuten. Rund um die Uhr." text="Bewerbung am Sonntagabend, Vorabgespräch zwei Minuten später, Bericht für HR am Montagmorgen. Niemand wartet auf einen Rückruf.">
+      <Tile i={0} className="lg:col-span-2" title="Antwort in Minuten. Rund um die Uhr." text="Bewerbung am Sonntagabend, Vorabgespräch zwei Minuten später, Bericht am Montagmorgen. Niemand wartet auf einen Rückruf.">
         <div className="relative pl-6">
           <span aria-hidden className="absolute bottom-3 left-[7px] top-3 w-px bg-gradient-to-b from-[#F97A3A] to-white/10" />
-          {[["21:14", "Bewerbung eingegangen", "Max Muster · Servicetechniker/in"], ["21:15", "Lebenslauf geprüft", "6 von 6 Anforderungen erfüllt"], ["21:16", "Vorabgespräch gestartet", "am Telefon, auf Deutsch"], ["21:27", "Bericht bereit", "Verfügbar ab 1. Januar · CHF 86'000"]].map(([time, t, d], k) => (
+          {[["21:14", "Bewerbung eingegangen", "Lebenslauf, Arbeitszeugnis, Anschreiben"], ["21:15", "Unterlagen geprüft", "7 von 7 Anforderungen belegt"], ["21:16", "Vorabgespräch gestartet", "am Telefon, auf Deutsch"], ["21:27", "Bericht bereit", "Verfügbar ab 1. Januar · CHF 86'000"]].map(([time, t, d], k) => (
             <div key={time} className="relative mb-2.5 last:mb-0">
               <span aria-hidden className={cn("absolute -left-6 top-3.5 h-3.5 w-3.5 rounded-full border-2", k === 3 ? "border-[#F97A3A] bg-[#F97A3A]" : "border-[#F97A3A] bg-[#181C29]")} />
               <Row><span className="font-mono text-[12px] tabular-nums text-[#FDB48C]">{time}</span><span className="font-medium text-white">{t}</span><span className="hidden text-white/50 sm:inline">· {d}</span></Row>
@@ -112,9 +112,9 @@ export function BenefitGrid() {
           </div>
         </div>
       </Tile>
-      <Tile i={2} title="Shortlist mit Belegen" text="Keine Blackbox, keine geheime Punktzahl: Jede Anforderung zeigt, wo sie belegt ist.">
+      <Tile i={2} title="Jede Aussage mit Fundstelle" text="Recruit24 liest Lebenslauf, Anschreiben, Zeugnisse und Diplome – und markiert, wo jede Angabe steht.">
         <div className="space-y-2">
-          {[["Ausbildung EFZ", "Lebenslauf", true], ["5 Jahre Aussendienst", "Interview", true], ["Führerausweis B", "Interview", true], ["SAP-Kenntnisse", "kein Beleg", false]].map(([r, src, ok]) => (
+          {[["Kundenschulungen", "Zeugnis · Z. 11", true], ["5 Jahre Aussendienst", "Lebenslauf · Z. 7", true], ["Führerausweis B", "Interview", true], ["SAP-Kenntnisse", "kein Beleg", false]].map(([r, src, ok]) => (
             <Row key={String(r)}>
               <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full", ok ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300")}>{ok ? <Check className="h-3 w-3" /> : "?"}</span>
               <span className="flex-1">{r}</span><span className="text-[12px] text-white/45">{src}</span>

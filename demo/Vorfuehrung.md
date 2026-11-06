@@ -22,7 +22,7 @@ Zwei Wege, Recruit24 zu starten:
 5. Unten im Terminal erscheint:
    `Recruit24 laeuft:  https://….app.github.dev/login`
    Diesen Link öffnen (Strg + Klick) und als **Lesezeichen speichern**.
-6. Den Beispiel-Lebenslauf auf den Laptop laden: auf GitHub die Datei `demo/Lebenslauf-Max-Muster.txt` öffnen und rechts oben auf **Download raw file** klicken.
+6. Die drei Beispiel-Unterlagen auf den Laptop laden: auf GitHub im Ordner `demo/` die Dateien `Lebenslauf-Max-Muster.txt`, `Arbeitszeugnis-Max-Muster.txt` und `Motivationsschreiben-Max-Muster.txt` öffnen und jeweils rechts oben auf **Download raw file** klicken.
 7. Einmal den ganzen Durchlauf (Teil B) üben. Testen Sie das unbedingt im Firmennetz. Falls die Firma GitHub-Seiten blockiert, nehmen Sie den Hotspot Ihres Handys.
 
 ### Am Tag, 15 Minuten vor dem Termin
@@ -57,7 +57,7 @@ Nach der Vorführung stoppt der Codespace von selbst. Sofort stoppen geht über 
    - Sie sind dann „Sandra Keller, Leiterin HR“ und dürfen alles sehen.
 3. **Fenster B – Bewerber** (privates Fenster: Strg + Umschalt + N):
    - `http://localhost:3000/careers/helvetic-engineering`
-4. Lebenslauf bereitlegen: `Q:\hirely\demo\Lebenslauf-Max-Muster.txt`
+4. Unterlagen bereitlegen: im Ordner `Q:\hirely\demo\` die Dateien `Lebenslauf-Max-Muster.txt`, `Arbeitszeugnis-Max-Muster.txt` und `Motivationsschreiben-Max-Muster.txt`
 5. Am Beamer: in beiden Fenstern mit Strg + Plus auf 110–125 % vergrössern.
 6. Benachrichtigungen am Laptop ausschalten (Windows: „Nicht stören“).
 7. **Ton einschalten** und kurz testen: Die KI spricht im Interview mit ElevenLabs-Stimme, und Roman Eglis Telefon-Aufnahme soll man hören.
@@ -99,6 +99,7 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Re
    - E-Mail **jedes Mal neu**, z. B. `max.muster1@example.ch`, beim nächsten Mal `max.muster2@…`
    - Telefon `+41 79 123 45 67`, Wohnort `8400 Winterthur`
    - Lebenslauf: die Datei `Lebenslauf-Max-Muster.txt`
+   - Weitere Unterlagen: `Arbeitszeugnis-Max-Muster.txt` und `Motivationsschreiben-Max-Muster.txt` (beide zusammen auswählen, Strg gedrückt halten)
    - Beide Fragen mit **Ja**, die zwei Pflicht-Häkchen setzen
    - **Bewerbung absenden**
 3. Das Bewerberportal öffnet sich. Erklären: „Recruit24 prüft jetzt den Lebenslauf gegen die Anforderungen der Stelle.“
@@ -127,10 +128,11 @@ Satz: „Ihr HR-Team sieht morgens sofort, wo es gebraucht wird. Den Rest hat Re
 ### Als HR (Fenster A)
 
 6. Oben rechts zeigt die **Glocke** innert 20 Sekunden eine neue Zahl (oder gleich F5 drücken). Klicken:
-   „**Neue Bewerbung bereit zur Prüfung: Max Muster** – erfüllt 6 von 6 Anforderungen“ → anklicken.
+   „**Neue Bewerbung bereit zur Prüfung: Max Muster** – erfüllt 7 von 7 Anforderungen“ → anklicken.
 7. Im Profil zeigen:
    - **Zusammenfassung**, darunter Verfügbar ab, Kündigungsfrist, Lohnvorstellung. Alles kommt aus dem Interview, niemand musste etwas abtippen.
-   - Runterscrollen: **jede Anforderung mit Beleg** (Zitat aus Lebenslauf oder Interview).
+   - Runterscrollen: **jede Anforderung mit Beleg** – aus Lebenslauf, Arbeitszeugnis, Anschreiben, Formular oder Interview.
+   - Bei «Erfahrung mit Kundenschulungen» auf **«Z. 11 ↗»** klicken: Der Reiter **Unterlagen** öffnet das Arbeitszeugnis, die Stelle ist markiert. Satz: „Diese Anforderung steht nicht im Lebenslauf – Recruit24 hat sie im Zeugnis gefunden und zeigt genau, wo.“
    - Reiter **KI-Interview**: das ganze Gespräch als Text.
 8. **Zum Gespräch einladen** → Gesprächsleitung, Dauer und Ort sind schon ausgefüllt → **Terminlink senden**.
 

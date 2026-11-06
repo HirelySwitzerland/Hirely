@@ -12,9 +12,9 @@ export default function DemoPage() {
       <div>
         <p className="text-sm font-semibold text-brand-600">Demo vereinbaren</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-ink">Erleben Sie Recruit24 mit Ihren eigenen Stellen.</h1>
-        <p className="mt-4 text-slate-600">In 30 Minuten zeigen wir den ganzen Ablauf – von der Bewerbung über das KI-Interview bis zum gebuchten Gespräch – anhand einer Ihrer echten Stellen.</p>
+        <p className="mt-4 text-slate-600">In 30 Minuten zeigen wir den ganzen Ablauf an einer Ihrer echten Stellen – von der Bewerbung über das Vorabgespräch bis zum gebuchten Termin.</p>
         <ul className="mt-8 space-y-3 text-sm text-slate-700">
-          {["Live-KI-Telefoninterview auf Deutsch oder Schweizerdeutsch", "Anbindung an Ihr ATS (Personio, Abacus, SuccessFactors, …)", "Datenschutz-Rundgang für Ihre Datenschutzberatung", "Preis passend zu Ihrem Recruiting-Volumen"].map((x) => (
+          {["Auswertung der ganzen Bewerbung – mit markierter Fundstelle für jede Aussage", "KI-Vorabgespräch am Telefon und im Browser, auf Deutsch, Französisch, Italienisch oder Englisch", "Anbindung an Ihr ATS (Personio, Abacus, SuccessFactors, …)", "Datenschutz-Rundgang für Ihre Datenschutzberatung", "Für HR-Abteilungen, Personalvermittler und Headhunter"].map((x) => (
             <li key={x} className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-brand-600" />{x}</li>
           ))}
         </ul>

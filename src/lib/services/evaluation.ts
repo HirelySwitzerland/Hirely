@@ -2,18 +2,34 @@ import { quoteIsGrounded } from "@/lib/ai-safety";
 import { CEFR_ORDER, type ParsedCv } from "./cv-heuristics";
 import { extractNumber, interpretYesNo } from "./interview-flow";
 import { langLabel } from "@/lib/stages";
+import { DOC_KIND_LABEL, locate } from "./document-kinds";
 
 /**
  * Evidence-based requirement evaluation.
  *
- * Every status is backed by verbatim quotes from a source (CV, screening
- * form, AI interview, video answer). No quote → UNKNOWN ("missing
- * information"), never a guess. There is intentionally no overall score:
- * the output is "meets X of Y configured requirements" plus evidence.
+ * Every status is backed by verbatim quotes from a source: the whole application (CV, cover letter,
+ * references, diplomas), the screening form, the AI interview or a video answer. No quote → UNKNOWN
+ * ("missing information"), never a guess. Quotes from documents carry their exact place (document,
+ * page, line, character offsets) so HR can jump to the marked passage. There is intentionally no
+ * overall score: the output is "meets X of Y configured requirements" plus evidence.
  */
 
-export type EvidenceSource = "CV" | "SCREENING" | "INTERVIEW" | "VIDEO";
-export type Evidence = { source: EvidenceSource; quote: string; ref?: string; note?: string };
+export type EvidenceSource = "CV" | "COVER_LETTER" | "REFERENCE" | "CERTIFICATE" | "DOCUMENT" | "SCREENING" | "INTERVIEW" | "VIDEO";
+export type Evidence = {
+  source: EvidenceSource;
+  quote: string;
+  ref?: string;
+  note?: string;
+  /** For quotes from a document: its id, and where the quote sits in its text. */
+  doc?: string;
+  line?: number;
+  page?: number;
+  pageLine?: number;
+  start?: number;
+  end?: number;
+};
+/** A further part of the application besides the CV (cover letter, reference, diploma …). */
+export type SourceDoc = { id: string; kind: "COVER_LETTER" | "REFERENCE" | "CERTIFICATE" | "DOCUMENT"; label: string; text: string };
 export type EvalStatus = "CONFIRMED" | "PARTIAL" | "NOT_MET" | "UNKNOWN";
 export type EvalResult = { status: EvalStatus; evidence: Evidence[]; explanation: string };
 
@@ -29,7 +45,7 @@ export type RequirementInput = {
 
 export type AnswerInput = { question: string; answer: string; requirementId?: string | null; source: EvidenceSource; ref?: string; knockout?: boolean };
 
-export type EvalContext = { cv: ParsedCv | null; cvText: string; answers: AnswerInput[] };
+export type EvalContext = { cv: ParsedCv | null; cvText: string; answers: AnswerInput[]; cvDocId?: string; docs?: SourceDoc[] };
 
 const STOP = new Set(["und", "and", "oder", "or", "mit", "with", "in", "im", "the", "der", "die", "das", "von", "of", "for", "für", "mind", "mindestens", "min", "at", "least", "jahre", "years", "year", "jahr", "erfahrung", "experience", "kenntnisse", "knowledge", "a", "an", "de", "et"]);
 
@@ -231,23 +247,75 @@ export function evaluateRequirement(req: RequirementInput, ctx: EvalContext): Ev
     default:
       r = evalKeyword(req, ctx);
   }
-  // Anti-hallucination guard: every CV quote must be grounded in the CV text.
+  r = withDocuments(req, ctx, r);
+  // Anti-hallucination guard: every document quote must be grounded in the text it claims to come from.
+  const textOf = (e: Evidence) => (e.source === "CV" ? ctx.cvText : ctx.docs?.find((d) => d.id === e.ref)?.text);
   const seen = new Set<string>();
   r.evidence = r.evidence
-    .filter((e) => e.source !== "CV" || quoteIsGrounded(e.quote, ctx.cvText))
     .map((e) => ({ ...e, quote: e.quote.replace(/^[-•*]\s*/, "") }))
+    .filter((e) => !isDocSource(e.source) || quoteIsGrounded(e.quote, textOf(e) ?? ""))
     .filter((e) => {
-      const k = `${e.source}:${e.quote.toLowerCase().slice(0, 80)}`;
+      const k = `${e.source}:${e.ref ?? ""}:${e.quote.toLowerCase().slice(0, 80)}`;
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
     })
-    .slice(0, 5);
+    .slice(0, 6)
+    .map((e) => {
+      // exact place of the quote, so the profile can link to the marked passage
+      if (!isDocSource(e.source)) return e;
+      const at = locate(textOf(e) ?? "", e.quote);
+      return at ? { ...e, doc: e.source === "CV" ? ctx.cvDocId : e.ref, ...at } : e;
+    });
   if (r.evidence.length === 0 && r.status !== "UNKNOWN") {
     r.status = "UNKNOWN";
     r.explanation = "Beleg konnte in der Quelle nicht bestätigt werden – als „Info fehlt“ markiert.";
   }
   return r;
+}
+
+const DOC_SOURCES = new Set<EvidenceSource>(["CV", "COVER_LETTER", "REFERENCE", "CERTIFICATE", "DOCUMENT"]);
+export const isDocSource = (s: EvidenceSource) => DOC_SOURCES.has(s);
+
+const NEGATION = /(^|[^\p{L}])(kein|keine|keinen|keiner|nicht|ohne|no|not|without|pas de|sans|nessun|senza)([^\p{L}]|$)/iu;
+const AUTH_WORDS = ["arbeitsbewilligung", "aufenthaltsbewilligung", "work permit", "bewilligung c", "bewilligung b", "permis c", "permis b", "ausweis c", "ausweis b"];
+
+/**
+ * Searches the further parts of the application (cover letter, references, diplomas) for the requirement.
+ * A positive mention fills a gap: «Info fehlt» becomes «teilweise» (languages, experience: level or duration
+ * still to check) or «erfüllt»; a reference or diploma also confirms a partial CV mention. Sentences with a
+ * negation are shown as evidence but never count in the candidate's favour.
+ */
+function withDocuments(req: RequirementInput, ctx: EvalContext, r: EvalResult): EvalResult {
+  if (!ctx.docs?.length) return r;
+  let kws = deriveKeywords(req.label, req.keywords);
+  if (req.category === "LANGUAGE") {
+    const target = Object.entries(LANG_SYNONYMS).find(([, syn]) => syn.some((x) => kws.includes(x) || req.label.toLowerCase().includes(x)))?.[0];
+    if (target) kws = [...kws, ...LANG_SYNONYMS[target]];
+  }
+  if (req.category === "AUTHORIZATION") kws = [...kws, ...AUTH_WORDS];
+  if (!kws.length) return r;
+  const evidence = [...r.evidence];
+  let { status, explanation } = r;
+  for (const d of ctx.docs) {
+    for (const line of linesContaining(d.text, kws).slice(0, 2)) {
+      const negative = NEGATION.test(line);
+      evidence.push({ source: d.kind, quote: clip(line), ref: d.id, note: negative ? "Verneinung – bitte prüfen" : undefined });
+      if (negative) continue;
+      const soft = req.category === "LANGUAGE" || req.category === "EXPERIENCE";
+      const name = DOC_KIND_LABEL[d.kind] ?? "Dokument";
+      if (status === "UNKNOWN") {
+        status = soft ? "PARTIAL" : "CONFIRMED";
+        explanation = soft
+          ? `Im ${name === "Anschreiben" ? "Anschreiben" : name} erwähnt – ${req.category === "LANGUAGE" ? "Niveau" : "Dauer"} bitte prüfen.`
+          : `Im ${name} erwähnt (siehe markierte Stelle).`;
+      } else if (status === "PARTIAL" && !soft && (d.kind === "REFERENCE" || d.kind === "CERTIFICATE")) {
+        status = "CONFIRMED";
+        explanation = `${explanation} Bestätigt durch ${d.kind === "REFERENCE" ? "das Arbeitszeugnis" : "Diplom / Zertifikat"}.`;
+      }
+    }
+  }
+  return { status, evidence, explanation };
 }
 
 export function aggregate(results: { kind: "MUST" | "NICE"; label: string; status: EvalStatus }[], knockoutFailed: boolean) {

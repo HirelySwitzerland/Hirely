@@ -20,15 +20,17 @@ import { EVIDENCE_META, EvidenceBadge, RequirementsMeter, StageBadge, SOURCE_LAB
 import { Markdown } from "@/components/markdown";
 import { ProfileActions } from "@/components/candidates/profile-actions";
 import { NextStepCard } from "@/components/candidates/next-step";
+import { DocumentViewer, type ViewerDoc, type ViewerMark } from "@/components/candidates/document-viewer";
+import { DOC_KIND_SHORT, FORM_LETTER_ID, placeLabel } from "@/lib/services/document-kinds";
 import { nextStepFor } from "@/lib/next-step";
 import { addComment, deleteCandidate, overrideEvaluation, rerunScreening, retryInterview, updateTags } from "@/app/actions/candidates";
 import { ago, cn, fmtDate, fmtDateTime, fmtDuration } from "@/lib/utils";
 
 export const metadata = { title: "Kandidat/in" };
 
-export default async function CandidateProfile({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function CandidateProfile({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string; doc?: string }> }) {
   const { id } = await params;
-  const { tab = "overview" } = await searchParams;
+  const { tab = "overview", doc: docParam } = await searchParams;
   const ctx = await pageContext("candidates.view");
   const app = await db.application.findFirst({
     where: { ...applicationScope(ctx), id },
@@ -59,7 +61,6 @@ export default async function CandidateProfile({ params, searchParams }: { param
     db.membership.findMany({ where: { orgId: ctx.orgId, role: { in: ["OWNER", "ADMIN", "RECRUITER", "HIRING_MANAGER"] } }, include: { user: true } }),
   ]);
   const profile = (c.profile ?? {}) as Partial<ParsedCv>;
-  const cvDoc = c.documents.find((d) => d.kind === "CV");
   const prescreen = app.interviews.find((i) => i.type !== "VIDEO" && i.status === "COMPLETED") ?? app.interviews.find((i) => i.type !== "VIDEO");
   const video = app.interviews.find((i) => i.type === "VIDEO");
   const counts: Record<EvidenceStatus, number> = { CONFIRMED: 0, PARTIAL: 0, NOT_MET: 0, UNKNOWN: 0 };
@@ -70,6 +71,16 @@ export default async function CandidateProfile({ params, searchParams }: { param
   const leadId = app.job.hiringManagerId ?? ctx.user.id;
   const interviewers = [...members.filter((m) => m.userId === leadId), ...members.filter((m) => m.userId !== leadId)].map((m) => ({ id: m.userId, name: m.user.name }));
   const settings = ctx.org.settings as Record<string, unknown>;
+  // the whole application, for the document viewer: CV first, then the cover letter and further documents
+  const viewerDocs: ViewerDoc[] = [
+    ...[...c.documents].sort((a, b) => (a.kind === "CV" ? -1 : b.kind === "CV" ? 1 : 0)).map((d) => ({ id: d.id, kind: d.kind, title: d.filename, text: d.extractedText ?? "", fileId: d.id, pdf: d.mimeType === "application/pdf" })),
+    ...(app.coverLetter?.trim() ? [{ id: FORM_LETTER_ID, kind: "COVER_LETTER", title: "Im Bewerbungsformular geschrieben", text: app.coverLetter }] : []),
+  ];
+  const viewerMarks: ViewerMark[] = app.evaluations.flatMap((e) =>
+    ((e.evidence ?? []) as Evidence[]).filter((ev) => ev.doc && ev.start != null && ev.end != null && ev.line).map((ev) => ({ doc: ev.doc!, start: ev.start!, end: ev.end!, line: ev.line!, label: e.requirement.label, status: e.status })),
+  );
+  const docHref = (docId: string) => `${base}?tab=cv&doc=${encodeURIComponent(docId)}`;
+  const SOURCE_CHIP: Record<string, string> = { SCREENING: "Formular", INTERVIEW: "Interview", VIDEO: "Video", ...DOC_KIND_SHORT };
 
   return (
     <div>
@@ -115,7 +126,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
         active={tab}
         tabs={[
           { id: "overview", label: "Übersicht", href: `${base}?tab=overview` },
-          { id: "cv", label: "Lebenslauf", href: `${base}?tab=cv` },
+          { id: "cv", label: "Unterlagen", href: `${base}?tab=cv`, count: viewerDocs.length > 1 ? viewerDocs.length : undefined },
           { id: "interview", label: "KI-Interview", href: `${base}?tab=interview`, count: app.interviews.filter((i) => i.status === "COMPLETED").length || undefined },
           { id: "messages", label: "Nachrichten", href: `${base}?tab=messages`, count: messages.length || undefined },
           { id: "activity", label: "Verlauf & Datenschutz", href: `${base}?tab=activity` },
@@ -174,10 +185,17 @@ export default async function CandidateProfile({ params, searchParams }: { param
                           <p className="text-[13px] text-slate-600">{e.explanation}</p>
                           {evidence.length > 0 && (
                             <ul className="mt-2 space-y-1.5">
-                              {evidence.slice(0, 3).map((ev, i) => (
+                              {evidence.slice(0, 4).map((ev, i) => (
                                 <li key={i} className="flex gap-2 text-[13px]">
-                                  <span className="mt-px shrink-0 rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase leading-5 text-slate-500">{ev.source === "INTERVIEW" ? "Interview" : ev.source === "SCREENING" ? "Formular" : ev.source === "VIDEO" ? "Video" : "CV"}</span>
-                                  <span className="text-slate-700">„{ev.quote}“{ev.note && <span className="text-slate-400"> — {ev.note}</span>}</span>
+                                  <span className="mt-px shrink-0 rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase leading-5 text-slate-500">{SOURCE_CHIP[ev.source] ?? "Beleg"}</span>
+                                  <span className="text-slate-700">
+                                    „{ev.quote}“{ev.note && <span className="text-slate-400"> — {ev.note}</span>}
+                                    {ev.doc && ev.line ? (
+                                      <a href={`${docHref(ev.doc)}#z-${ev.line}`} className="ml-1.5 whitespace-nowrap text-[12px] font-medium text-brand-700 hover:underline" title="Im Dokument zeigen">{placeLabel(ev)} ↗</a>
+                                    ) : ev.source === "INTERVIEW" || ev.source === "VIDEO" ? (
+                                      <a href={`${base}?tab=interview`} className="ml-1.5 whitespace-nowrap text-[12px] font-medium text-brand-700 hover:underline">im Gespräch ↗</a>
+                                    ) : null}
+                                  </span>
                                 </li>
                               ))}
                             </ul>
@@ -291,6 +309,14 @@ export default async function CandidateProfile({ params, searchParams }: { param
 
       {tab === "cv" && (
         <div className="space-y-5">
+          <Card>
+            <CardHeader
+              title="Bewerbungsunterlagen"
+              description="Lebenslauf, Anschreiben, Zeugnisse und Diplome. Markiert ist jede Stelle, die Recruit24 als Beleg für eine Anforderung verwendet."
+              action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Neu auswerten</ActionButton>}
+            />
+            <DocumentViewer docs={viewerDocs} marks={viewerMarks} selected={docParam} hrefFor={docHref} />
+          </Card>
           <div className="grid gap-5 lg:grid-cols-2">
               <Card>
                 <CardHeader title="Berufserfahrung" description="Aus dem Lebenslauf" />
@@ -329,8 +355,8 @@ export default async function CandidateProfile({ params, searchParams }: { param
                 </div>
               </Card>
             </div>
-        <div className="grid gap-5 xl:grid-cols-5">
-          <Card className="xl:col-span-2">
+        <div className="grid gap-5">
+          <Card>
             <CardHeader title="Erkannte Angaben" description="Von Recruit24 aus dem CV gelesen" action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Neu auswerten</ActionButton>} />
             <div className="space-y-4 p-5 text-sm">
               {warnings.map((w) => <Alert key={w} tone="warning">{w}</Alert>)}
@@ -350,13 +376,6 @@ export default async function CandidateProfile({ params, searchParams }: { param
                 </ul>
               </div>
               <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500"><strong className="text-slate-700">Bestätigt</strong> = wörtlich im CV. <strong className="text-slate-700">Abgeleitet</strong> = von Recruit24 erschlossen (z. B. Jahre aus Daten, Region aus PLZ). Ableitungen werden nie als Fakten dargestellt.</p>
-            </div>
-          </Card>
-          <Card className="xl:col-span-3">
-            <CardHeader title={<span className="flex items-center gap-2"><FileText className="h-4 w-4 text-slate-400" />{cvDoc?.filename ?? "Kein CV"}</span>} description={cvDoc ? `${Math.round(cvDoc.size / 1024)} KB · hochgeladen ${fmtDate(cvDoc.createdAt)} · verschlüsselt gespeichert` : undefined} action={cvDoc && <a href={`/api/files/${cvDoc.id}`} className="link text-xs">Original herunterladen</a>} />
-            <div className="p-5">
-              {cvDoc?.mimeType === "application/pdf" && <iframe src={`/api/files/${cvDoc.id}?inline=1`} className="mb-4 h-[640px] w-full rounded-lg border border-slate-200" title="CV" />}
-              {cvDoc?.extractedText ? <pre className="max-h-[700px] overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-4 font-mono text-[12.5px] leading-relaxed text-slate-700">{cvDoc.extractedText}</pre> : <EmptyState title="Kein Text vorhanden" description="Laden Sie ein textbasiertes PDF, DOCX oder TXT hoch." />}
             </div>
           </Card>
         </div>

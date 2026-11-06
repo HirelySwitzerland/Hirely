@@ -19,6 +19,8 @@ export type IngestInput = {
   externalId?: string;
   candidate: { firstName: string; lastName: string; email: string; phone?: string; location?: string };
   cv?: { buffer: Buffer; filename: string; mime: string } | { text: string; filename?: string };
+  /** Further parts of the application: cover letter, references, diplomas (recognised automatically). */
+  documents?: { buffer: Buffer; filename: string; mime: string }[];
   coverLetter?: string;
   screeningAnswers?: { questionId: string; question: string; answer: string }[];
   consents?: { processing?: boolean; recording?: boolean; talentPool?: boolean };
@@ -78,6 +80,7 @@ export async function ingestApplication(input: IngestInput) {
     else if (input.cv.text.trim())
       await storeCandidateDocument(input.orgId, candidate.id, { buffer: Buffer.from(input.cv.text, "utf8"), filename: input.cv.filename ?? "CV.txt", mime: "text/plain" });
   }
+  for (const d of (input.documents ?? []).slice(0, 6)) await storeCandidateDocument(input.orgId, candidate.id, d, "AUTO");
 
   const application = await db.application.create({
     data: {

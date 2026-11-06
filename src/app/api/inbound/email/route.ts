@@ -23,11 +23,14 @@ export async function POST(req: Request) {
   const [first, ...rest] = (p.FromName ?? p.From ?? "Unknown").replace(/<.*>/, "").trim().split(/\s+/);
   const email = p.From?.match(/[\w.+-]+@[\w-]+\.[\w.-]+/)?.[0];
   if (!email) return Response.json({ error: "No sender" }, { status: 422 });
-  const att = p.Attachments?.find((a) => /pdf|word|text/.test(a.ContentType));
+  const files = (p.Attachments ?? []).filter((a) => /pdf|word|text/.test(a.ContentType));
+  // the CV is the attachment named like one, otherwise the first; everything else is analysed as part of the application
+  const att = files.find((a) => /(lebenslauf|curriculum|\bcv\b|_cv|cv_|resume)/i.test(a.Name)) ?? files[0];
   const r = await ingestApplication({
     orgId: org.id, jobId: job.id, source: "EMAIL", sourceDetail: `Email · ${p.Subject?.slice(0, 60) ?? ""}`,
     candidate: { firstName: first || "Unknown", lastName: rest.join(" ") || "—", email },
     cv: att ? { buffer: Buffer.from(att.Content, "base64"), filename: att.Name, mime: att.ContentType } : p.TextBody ? { text: p.TextBody } : undefined,
+    documents: files.filter((a) => a !== att).map((a) => ({ buffer: Buffer.from(a.Content, "base64"), filename: a.Name, mime: a.ContentType })),
     coverLetter: p.TextBody?.slice(0, 4000), consents: { processing: false }, actor: { type: "INTEGRATION", name: "Inbound email" },
   });
   return Response.json({ ok: true, applicationId: r.application.id });

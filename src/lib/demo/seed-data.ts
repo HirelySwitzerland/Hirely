@@ -176,6 +176,7 @@ export const JOBS: JobSeed[] = [
       { kind: "MUST", category: "EDUCATION", label: "Grundausbildung Elektro / Mechanik (EFZ)", keywords: ["elektro", "automatiker", "polymechan", "mechatron", "efz"] },
       { kind: "NICE", category: "LANGUAGE", label: "Englisch B1", keywords: ["englisch"], minLevel: "B1" },
       { kind: "NICE", category: "SKILL", label: "SPS-Kenntnisse", keywords: ["sps", "s7", "plc"] },
+      { kind: "NICE", category: "SKILL", label: "Erfahrung mit Kundenschulungen", keywords: ["schulung", "schulungen", "schulte", "geschult", "schulen", "instruktion"] },
     ],
     questions: [
       { type: "KNOCKOUT", text: "Besitzen Sie den Führerausweis Kategorie B?", req: 0, expected: "yes" },
