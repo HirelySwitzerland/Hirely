@@ -33,7 +33,7 @@ export const PLANS: Plan[] = [
     seats: 3,
     positions: 3,
     included: { VOICE_MINUTES: 100, VIDEO_INTERVIEWS: 20, SMS: 100, CV_ANALYSES: 300 },
-    features: ["KI-CV-Prüfung", "KI-Telefoninterviews", "Karriereseite", "E-Mail- & SMS-Automation", "Standardvorlagen"],
+    features: ["Prüfung der ganzen Bewerbung mit Fundstellen", "KI-Vorabgespräch am Telefon und im Browser", "Kandidatendossier als PDF, auch anonymisiert", "Karriereseite", "E-Mail- & SMS-Automation", "Auch auf dem Handy"],
   },
   {
     id: "GROWTH",
@@ -56,8 +56,8 @@ export const PLANS: Plan[] = [
     setupCents: SETUP_CENTS,
     seats: 25,
     positions: 30,
-    included: { VOICE_MINUTES: 2000, VIDEO_INTERVIEWS: 500, SMS: 2000, CV_ANALYSES: 6000 },
-    features: ["Alles aus Growth", "Mehrere ATS & Kalender", "Eigene Rollen", "Protokoll-Export", "Priorisierter Support", "Datenhaltung in der Schweiz"],
+    included: { VOICE_MINUTES: 1500, VIDEO_INTERVIEWS: 500, SMS: 2000, CV_ANALYSES: 6000 },
+    features: ["Alles aus Growth", "Mehrere ATS & Kalender", "Eigene Rollen", "Protokoll-Export", "Priorisierter Support"],
   },
   {
     id: "ENTERPRISE",
@@ -69,12 +69,12 @@ export const PLANS: Plan[] = [
     seats: null,
     positions: null,
     included: { VOICE_MINUTES: 10000, VIDEO_INTERVIEWS: 2000, SMS: 10000, CV_ANALYSES: 30000 },
-    features: ["Alles aus Business", "Individuelle KI-Konfiguration", "Individuelle Integrationen", "SSO / SAML", "Persönliche Einführung", "99,9 % SLA"],
+    features: ["Alles aus Business", "Individuelle KI-Konfiguration", "Individuelle Integrationen", "Persönliche Einführung", "Single Sign-on und SLA nach Vereinbarung"],
   },
 ];
 
 export const OVERAGE_CENTS: Record<string, { unit: string; cents: number; label: string }> = {
-  VOICE_MINUTES: { unit: "Min.", cents: 45, label: "KI-Telefonminuten" },
+  VOICE_MINUTES: { unit: "Min.", cents: 60, label: "KI-Telefonminuten" },
   VIDEO_INTERVIEWS: { unit: "Interview", cents: 200, label: "Video-Interviews" },
   SMS: { unit: "SMS", cents: 12, label: "SMS" },
   CV_ANALYSES: { unit: "Auswertung", cents: 15, label: "KI-Auswertungen (CVs)" },

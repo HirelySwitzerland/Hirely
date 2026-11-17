@@ -11,7 +11,7 @@ import { SavingsCalculator, StudyFacts } from "@/components/marketing/savings-ca
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
-import { PLANS, chf, setupLabel } from "@/lib/billing";
+import { OVERAGE_CENTS, PLANS, chf, setupLabel } from "@/lib/billing";
 import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { HERO } from "@/components/marketing/story-texts";
@@ -295,7 +295,7 @@ export default function LandingPage() {
             );
           })}
         </div>
-        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: KI-Telefonminute CHF 0.45 · SMS CHF 0.12 · Video-Interview CHF 2.00 · CV-Auswertung CHF 0.15 · zusätzliche Stelle CHF 29 / Monat.</p>
+        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: {Object.values(OVERAGE_CENTS).map((o) => `${o.label} ${chf(o.cents)} / ${o.unit}`).join(" · ")}.</p>
         </div>
       </section>
       )}
