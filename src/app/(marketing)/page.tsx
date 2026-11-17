@@ -11,7 +11,7 @@ import { SavingsCalculator, StudyFacts } from "@/components/marketing/savings-ca
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
-import { OVERAGE_CENTS, PLANS, chf, setupLabel } from "@/lib/billing";
+import { OVERAGE_CENTS, PHONE_MINUTES_PER_APPLICATION, PLANS, applicationsLabel, chf, setupLabel } from "@/lib/billing";
 import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { HERO } from "@/components/marketing/story-texts";
@@ -271,6 +271,7 @@ export default function LandingPage() {
                 {hot && <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-500 to-[#F97A3A] px-3 py-1 text-[12px] font-semibold text-white">Am beliebtesten</span>}
                 <p className={cn("text-[17px] font-semibold", hot ? "text-white" : "text-ink")}>{p.name}</p>
                 <p className={cn("mt-1.5 min-h-[44px] text-[14px] leading-snug", hot ? "text-white/65" : "text-slate-500")}>{p.tagline}</p>
+                <p className={cn("mt-4 rounded-xl px-3 py-2 text-[14px] font-semibold", hot ? "bg-white/10 text-white" : "bg-brand-50 text-brand-800")}>{applicationsLabel(p)}</p>
                 <p className="mt-6 flex flex-wrap items-baseline gap-x-1.5">
                   <span className={cn("whitespace-nowrap text-[36px] font-semibold tracking-[-0.03em]", hot ? "text-white" : "text-ink")}>{p.monthlyCents ? chf(p.monthlyCents, { decimals: false }) : "Auf Anfrage"}</span>
                   {p.monthlyCents && <span className={cn("text-[14px]", hot ? "text-white/60" : "text-slate-500")}>/ Monat</span>}
@@ -285,17 +286,20 @@ export default function LandingPage() {
                 </Link>
                 <ul className={cn("mt-7 flex-1 space-y-2.5 border-t pt-6 text-[14px]", hot ? "border-white/10 text-white/80" : "border-slate-100 text-slate-600")}>
                   <li className={cn("font-medium", hot ? "text-white" : "text-ink")}>{p.positions ? `${p.positions} offene Stellen` : "Unbegrenzt Stellen"} · {p.seats ? `${p.seats} Benutzer` : "unbegrenzt Benutzer"}</li>
-                  <li>{p.monthlyCents ? `${p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten` : "KI-Telefonminuten nach Bedarf"}</li>
-                  <li>{p.monthlyCents ? `${p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews` : "Video-Interviews nach Bedarf"}</li>
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2.5"><Check className={cn("mt-0.5 h-4 w-4 shrink-0", hot ? "text-brand-300" : "text-brand-600")} />{f}</li>
                   ))}
                 </ul>
+                <p className={cn("mt-6 border-t pt-4 text-[12px] leading-relaxed", hot ? "border-white/10 text-white/50" : "border-slate-100 text-slate-500")}>
+                  {p.monthlyCents
+                    ? `Inklusive ${p.included.VOICE_MINUTES.toLocaleString("de-CH")} KI-Telefonminuten, ${p.included.VIDEO_INTERVIEWS.toLocaleString("de-CH")} Video-Interviews, ${p.included.CV_ANALYSES.toLocaleString("de-CH")} Auswertungen und ${p.included.SMS.toLocaleString("de-CH")} SMS pro Monat.`
+                    : "Telefonminuten, Video-Interviews, Auswertungen und SMS nach Bedarf."}
+                </p>
               </div>
             );
           })}
         </div>
-        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: {Object.values(OVERAGE_CENTS).map((o) => `${o.label} ${chf(o.cents)} / ${o.unit}`).join(" · ")}.</p>
+        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Anzahl Bewerbungen ist ein Richtwert: gerechnet mit {PHONE_MINUTES_PER_APPLICATION} Telefonminuten pro Bewerbung, weil rund 30 % der Bewerbenden ein Vorabgespräch von etwa 10 Minuten führen. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: {Object.values(OVERAGE_CENTS).map((o) => `${o.label} ${chf(o.cents)} / ${o.unit}`).join(" · ")}.</p>
         </div>
       </section>
       )}

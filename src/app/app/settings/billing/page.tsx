@@ -1,7 +1,7 @@
 import { CheckCircle2, CreditCard } from "lucide-react";
 import { db } from "@/lib/db";
 import { pageContext } from "@/lib/auth/session";
-import { chf, computeOverage, OVERAGE_CENTS, planById, PLANS, setupLabel } from "@/lib/billing";
+import { applicationsLabel, chf, computeOverage, OVERAGE_CENTS, planById, PLANS, setupLabel } from "@/lib/billing";
 import { usageThisPeriod } from "@/lib/services/usage";
 import { ActionButton, ActionForm, SubmitButton } from "@/components/forms";
 import { Alert, Badge, Card, CardHeader, Progress, Table, Td, Th } from "@/components/ui";
@@ -65,6 +65,7 @@ export default async function BillingPage() {
               <p className="mt-3 text-lg font-semibold text-ink">{p.monthlyCents ? `${chf(p.monthlyCents, { decimals: false })}/Monat` : "Auf Anfrage"}</p>
               {p.annualMonthlyCents && <p className="text-xs text-slate-500">oder {chf(p.annualMonthlyCents, { decimals: false })}/Monat bei jährlicher Zahlung</p>}
               <p className="text-xs text-slate-500">{setupLabel(p)}</p>
+              <p className="mt-2 text-xs font-medium text-brand-700">{applicationsLabel(p)}</p>
               <ul className="mt-3 flex-1 space-y-1 text-xs text-slate-600">
                 <li>{p.seats ?? "Unbegrenzt"} Benutzer · {p.positions ?? "unbegrenzt"} Stellen</li>
                 <li>{p.monthlyCents ? `${p.included.VOICE_MINUTES} KI-Telefonminuten · ${p.included.VIDEO_INTERVIEWS} Video-Interviews` : "Telefonminuten und Video-Interviews nach Bedarf"}</li>

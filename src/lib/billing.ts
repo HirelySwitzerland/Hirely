@@ -95,6 +95,24 @@ export const USAGE_METRICS: Record<string, { label: string; unit: string }> = {
 
 export const VAT_RATE = 0.081; // Swiss VAT 8.1%
 
+/**
+ * Rule of thumb for sizing: about 30 % of applicants get a ~10-minute pre-screening call,
+ * so one application needs about 3 phone minutes on average.
+ */
+export const PHONE_MINUTES_PER_APPLICATION = 3;
+
+/** About how many applications per month a plan's phone minutes cover, rounded to 5 (Enterprise: null). */
+export function applicationsPerMonth(p: Plan): number | null {
+  if (!p.monthlyCents) return null;
+  return Math.round(p.included.VOICE_MINUTES / PHONE_MINUTES_PER_APPLICATION / 5) * 5;
+}
+
+/** «Bis ca. 35 Bewerbungen pro Monat» – how customers think about volume. */
+export function applicationsLabel(p: Plan) {
+  const n = applicationsPerMonth(p);
+  return n ? `Bis ca. ${n.toLocaleString("de-CH")} Bewerbungen pro Monat` : "Für jedes Volumen";
+}
+
 /** «Einrichtung einmalig CHF 2’490» (Enterprise: «ab CHF 2’490»). */
 export function setupLabel(p: Plan) {
   if (!p.setupCents) return "Einrichtung auf Anfrage";
