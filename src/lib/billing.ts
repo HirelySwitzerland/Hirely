@@ -74,7 +74,7 @@ export const PLANS: Plan[] = [
 ];
 
 export const OVERAGE_CENTS: Record<string, { unit: string; cents: number; label: string }> = {
-  VOICE_MINUTES: { unit: "Min.", cents: 60, label: "KI-Telefonminuten" },
+  VOICE_MINUTES: { unit: "Min.", cents: 90, label: "KI-Telefonminuten" },
   VIDEO_INTERVIEWS: { unit: "Interview", cents: 200, label: "Video-Interviews" },
   SMS: { unit: "SMS", cents: 12, label: "SMS" },
   CV_ANALYSES: { unit: "Auswertung", cents: 15, label: "KI-Auswertungen (CVs)" },
@@ -105,6 +105,14 @@ export const PHONE_MINUTES_PER_APPLICATION = 3;
 export function applicationsPerMonth(p: Plan): number | null {
   if (!p.monthlyCents) return null;
   return Math.round(p.included.VOICE_MINUTES / PHONE_MINUTES_PER_APPLICATION / 5) * 5;
+}
+
+/**
+ * What one application above the plan costs on average (its phone minutes at the overage price).
+ * Set so that moving up a plan pays off about where the smaller plan is full.
+ */
+export function extraApplicationCents() {
+  return PHONE_MINUTES_PER_APPLICATION * OVERAGE_CENTS.VOICE_MINUTES.cents;
 }
 
 /** «Bis ca. 35 Bewerbungen pro Monat» – how customers think about volume. */

@@ -8,7 +8,7 @@ import { can, assignableRoles } from "../src/lib/auth/rbac";
 import { decrypt, encrypt, decryptBuffer, encryptBuffer, hmacSha256 } from "../src/lib/crypto";
 import { detectInjection, quoteIsGrounded } from "../src/lib/ai-safety";
 import { verifyWebhookSignature } from "../src/lib/providers/ats";
-import { OVERAGE_CENTS, computeOverage } from "../src/lib/billing";
+import { OVERAGE_CENTS, applicationsPerMonth, computeOverage, extraApplicationCents, planById } from "../src/lib/billing";
 import { parseTalentQuery } from "../src/lib/services/search";
 import { deriveRequirements, guessCategory } from "../src/lib/services/jobs";
 import { langLabel } from "../src/lib/stages";
@@ -160,6 +160,17 @@ test("Billing overage", () => {
   const voice = lines.find((l) => l.metric === "VOICE_MINUTES")!;
   assert.equal(voice.over, 50);
   assert.equal(voice.cents, 50 * OVERAGE_CENTS.VOICE_MINUTES.cents);
+});
+
+test("moving up a plan pays off about where the smaller plan is full", () => {
+  const extra = extraApplicationCents();
+  for (const [small, big] of [["STARTER", "GROWTH"], ["GROWTH", "BUSINESS"]]) {
+    const s = planById(small), b = planById(big);
+    // applications at which the smaller plan plus overage costs as much as the bigger plan
+    const breakEven = applicationsPerMonth(s)! + (b.monthlyCents! - s.monthlyCents!) / extra;
+    const ratio = breakEven / applicationsPerMonth(b)!;
+    assert.ok(ratio > 0.8 && ratio < 1.2, `${small}→${big}: break-even at ${Math.round(breakEven)} applications`);
+  }
 });
 
 test("Talent search query parsing", () => {

@@ -11,7 +11,7 @@ import { SavingsCalculator, StudyFacts } from "@/components/marketing/savings-ca
 import { Film } from "@/components/marketing/film";
 import { type StoryStep } from "@/components/marketing/scroll-story";
 import { Hoerprobe } from "@/components/marketing/hoerprobe";
-import { OVERAGE_CENTS, PHONE_MINUTES_PER_APPLICATION, PLANS, applicationsLabel, chf, setupLabel } from "@/lib/billing";
+import { OVERAGE_CENTS, PHONE_MINUTES_PER_APPLICATION, PLANS, applicationsLabel, chf, extraApplicationCents, setupLabel } from "@/lib/billing";
 import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { HERO } from "@/components/marketing/story-texts";
@@ -299,7 +299,7 @@ export default function LandingPage() {
             );
           })}
         </div>
-        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Anzahl Bewerbungen ist ein Richtwert: gerechnet mit {PHONE_MINUTES_PER_APPLICATION} Telefonminuten pro Bewerbung, weil rund 30 % der Bewerbenden ein Vorabgespräch von etwa 10 Minuten führen. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: {Object.values(OVERAGE_CENTS).map((o) => `${o.label} ${chf(o.cents)} / ${o.unit}`).join(" · ")}.</p>
+        <p className="mt-8 text-center text-[13px] text-slate-500">Preise in CHF, exkl. MwSt. Die Anzahl Bewerbungen ist ein Richtwert: gerechnet mit {PHONE_MINUTES_PER_APPLICATION} Telefonminuten pro Bewerbung, weil rund 30 % der Bewerbenden ein Vorabgespräch von etwa 10 Minuten führen. Jede weitere Bewerbung über dem Paket kostet so im Schnitt rund {chf(extraApplicationCents())}. Die Einrichtung umfasst Stellen, Fragen, Kalender, Vorlagen und eine Schulung. Mehrverbrauch: {Object.values(OVERAGE_CENTS).map((o) => `${o.label} ${chf(o.cents)} / ${o.unit}`).join(" · ")}.</p>
         </div>
       </section>
       )}
