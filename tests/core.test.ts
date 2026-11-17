@@ -8,7 +8,7 @@ import { can, assignableRoles } from "../src/lib/auth/rbac";
 import { decrypt, encrypt, decryptBuffer, encryptBuffer, hmacSha256 } from "../src/lib/crypto";
 import { detectInjection, quoteIsGrounded } from "../src/lib/ai-safety";
 import { verifyWebhookSignature } from "../src/lib/providers/ats";
-import { computeOverage } from "../src/lib/billing";
+import { OVERAGE_CENTS, computeOverage } from "../src/lib/billing";
 import { parseTalentQuery } from "../src/lib/services/search";
 import { deriveRequirements, guessCategory } from "../src/lib/services/jobs";
 import { langLabel } from "../src/lib/stages";
@@ -159,7 +159,7 @@ test("Billing overage", () => {
   const lines = computeOverage("STARTER", { VOICE_MINUTES: 150, SMS: 10 });
   const voice = lines.find((l) => l.metric === "VOICE_MINUTES")!;
   assert.equal(voice.over, 50);
-  assert.equal(voice.cents, 50 * 45);
+  assert.equal(voice.cents, 50 * OVERAGE_CENTS.VOICE_MINUTES.cents);
 });
 
 test("Talent search query parsing", () => {
