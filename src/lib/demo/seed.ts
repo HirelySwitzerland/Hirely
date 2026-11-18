@@ -273,7 +273,9 @@ export async function seedDemo() {
     const job = JOBS.find((j) => j.key === cs.job)!;
     // most people send more than a CV: a reference letter from their latest employer and a few lines in the form
     const fullApplication = p.last.length % 3 !== 0 || p.last === "Egli";
-    const reference = fullApplication ? buildReference(p) : null;
+    // references of different quality, so the grade differs: strong for people far along, weaker for rejections
+    const refLevel = (["OFFER", "HIRED", "PERSONAL_INTERVIEW", "SHORTLISTED"].includes(cs.target) ? 1 : ["REJECTED", "NO_ANSWER"].includes(cs.target) ? 3 + (p.last.length % 2) : [2, 1, 3, 3][p.last.length % 4]) as 1 | 2 | 3 | 4;
+    const reference = fullApplication ? buildReference(p, refLevel) : null;
     if (reference) await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(reference, "utf8"), filename: `${/heute|present/i.test(p.experience[0].to) ? "Zwischenzeugnis" : "Arbeitszeugnis"}_${p.experience[0].company}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" }, "REFERENCE");
     const app = await db.application.create({
       data: {

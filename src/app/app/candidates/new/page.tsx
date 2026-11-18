@@ -32,7 +32,7 @@ export default async function AddCandidatesPage() {
               <Field label="Mobiltelefon"><Input name="phone" type="tel" placeholder="+41 79 …" /></Field>
             </div>
             <Field label="Wohnort"><Input name="location" placeholder="8400 Winterthur" /></Field>
-            <Field label="Lebenslauf" hint="PDF, DOCX oder TXT · max. 10 MB · verschlüsselt gespeichert"><Input name="cv" type="file" accept=".pdf,.docx,.txt,application/pdf,text/plain" /></Field>
+            <Field label="Lebenslauf" hint="PDF, DOCX, TXT oder Foto · max. 10 MB · verschlüsselt gespeichert"><Input name="cv" type="file" accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,application/pdf,text/plain,image/jpeg,image/png" /></Field>
             <Field label="…oder CV-Text einfügen"><Textarea name="cvText" rows={3} /></Field>
             <Checkbox name="consent" label="Die Person hat der Datenbearbeitung zugestimmt" description="Nötig für die Dokumentation nach revDSG/DSGVO." />
             <Checkbox name="sendConfirmation" defaultChecked label="Bestätigungs-E-Mail mit Portal-Link senden" />

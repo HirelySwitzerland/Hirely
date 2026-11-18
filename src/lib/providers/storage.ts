@@ -69,6 +69,9 @@ export const ALLOWED_UPLOADS: Record<string, string> = {
   "application/pdf": "pdf",
   "text/plain": "txt",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  // photos of paper documents (e.g. a work reference); read by the AI when one is configured
+  "image/jpeg": "jpg",
+  "image/png": "png",
   "video/webm": "webm",
   "video/mp4": "mp4",
   "audio/webm": "webm",
@@ -80,6 +83,8 @@ export function sniffMime(buf: Buffer, claimed: string): string | null {
   if (buf[0] === 0x50 && buf[1] === 0x4b) return claimed.includes("wordprocessingml") ? claimed : null;
   if (buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3) return claimed.startsWith("audio") ? "audio/webm" : "video/webm";
   if (buf.subarray(4, 8).toString() === "ftyp") return "video/mp4";
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "image/png";
   if (claimed === "text/plain" && !buf.subarray(0, 2048).includes(0)) return "text/plain";
   return null;
 }

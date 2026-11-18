@@ -21,6 +21,8 @@ import { Markdown } from "@/components/markdown";
 import { ProfileActions } from "@/components/candidates/profile-actions";
 import { NextStepCard } from "@/components/candidates/next-step";
 import { DocumentViewer, type ViewerDoc, type ViewerMark } from "@/components/candidates/document-viewer";
+import { ReferenceGrades } from "@/components/candidates/reference-grades";
+import { PART_LABEL, fmtGrade, gradeTone, gradedReferences, type ReferenceGrade } from "@/lib/services/reference-grade";
 import { DOC_KIND_SHORT, FORM_LETTER_ID, placeLabel } from "@/lib/services/document-kinds";
 import { nextStepFor } from "@/lib/next-step";
 import { addComment, deleteCandidate, overrideEvaluation, rerunScreening, retryInterview, updateTags } from "@/app/actions/candidates";
@@ -73,12 +75,20 @@ export default async function CandidateProfile({ params, searchParams }: { param
   const settings = ctx.org.settings as Record<string, unknown>;
   // the whole application, for the document viewer: CV first, then the cover letter and further documents
   const viewerDocs: ViewerDoc[] = [
-    ...[...c.documents].sort((a, b) => (a.kind === "CV" ? -1 : b.kind === "CV" ? 1 : 0)).map((d) => ({ id: d.id, kind: d.kind, title: d.filename, text: d.extractedText ?? "", fileId: d.id, pdf: d.mimeType === "application/pdf" })),
+    ...[...c.documents].sort((a, b) => (a.kind === "CV" ? -1 : b.kind === "CV" ? 1 : 0)).map((d) => ({ id: d.id, kind: d.kind, title: d.filename, text: d.extractedText ?? "", fileId: d.id, pdf: d.mimeType === "application/pdf" || d.mimeType.startsWith("image/") })),
     ...(app.coverLetter?.trim() ? [{ id: FORM_LETTER_ID, kind: "COVER_LETTER", title: "Im Bewerbungsformular geschrieben", text: app.coverLetter }] : []),
   ];
-  const viewerMarks: ViewerMark[] = app.evaluations.flatMap((e) =>
-    ((e.evidence ?? []) as Evidence[]).filter((ev) => ev.doc && ev.start != null && ev.end != null && ev.line).map((ev) => ({ doc: ev.doc!, start: ev.start!, end: ev.end!, line: ev.line!, label: e.requirement.label, status: e.status })),
-  );
+  // work references: grade on the Swiss scale, AI-refined when the latest analysis holds one
+  const references = gradedReferences(c.documents, (app.cvAnalyses[0]?.data as { references?: Record<string, ReferenceGrade> } | undefined)?.references);
+  const viewerMarks: ViewerMark[] = [
+    ...app.evaluations.flatMap((e) =>
+      ((e.evidence ?? []) as Evidence[]).filter((ev) => ev.doc && ev.start != null && ev.end != null && ev.line).map((ev) => ({ doc: ev.doc!, start: ev.start!, end: ev.end!, line: ev.line!, label: e.requirement.label, status: e.status })),
+    ),
+    ...references.flatMap((r) =>
+      (r.grade?.findings ?? []).filter((f) => f.start != null && f.end != null && f.line).map((f) => ({ doc: r.docId, start: f.start!, end: f.end!, line: f.line!, label: `Zeugnis ${PART_LABEL[f.part]} ${fmtGrade(f.grade)}`, status: gradeTone(f.grade) })),
+    ),
+  ];
+  const headlineRef = references.find((r) => r.grade?.overall != null)?.grade;
   const docHref = (docId: string) => `${base}?tab=cv&doc=${encodeURIComponent(docId)}`;
   const SOURCE_CHIP: Record<string, string> = { SCREENING: "Formular", INTERVIEW: "Interview", VIDEO: "Video", ...DOC_KIND_SHORT };
 
@@ -99,6 +109,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
                 <StageBadge stage={app.stage} />
                 {app.videoStatus !== "NOT_INVITED" && <Badge tone={app.videoStatus === "COMPLETED" ? "green" : "slate"}>Video: {app.videoStatus === "COMPLETED" ? "abgeschlossen" : app.videoStatus === "INVITED" ? "eingeladen" : app.videoStatus === "IN_PROGRESS" ? "läuft" : "offen"}</Badge>}
                 {c.inTalentPool && <Badge tone="stone">Talent-Pool</Badge>}
+                {headlineRef && <a href={`${base}?tab=overview#zeugnisse`}><Badge tone={gradeTone(headlineRef.overall) === "CONFIRMED" ? "green" : gradeTone(headlineRef.overall) === "PARTIAL" ? "amber" : "red"}>Zeugnis {fmtGrade(headlineRef.overall)}</Badge></a>}
               </div>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-slate-500">
                 <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 hover:text-ink"><Mail className="h-3.5 w-3.5" />{c.email}</a>
@@ -235,6 +246,8 @@ export default async function CandidateProfile({ params, searchParams }: { param
               )}
             </Card>
 
+            {references.length > 0 && <div id="zeugnisse" className="scroll-mt-20"><ReferenceGrades refs={references} docHref={docHref} /></div>}
+
             {prescreen?.status === "COMPLETED" && (
               <Card>
                 <CardHeader title="Interview-Zusammenfassung" description={`${prescreen.type === "PHONE" ? "KI-Telefoninterview" : "Browser-Interview"} · ${fmtDateTime(prescreen.endedAt)} · ${fmtDuration(prescreen.durationSec)}`} action={<Link href={`${base}?tab=interview`} className="link text-xs">Ganzes Transkript</Link>} />
@@ -315,7 +328,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
           <Card>
             <CardHeader
               title="Bewerbungsunterlagen"
-              description="Lebenslauf, Anschreiben, Zeugnisse und Diplome. Markiert ist jede Stelle, die Recruit24 als Beleg für eine Anforderung verwendet."
+              description="Lebenslauf, Anschreiben, Zeugnisse und Diplome. Markiert ist jede Stelle, die Recruit24 als Beleg für eine Anforderung oder für die Zeugnis-Note verwendet."
               action={ctx.can("candidates.manage") && <ActionButton action={rerunScreening} fields={{ applicationId: app.id }}>Neu auswerten</ActionButton>}
             />
             <DocumentViewer docs={viewerDocs} marks={viewerMarks} selected={docParam} hrefFor={docHref} />

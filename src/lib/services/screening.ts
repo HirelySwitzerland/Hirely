@@ -5,6 +5,8 @@ import { generate, getLLM, parseJsonLoose } from "@/lib/providers/llm";
 import { parseCvHeuristic, type ParsedCv } from "./cv-heuristics";
 import { aggregate, evaluateRequirement, type AnswerInput, type SourceDoc } from "./evaluation";
 import { DOC_KIND_LABEL, FORM_LETTER_ID } from "./document-kinds";
+import { transcribeScans } from "./documents";
+import { gradeReference, mergeAiGrade, type ReferenceGrade } from "./reference-grade";
 import { interpretYesNo, type FlowState } from "./interview-flow";
 import { notify } from "./notifications";
 import { recordUsage } from "./usage";
@@ -24,9 +26,13 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
   if (app.screeningStatus === "COMPLETED" && !opts.force) return;
   await db.application.update({ where: { id: app.id }, data: { screeningStatus: "RUNNING" } });
 
+  const warnings: string[] = [];
+  // scans and photos have no text layer: let the AI write them down first, so everything below can read them
+  const scans = await transcribeScans(app.orgId, app.candidate.documents);
+  for (const f of scans.failed) warnings.push(`«${f}» ist ein Scan oder Foto und konnte nicht gelesen werden. Bitten Sie um ein textbasiertes PDF.`);
+
   const cvDoc = app.candidate.documents.find((d) => d.kind === "CV");
   const cvText = cvDoc?.extractedText ?? "";
-  const warnings: string[] = [];
   let parsed: ParsedCv | null = null;
   let provider = "heuristic";
 
@@ -66,8 +72,22 @@ export async function analyzeApplication(applicationId: string, opts: { force?: 
     if (inj.length) warnings.push(`Möglicher Manipulationsversuch in «${d.filename}» gefunden („${inj[0]}“). Der Text wird nur als Daten behandelt.`);
   }
 
+  // work references: the fixed rules always give a grade; a real AI model may refine it (stored here)
+  const references: Record<string, ReferenceGrade> = {};
+  if (getLLM().name !== "mock") {
+    for (const d of app.candidate.documents) {
+      if (d.kind !== "REFERENCE" || !d.extractedText?.trim()) continue;
+      try {
+        const g = await refineReferenceGrade(app.orgId, d.extractedText);
+        if (g) references[d.id] = g;
+      } catch (e) {
+        warnings.push(`KI-Prüfung von «${d.filename}» nicht verfügbar (${(e as Error).message}); die Zeugnis-Note stammt aus den festen Regeln.`);
+      }
+    }
+  }
+
   await db.cvAnalysis.create({
-    data: { orgId: app.orgId, applicationId: app.id, status: cvText ? "COMPLETED" : "FAILED", provider, data: (parsed ?? { warnings }) as object, error: cvText ? null : warnings[0] },
+    data: { orgId: app.orgId, applicationId: app.id, status: cvText ? "COMPLETED" : "FAILED", provider, data: { ...(parsed ?? { warnings }), references } as object, error: cvText ? null : warnings[0] },
   });
 
   if (parsed) {
@@ -197,4 +217,38 @@ export async function reevaluate(applicationId: string) {
     data: { ...agg, knockoutFailed, summary: summaryRes.text },
   });
   return agg;
+}
+
+const REFERENCE_SYSTEM = `You read Swiss and German work references (Arbeitszeugnisse) for an HR team and estimate a grade on the Swiss scale:
+6 = sehr gut, 5.5 = gut bis sehr gut, 5 = gut, 4.5 = befriedigend, 4 = genügend, below 4 = ungenügend. Use half steps only.
+Grade three parts: LEISTUNG (performance: the satisfaction and expectation formulas count most, then how skills, commitment and results are described),
+VERHALTEN (conduct towards supervisors, colleagues and customers; supervisors should be named first and must not be missing),
+SCHLUSS (closing: regret, thanks, good wishes; for an interim reference thanks and looking forward to further work).
+Watch for what is missing, restrictions such as «im Grossen und Ganzen» or «hat sich bemüht», and the reason for leaving.
+Swiss law (Art. 330a OR) requires references to be true and benevolent and forbids hidden codes; the graded formulas are common but less uniform than in Germany,
+and French, Italian and English references use few of them. Lower the confidence when the wording is unusual or the language is not German.
+Assess only performance, conduct and the closing. Never infer or mention health, alcohol, family, pregnancy, religion, origin, age, union or political activity or private life,
+even if the text seems to hint at it. Write all texts in German with Swiss spelling (ss, never ß).
+Return JSON: {"overall": number, "parts": {"LEISTUNG": number, "VERHALTEN": number, "SCHLUSS": number},
+"findings": [{"part": "LEISTUNG"|"VERHALTEN"|"SCHLUSS", "grade": number, "meaning": "what this sentence says, max 15 words", "quote": "exact sentence from the reference"}],
+"flags": [{"tone": "warn"|"info", "text": "short hint for the recruiter", "quote": "exact sentence, optional"}],
+"confidence": "hoch"|"mittel"|"tief", "note": "one or two sentences explaining the grade"}.
+Quotes must be copied exactly from the reference. Leave out a part that the reference does not assess.`;
+
+/** Lets a real AI model refine the rule-based grade of one work reference. Null when its answer is unusable. */
+export async function refineReferenceGrade(orgId: string, text: string): Promise<ReferenceGrade | null> {
+  const rules = gradeReference(text);
+  const res = await generate({
+    task: "grade_reference",
+    orgId,
+    json: true,
+    maxTokens: 6000,
+    system: REFERENCE_SYSTEM,
+    prompt:
+      "Bewerte dieses Arbeitszeugnis. Eine regelbasierte Ersteinschätzung liegt bei; prüfe sie und korrigiere sie, wo nötig.\n\n" +
+      `Ersteinschätzung: ${JSON.stringify({ overall: rules.overall, parts: rules.parts, kind: rules.kind, findings: rules.findings.map((f) => ({ part: f.part, grade: f.grade, meaning: f.meaning })), flags: rules.flags.map((f) => f.text) })}\n\n` +
+      wrapUntrusted("reference", text),
+    input: { rules },
+  });
+  return mergeAiGrade(text, rules, parseJsonLoose(res.text));
 }

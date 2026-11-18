@@ -231,5 +231,10 @@ export function mockGenerate(req: LLMRequest): string {
       return videoAnalysis(input);
     case "assistant":
       return String(input.fallback ?? "Ich helfe bei Kandidierenden, Interviews, Stellen und beim Entwerfen von Nachrichten.");
+    // the demo cannot read scans; work references are graded by the fixed rules in reference-grade.ts
+    case "transcribe_document":
+      return "";
+    case "grade_reference":
+      return JSON.stringify(input.rules ?? {});
   }
 }

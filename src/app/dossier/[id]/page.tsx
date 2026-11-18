@@ -12,6 +12,7 @@ import type { ParsedCv } from "@/lib/services/cv-heuristics";
 import type { Evidence } from "@/lib/services/evaluation";
 import { DOC_KIND_LABEL, FORM_LETTER_ID, placeLabel, type DocKind } from "@/lib/services/document-kinds";
 import { dossierRef, makeScrubber } from "@/lib/dossier";
+import { PART_LABEL, fmtGrade, gradeLabel, gradedReferences, keyFindings, type RefPart, type ReferenceGrade } from "@/lib/services/reference-grade";
 import { EVIDENCE_META } from "@/components/status";
 import { Markdown } from "@/components/markdown";
 import { PrintButton } from "@/components/candidates/print-button";
@@ -26,7 +27,8 @@ async function load(id: string) {
   const app = await db.application.findFirst({
     where: { ...applicationScope(ctx), id },
     include: {
-      candidate: { include: { documents: { select: { id: true, kind: true } } } },
+      candidate: { include: { documents: { select: { id: true, kind: true, filename: true, extractedText: true } } } },
+      cvAnalyses: { orderBy: { createdAt: "desc" }, take: 1, select: { data: true } },
       job: true,
       evaluations: { include: { requirement: true }, orderBy: { requirement: { order: "asc" } } },
       interviews: { where: { type: { not: "VIDEO" }, status: "COMPLETED" }, orderBy: { endedAt: "desc" }, take: 1 },
@@ -74,6 +76,10 @@ export default async function DossierPage({ params, searchParams }: { params: Pr
     const name = (kind && DOC_KIND_LABEL[kind as DocKind]) ?? SOURCE_NAME[ev.source] ?? "Beleg";
     return ev.doc && ev.line ? `${name} · ${placeLabel(ev)}` : name;
   };
+
+  const references = gradedReferences(c.documents, (app.cvAnalyses[0]?.data as { references?: Record<string, ReferenceGrade> } | undefined)?.references).filter((r) => r.grade?.overall != null);
+  // anonymised quotes should not reveal the gender either: «Herr [Name]» → «[Name]»
+  const scrubQuote = (s: string) => (anon ? scrub(s).replace(/\b(?:Herrn?|Frau)\s+(?=\[Name\])/g, "") : s);
 
   const counts: Record<EvidenceStatus, number> = { CONFIRMED: 0, PARTIAL: 0, NOT_MET: 0, UNKNOWN: 0 };
   for (const e of app.evaluations) counts[e.status]++;
@@ -192,6 +198,31 @@ export default async function DossierPage({ params, searchParams }: { params: Pr
               })}
             </ul>
             <p className="mt-1.5 text-[11px] text-slate-500">{counts.CONFIRMED} erfüllt · {counts.PARTIAL} teilweise · {counts.NOT_MET} nicht erfüllt · {counts.UNKNOWN} offen. Jede Angabe ist mit Dokument und Zeile belegt.</p>
+          </Section>
+        )}
+
+        {references.length > 0 && (
+          <Section title="Arbeitszeugnisse" aside="Schweizer Skala: 6 sehr gut, 5 gut, 4 genügend">
+            <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+              {references.map((r) => {
+                const g = r.grade!;
+                const parts = (["LEISTUNG", "VERHALTEN", "SCHLUSS"] as RefPart[]).filter((p) => g.parts[p] != null);
+                const quotes = withQuotes ? keyFindings(g, 2) : [];
+                const warns = g.flags.filter((f) => f.tone === "warn").slice(0, 2);
+                return (
+                  <li key={r.docId} className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 px-3 py-2.5 break-inside-avoid">
+                    <p className="text-[22px] font-semibold leading-none tabular-nums text-ink">{fmtGrade(g.overall)}</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-ink">{g.kind} <span className="font-normal text-slate-500">· {gradeLabel(g.overall)}</span></p>
+                      <p className="text-[12px] text-slate-600">{parts.map((p) => `${PART_LABEL[p]} ${fmtGrade(g.parts[p])}`).join(" · ")} · Sicherheit {g.confidence}{g.source === "ai" ? " · KI-geprüft" : ""}</p>
+                      {quotes.map((f, i) => <p key={i} className="mt-0.5 text-[12px] text-slate-600">«{scrubQuote(f.quote)}»</p>)}
+                      {warns.map((f, i) => <p key={i} className="mt-0.5 text-[11px] text-amber-700">Hinweis: {scrubQuote(f.text)}</p>)}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-1.5 text-[11px] text-slate-500">Einschätzung nach der üblichen Zeugnissprache; sie ersetzt das Lesen der Zeugnisse nicht. Die Zeugnisse liegen bei {ctx.org.name}.</p>
           </Section>
         )}
 

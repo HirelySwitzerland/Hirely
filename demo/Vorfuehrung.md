@@ -171,6 +171,12 @@ Alles in Fenster A, Menü links von oben nach unten.
 - Zurück zu **Liste**, zwei Personen anhaken → **Vergleichen**.
 - **Hinzufügen**: einzeln oder per CSV (z. B. nach einer Jobmesse).
 
+**Arbeitszeugnis mit Note**
+- **Kandidierende** → **Lukas Meier**: oben steht «Zeugnis 6», in der Übersicht die Karte **Arbeitszeugnisse** mit Leistung, Verhalten und Schluss.
+- Zum Vergleich **Manuela Steiner** (4.5): Recruit24 zeigt, dass «zur vollen Zufriedenheit» ohne «stets» nur befriedigend ist und dass die Kollegen vor den Vorgesetzten genannt werden.
+- Auf **Z. 16 ↗** klicken: Der Satz ist direkt im Zeugnis markiert.
+- Satz: „Recruit24 liest die Zeugnissprache und gibt eine Note von 1 bis 6 – mit jedem Satz, auf dem sie beruht. Entscheiden tun Sie.“
+
 **Hörprobe: so klingt ein Telefoninterview**
 - **Kandidierende** → **Roman Egli** → Reiter **KI-Interview** → oben **Aufnahme des Gesprächs** abspielen (2:44 Minuten).
 - Rechts läuft das Transkript mit, die Zeitangaben passen zur Aufnahme. Links stehen die wichtigsten Antworten, die Recruit24 daraus gezogen hat.
@@ -230,6 +236,7 @@ Alles in Fenster A, Menü links von oben nach unten.
 
 - **Telefonanrufe** sind in der Demo simuliert. Echte Anrufe brauchen eine Schweizer Nummer (Twilio).
 - **ATS-Anbindungen** sind vorbereitet und werden mit den Zugangsdaten des Kunden eingerichtet.
+- **Zeugnis-Note** ist eine Einschätzung nach der üblichen Zeugnissprache, keine amtliche Note. In der Schweiz müssen Zeugnisse wahr und wohlwollend sein; versteckte Codes sind eigentlich nicht erlaubt. In der Demo rechnen feste Regeln, mit Claude-Schlüssel prüft Claude zusätzlich und liest auch Scans und Fotos.
 - Ohne KI-Schlüssel nutzt die Demo eine eingebaute Test-KI. Mit Schlüssel (Claude oder OpenAI) werden die Texte noch natürlicher.
 - **Sandra und Max** auf der Website sind erfundene Personen. Bilder und Kamerafahrten sind mit KI erstellt (Higgsfield).
 - **LinkedIn und Indeed:** Beworben wird über den Link auf die Recruit24-Stellenseite. Bewerben direkt in LinkedIn („Easy Apply“) braucht eine offizielle Partnerschaft – das kommt später.

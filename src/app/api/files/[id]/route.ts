@@ -22,7 +22,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return new NextResponse("Die Datei konnte nicht geladen werden. Bitte wenden Sie sich an den Support.", { status: 502 });
   }
   await audit(ctx.orgId, userActor(ctx.user), "document.downloaded", { type: "Document", id: doc.id, label: doc.filename });
-  const inline = new URL(req.url).searchParams.get("inline") === "1" && doc.mimeType === "application/pdf";
+  const inline = new URL(req.url).searchParams.get("inline") === "1" && (doc.mimeType === "application/pdf" || doc.mimeType.startsWith("image/"));
   return new NextResponse(new Uint8Array(data), {
     headers: {
       "content-type": doc.mimeType,

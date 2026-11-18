@@ -17,7 +17,9 @@ export type LLMTask =
   | "followup_question"
   | "parse_cv"
   | "assistant"
-  | "video_answer_analysis";
+  | "video_answer_analysis"
+  | "transcribe_document"
+  | "grade_reference";
 
 export interface LLMRequest {
   task: LLMTask;
@@ -27,6 +29,8 @@ export interface LLMRequest {
   input?: unknown;
   json?: boolean;
   maxTokens?: number;
+  /** Scanned PDFs or photos sent along with the prompt. Only providers that read documents accept them. */
+  files?: { mime: string; base64: string }[];
 }
 
 export interface LLMResponse {
@@ -71,7 +75,7 @@ class AnthropicProvider implements LLMProvider {
         system: [BASE_SYSTEM, req.system, req.json ? "Respond with a single valid JSON object and nothing else." : ""]
           .filter(Boolean)
           .join("\n\n"),
-        messages: [{ role: "user", content: req.prompt }],
+        messages: [{ role: "user", content: req.files?.length ? [...req.files.map(fileBlock), { type: "text", text: req.prompt }] : req.prompt }],
       } as Anthropic.Beta.MessageCreateParamsNonStreaming);
       if (res.stop_reason === "refusal") throw new AIUnavailableError("The AI model declined this request.");
       const text = res.content.map((b) => (b.type === "text" ? b.text : "")).join("").trim();
@@ -86,10 +90,17 @@ class AnthropicProvider implements LLMProvider {
   }
 }
 
+/** A scanned PDF becomes a document block, a photo an image block; both go before the text. */
+function fileBlock(f: { mime: string; base64: string }): Anthropic.Beta.BetaContentBlockParam {
+  if (f.mime === "application/pdf") return { type: "document", source: { type: "base64", media_type: "application/pdf", data: f.base64 } };
+  return { type: "image", source: { type: "base64", media_type: f.mime as "image/png" | "image/jpeg", data: f.base64 } };
+}
+
 class OpenAIProvider implements LLMProvider {
   name = "openai";
   model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
   async generate(req: LLMRequest): Promise<LLMResponse> {
+    if (req.files?.length) throw new AIUnavailableError("This AI provider is not set up to read scanned documents.");
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
