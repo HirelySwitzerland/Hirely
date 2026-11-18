@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { encrypt, randomToken } from "@/lib/crypto";
 import { hashPassword } from "@/lib/auth/password";
 import { buildCoverLetter, buildCv, buildReference, emailFor } from "@/lib/demo/personas";
+
 import { storeCandidateDocument } from "@/lib/services/documents";
 import { analyzeApplication, reevaluate } from "@/lib/services/screening";
 import { defaultFlow, startFlow, answerFlow, type FlowNode } from "@/lib/services/interview-flow";
@@ -17,7 +18,7 @@ import { changeStage } from "@/lib/services/pipeline";
 import { sendMessage } from "@/lib/services/communication";
 import { defaultPipelineAutomation, type Step } from "@/lib/services/automation";
 import { enqueue } from "@/lib/queue";
-import { CANDIDATES, JOBS } from "./seed-data";
+import { CANDIDATES, JOBS, REF_QUALITY } from "./seed-data";
 import { getStorage } from "@/lib/providers/storage";
 
 const PASSWORD = "Recruit24-Demo-2026";
@@ -271,12 +272,14 @@ export async function seedDemo() {
     });
     await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(buildCv(p, email), "utf8"), filename: `CV_${p.first}_${p.last}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" });
     const job = JOBS.find((j) => j.key === cs.job)!;
-    // most people send more than a CV: a reference letter from their latest employer and a few lines in the form
+    // most people also send a cover letter and a few lines in the form
     const fullApplication = p.last.length % 3 !== 0 || p.last === "Egli";
-    // references of different quality, so the grade differs: strong for people far along, weaker for rejections
-    const refLevel = (["OFFER", "HIRED", "PERSONAL_INTERVIEW", "SHORTLISTED"].includes(cs.target) ? 1 : ["REJECTED", "NO_ANSWER"].includes(cs.target) ? 3 + (p.last.length % 2) : [2, 1, 3, 3][p.last.length % 4]) as 1 | 2 | 3 | 4;
-    const reference = fullApplication ? buildReference(p, refLevel) : null;
-    if (reference) await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(reference, "utf8"), filename: `${/heute|present/i.test(p.experience[0].to) ? "Zwischenzeugnis" : "Arbeitszeugnis"}_${p.experience[0].company}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" }, "REFERENCE");
+    // everyone sends a reference: an interim one from the current employer with a full application,
+    // otherwise the final reference from the previous employer
+    const refJob = fullApplication || !p.experience[1] ? 0 : 1;
+    const reference = buildReference(p, REF_QUALITY[p.last] ?? 5.5, refJob);
+    const refEmployer = p.experience[refJob] ?? p.experience[0];
+    if (reference && refEmployer) await storeCandidateDocument(O, cand.id, { buffer: Buffer.from(reference, "utf8"), filename: `${/heute|present/i.test(refEmployer.to) ? "Zwischenzeugnis" : "Arbeitszeugnis"}_${refEmployer.company}.txt`.replace(/[^\w.]/g, "_"), mime: "text/plain" }, "REFERENCE");
     const app = await db.application.create({
       data: {
         orgId: O, candidateId: cand.id, jobId: jobIds[cs.job], source: cs.source, sourceDetail: cs.sourceDetail, appliedAt, stageChangedAt: appliedAt, createdAt: appliedAt,
@@ -417,6 +420,7 @@ export async function seedDemo() {
   await db.jobRequirement.create({ data: { orgId: org2.id, jobId: j2.id, kind: "MUST", category: "CERTIFICATION", label: "Staplerausweis", keywords: ["stapler"] } });
   const c2 = await db.candidate.create({ data: { orgId: org2.id, firstName: "Remo", lastName: "Arnold", email: "remo.arnold@bluewin.ch", phone: "+41 79 111 22 33", portalToken: randomToken(24), consentProcessingAt: now } });
   await storeCandidateDocument(org2.id, c2.id, { buffer: Buffer.from("Remo Arnold\nLogistiker EFZ\nHaldenstrasse 4, 6006 Luzern\nremo.arnold@bluewin.ch\n\nBERUFSERFAHRUNG\n2018 – heute  Lagermitarbeiter, Planzer AG, Dietikon\n- Kommissionierung\n\nKENNTNISSE\nStaplerausweis, SAP WM\n\nSPRACHEN\nDeutsch (Muttersprache)"), filename: "CV_Remo_Arnold.txt", mime: "text/plain" });
+  await storeCandidateDocument(org2.id, c2.id, { buffer: Buffer.from("Planzer AG\nDietikon\n\nZWISCHENZEUGNIS\n\nRemo Arnold ist seit 2018 als Lagermitarbeiter bei der Planzer AG tätig.\n\nZu den Hauptaufgaben gehören:\n- Kommissionierung und Warenausgang\n- Staplerfahrten im Hochregallager\n\nRemo Arnold verfügt über fundierte Kenntnisse in SAP WM und setzt diese sicher ein. Er erledigt die übertragenen Aufgaben stets zu unserer vollen Zufriedenheit.\nDas Verhalten gegenüber Vorgesetzten und Mitarbeitenden ist stets einwandfrei.\nDieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken für die bisherige Mitarbeit und freuen uns auf die weitere Zusammenarbeit.\n\nDietikon\nPlanzer AG, Personalabteilung"), filename: "Zwischenzeugnis_Planzer_AG.txt", mime: "text/plain" }, "REFERENCE");
   const a2 = await db.application.create({ data: { orgId: org2.id, candidateId: c2.id, jobId: j2.id, source: "CAREER_SITE", stageHistory: { create: { orgId: org2.id, toStage: "NEW" } } } });
   await analyzeApplication(a2.id);
 

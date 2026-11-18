@@ -7,6 +7,7 @@ import { applicationScope } from "@/lib/services/scope";
 import { STAGES } from "@/lib/services/pipeline";
 import { Card, EmptyState, LinkButton, PageHeader, Select } from "@/components/ui";
 import { InboxTable, PipelineBoard, type InboxRow } from "@/components/candidates/inbox";
+import { headlineGrade, storedReferenceGrades } from "@/lib/services/reference-store";
 import { ago, cn, fmtDate } from "@/lib/utils";
 import { nextStepFor, nextStepInclude } from "@/lib/next-step";
 import { myNextSteps } from "@/lib/services/next-steps";
@@ -39,18 +40,20 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
   const orderBy: Prisma.ApplicationOrderByWithRelationInput[] =
     sp.sort === "requirements" ? [{ requirementsMet: "desc" }, { appliedAt: "desc" }] : sp.sort === "stage" ? [{ stageChangedAt: "desc" }] : [{ appliedAt: "desc" }];
   const [apps, jobs, stageCounts, todo] = await Promise.all([
-    db.application.findMany({ where, include: { candidate: true, job: { select: { title: true } }, evaluations: { select: { status: true } }, ...nextStepInclude }, orderBy, take: 300 }),
+    db.application.findMany({ where, include: { candidate: { include: { documents: { where: { kind: "REFERENCE" }, select: { id: true, kind: true, filename: true, extractedText: true } } } }, job: { select: { title: true } }, evaluations: { select: { status: true } }, ...nextStepInclude }, orderBy, take: 300 }),
     db.job.findMany({ where: { orgId: ctx.orgId, ...(ctx.role === "HIRING_MANAGER" ? { hiringManagerId: ctx.user.id } : {}) }, select: { id: true, title: true, status: true }, orderBy: { title: "asc" } }),
     db.application.groupBy({ by: ["stage"], where: { ...scope, ...(sp.job ? { jobId: sp.job } : {}), candidate: { anonymizedAt: null } }, _count: true }),
     myNextSteps({ ...scope, ...(sp.job ? { jobId: sp.job } : {}) }),
   ]);
   const now = new Date();
+  const storedGrades = await storedReferenceGrades(apps.filter((a) => a.candidate.documents.length).map((a) => a.id));
   const rows: InboxRow[] = apps.map((a) => ({ a, step: nextStepFor(a, now) })).filter((x) => !sp.todo || x.step.owner === "you").map(({ a, step }) => ({
     id: a.id, name: `${a.candidate.firstName} ${a.candidate.lastName}`, email: a.candidate.email, jobTitle: a.job.title,
     appliedAt: fmtDate(a.appliedAt), appliedAgo: ago(a.appliedAt), source: a.source, sourceDetail: a.sourceDetail, stage: a.stage,
     screeningStatus: a.screeningStatus, meetsMinimum: a.meetsMinimum, interviewStatus: a.interviewStatus, met: a.requirementsMet, total: a.requirementsTotal,
     mustMet: a.mustHaveMet, mustTotal: a.mustHaveTotal, location: a.candidate.location, flags: a.evaluations.map((e) => e.status),
     nextOwner: step.owner, nextShort: step.short,
+    refGrade: headlineGrade(a.candidate.documents, storedGrades.get(a.id)),
   }));
   const board = sp.view === "board";
   const qs = (patch: Partial<SP>) => {

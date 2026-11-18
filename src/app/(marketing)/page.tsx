@@ -16,6 +16,7 @@ import { SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 import { StartButtons } from "@/components/marketing/cta";
 import { HERO } from "@/components/marketing/story-texts";
 import { MobileShowcase, Promises, SECTION, SectionHead } from "@/components/marketing/sections";
+import { ReferenceShowcase } from "@/components/marketing/reference-showcase";
 import { cn } from "@/lib/utils";
 
 /** The photo/video story switches on once its pictures are in public/story (generated with Higgsfield); until then the 3D film runs. */
@@ -23,7 +24,7 @@ const STORY_READY = fs.existsSync(path.join(process.cwd(), "public", "story", "h
 
 export const metadata = {
   title: { absolute: "Recruit24 – Recruiting rund um die Uhr, automatisiert" },
-  description: "Recruit24 prüft jede Bewerbung, führt das Vorabgespräch und vereinbart den Termin – rund um die Uhr. Mehr Zeit für das Wichtige, Entscheide auch unterwegs auf dem Handy. Für HR-Abteilungen, Personalvermittler und Headhunter in der Schweiz.",
+  description: "Recruit24 prüft jede Bewerbung, benotet Arbeitszeugnisse, führt das Vorabgespräch und vereinbart den Termin – rund um die Uhr. Mehr Zeit für das Wichtige, Entscheide auch unterwegs auf dem Handy. Für HR-Abteilungen, Personalvermittler und Headhunter in der Schweiz.",
 };
 
 const STEPS: StoryStep[] = [
@@ -63,9 +64,9 @@ const NEVER = [
 const FAQ = [
   ["Was erledigt Recruit24 – und was bleibt bei uns?", "Recruit24 prüft Bewerbungen, führt das Vorabgespräch, fasst zusammen und vereinbart Termine – rund um die Uhr. Bei Ihnen bleibt, was zählt: entscheiden, wen Sie kennenlernen, und die Gespräche selbst führen. Zu- und Absagen trifft immer ein Mensch – das ist technisch so eingebaut."],
   ["Funktioniert Recruit24 auch auf dem Handy?", "Ja. Recruit24 läuft im Browser auf Computer, Tablet und Handy, ohne App-Installation. Auf dem Handy legen Sie Recruit24 mit «Zum Home-Bildschirm» wie eine App ab. Auch Bewerbende brauchen nur ihr Handy: Sie bewerben sich, führen das Vorabgespräch und wählen den Termin – ohne Konto."],
-  ["Was liest Recruit24 aus einer Bewerbung?", "Alles, was eingereicht wird: Lebenslauf, Anschreiben, Arbeitszeugnisse und Diplome, dazu die Antworten im Formular und das Vorabgespräch. Jede Aussage, die Recruit24 daraus ableitet, ist mit Dokument und Zeile verknüpft – ein Klick zeigt die markierte Stelle."],
+  ["Was liest Recruit24 aus einer Bewerbung?", "Alles, was eingereicht wird: Lebenslauf, Anschreiben, Arbeitszeugnisse und Diplome, dazu die Antworten im Formular und das Vorabgespräch. Jede Aussage, die Recruit24 daraus ableitet, ist mit Dokument und Zeile verknüpft – ein Klick zeigt die markierte Stelle. Arbeitszeugnisse bekommen zusätzlich eine Note von 1 bis 6."],
   ["Wissen Bewerbende, dass sie mit einer KI sprechen?", "Ja, immer. Die KI stellt sich zu Beginn als KI vor, erklärt, dass am Schluss ein Mensch entscheidet, und fragt nach dem Einverständnis zur Aufnahme."],
-  ["Deutet Recruit24 die Zeugnissprache?", "Nein. Recruit24 übernimmt aus Zeugnissen nur Fakten mit Fundstelle – etwa Aufgaben, Abschlüsse oder den Führerausweis. Wie eine Formulierung gemeint ist, beurteilen Sie."],
+  ["Deutet Recruit24 die Zeugnissprache?", "Ja, als Einschätzung. Recruit24 kennt die üblichen, abgestuften Formulierungen und gibt jedem Arbeitszeugnis eine Note nach Schweizer Skala für Leistung, Verhalten und Schluss – mit jedem Satz, auf dem sie beruht, und mit Hinweisen auf das, was fehlt. Weil Zeugnisse in der Schweiz wahr und wohlwollend sein müssen und die Formulierungen nicht überall gleich verwendet werden, zeigt Recruit24 auch, wie sicher die Note ist. Entscheiden tun Sie."],
   ["Wie steht es um den Datenschutz?", "Recruit24 ist auf das Schweizer Datenschutzgesetz (revDSG) und die DSGVO ausgelegt: Einwilligungen, Aufbewahrungsfristen, Export und Löschung auf Anfrage, lückenloses Protokoll. Daten werden verschlüsselt gespeichert und übertragen. Speicherort und Auftragsverarbeitung regeln wir mit Ihnen im Vertrag."],
   ["Wir sind Personalvermittler – passt Recruit24 für uns?", "Ja. Recruit24 übernimmt die Erstqualifikation: Unterlagen prüfen, Vorabgespräch führen, Verfügbarkeit und Lohnvorstellung erfassen, Termine vereinbaren. Pro Kunde führen Sie einen eigenen Bereich mit getrennten Daten. Für Ihre Kunden erstellen Sie mit einem Klick ein Kandidatendossier – auf Wunsch anonymisiert."],
   ["In welchen Sprachen führt Recruit24 die Gespräche?", "Auf Deutsch, Französisch, Italienisch und Englisch – pro Stelle einstellbar. Inserate, Nachrichten und das Bewerbungsformular gibt es in denselben Sprachen."],
@@ -190,6 +191,11 @@ export default function LandingPage() {
           />
           <div className="mt-16"><BenefitGrid /></div>
         </div>
+      </section>
+
+      {/* Arbeitszeugnisse mit Note */}
+      <section id="zeugnisse" className="scroll-mt-16 bg-[#F8F9FB]">
+        <div className={SECTION}><ReferenceShowcase /></div>
       </section>
 
       {/* Auf dem Handy */}

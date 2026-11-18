@@ -7,6 +7,9 @@ import type { Evidence } from "@/lib/services/evaluation";
 import { Alert, Avatar, Card, EmptyState, LinkButton, PageHeader } from "@/components/ui";
 import { EVIDENCE_META, InterviewBadge, RequirementsMeter, StageBadge } from "@/components/status";
 import { cn } from "@/lib/utils";
+import { fmtGrade, gradeLabel, gradeTone } from "@/lib/grade";
+import { gradedReferences } from "@/lib/services/reference-grade";
+import { storedReferenceGrades } from "@/lib/services/reference-store";
 
 export const metadata = { title: "Vergleich" };
 
@@ -15,8 +18,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const ids = ((await searchParams).ids ?? "").split(",").filter(Boolean).slice(0, 5);
   const apps = await db.application.findMany({
     where: { ...applicationScope(ctx), id: { in: ids } },
-    include: { candidate: true, job: true, evaluations: { include: { requirement: true } }, interviews: { where: { status: "COMPLETED" }, include: { segments: true } } },
+    include: { candidate: { include: { documents: { where: { kind: "REFERENCE" }, select: { id: true, kind: true, filename: true, extractedText: true } } } }, job: true, evaluations: { include: { requirement: true } }, interviews: { where: { status: "COMPLETED" }, include: { segments: true } } },
   });
+  const storedGrades = await storedReferenceGrades(apps.map((a) => a.id));
   if (apps.length < 2) {
     return (
       <div>
@@ -36,6 +40,20 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
     { label: "Erfahrung", render: (a) => <span>{a.candidate.yearsExperience != null ? `≈ ${a.candidate.yearsExperience} Jahre` : "—"}<span className="block text-[11px] text-slate-400">{a.candidate.currentTitle}</span></span> },
     { label: "Anforderungen", render: (a) => <RequirementsMeter met={a.requirementsMet} total={a.requirementsTotal} mustMet={a.mustHaveMet} mustTotal={a.mustHaveTotal} /> },
     { label: "KI-Interview", render: (a) => <InterviewBadge status={a.interviewStatus} /> },
+    {
+      label: "Arbeitszeugnis",
+      render: (a) => {
+        const g = gradedReferences(a.candidate.documents, storedGrades.get(a.id)).find((r) => r.grade?.overall != null)?.grade;
+        if (!g) return <span className="text-slate-400">Kein Zeugnis</span>;
+        return (
+          <Link href={`/app/candidates/${a.id}#zeugnisse`} className="block">
+            <span className={cn("text-[15px] font-semibold tabular-nums", { CONFIRMED: "text-emerald-700", PARTIAL: "text-amber-700", NOT_MET: "text-rose-700", UNKNOWN: "text-slate-500" }[gradeTone(g.overall)])}>{fmtGrade(g.overall)}</span>
+            <span className="ml-1.5 text-[13px] text-slate-600">{gradeLabel(g.overall)}</span>
+            <span className="block text-[11px] text-slate-400">{g.kind} · Leistung {fmtGrade(g.parts.LEISTUNG)} · Verhalten {fmtGrade(g.parts.VERHALTEN)}</span>
+          </Link>
+        );
+      },
+    },
     { label: "Verfügbar ab", render: (a) => a.availability ?? <span className="text-slate-400">Unbekannt</span> },
     { label: "Kündigungsfrist", render: (a) => a.noticePeriod ?? <span className="text-slate-400">Unbekannt</span> },
     { label: "Lohnvorstellung", render: (a) => a.salaryExpectation ?? <span className="text-slate-400">Unbekannt</span> },

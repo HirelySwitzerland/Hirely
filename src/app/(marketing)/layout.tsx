@@ -1,15 +1,17 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui";
 import { PUBLIC_DEMO, SHOW_PRICES, SITE_ONLY } from "@/lib/site";
 
 const NAV = [
   { href: "/#vorteile", label: "Vorteile" },
-  { href: "/#fuer-wen", label: "Für wen" },
+  { href: "/#fuer-wen", label: "Für wen", wide: true },
   { href: "/#funktionen", label: "Funktionen" },
+  { href: "/#zeugnisse", label: "Zeugnisse" },
   { href: "/#rechner", label: "Ersparnis" },
   { href: "/#preise", label: "Preise" },
-  { href: "/#vertrauen", label: "Datenschutz" },
+  { href: "/#vertrauen", label: "Datenschutz", wide: true },
   { href: "/#fragen", label: "Fragen" },
 ].filter((n) => SHOW_PRICES || n.href !== "/#preise");
 
@@ -21,8 +23,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <Link href="/" aria-label="Recruit24 Startseite">
             <Logo onDark className="h-10" />
           </Link>
-          <nav className="hidden items-center gap-8 text-[14px] font-medium text-white/70 lg:flex" aria-label="Hauptnavigation">
-            {NAV.map((n) => <a key={n.href} href={n.href} className="transition hover:text-white">{n.label}</a>)}
+          <nav className="hidden items-center gap-6 text-[14px] font-medium text-white/70 lg:flex xl:gap-8" aria-label="Hauptnavigation">
+            {/* on small laptops the menu keeps one line: the «wide» items appear from 1280 px */}
+            {NAV.map((n) => <a key={n.href} href={n.href} className={cn("transition hover:text-white", n.wide && "hidden xl:inline")}>{n.label}</a>)}
           </nav>
           <div className="flex items-center gap-1 sm:gap-2">
             {(!SITE_ONLY || PUBLIC_DEMO) && <Link href="/login" className="inline-flex h-9 items-center rounded-lg border border-white/20 px-3.5 text-[14px] font-medium text-white/90 transition hover:border-white/40 hover:text-white">Login</Link>}

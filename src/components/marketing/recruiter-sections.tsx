@@ -27,7 +27,7 @@ const AUDIENCES = [
     lead: "Für Personalvermittler, Temporärbüros und Headhunter: Recruit24 übernimmt die Erstqualifikation – Ihre Beraterinnen und Berater die Beziehungen.",
     points: [
       ["Erstqualifikation auf Autopilot", "Unterlagen prüfen, Vorabgespräch führen, Verfügbarkeit, Kündigungsfrist und Lohn erfassen – rund um die Uhr."],
-      ["Belegt statt behauptet", "Jede Aussage über eine Person verweist auf die Stelle in Lebenslauf, Zeugnis oder Gespräch – stark im Gespräch mit Ihrem Kunden."],
+      ["Belegt statt behauptet", "Jede Aussage über eine Person verweist auf die Stelle in Lebenslauf, Zeugnis oder Gespräch, jedes Arbeitszeugnis bekommt eine Note – stark im Gespräch mit Ihrem Kunden."],
       ["Ihre Datenbank wird lebendig", "Den Talent-Pool in normaler Sprache durchsuchen – «Elektroingenieure in der Ostschweiz» – und Treffer mit einem Klick einer Stelle zuordnen."],
       ["Pro Kunde ein eigener Bereich", "Getrennte Daten, eigene Stellen und Interviewfragen pro Mandat – ein Login, schneller Wechsel."],
     ],

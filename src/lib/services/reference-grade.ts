@@ -10,7 +10,10 @@
  * with a confidence level, never a decision.
  */
 import { quoteIsGrounded } from "@/lib/ai-safety";
+import { gradeLabel } from "@/lib/grade";
 import { locate } from "./document-kinds";
+
+export { fmtGrade, gradeLabel, gradeTone } from "@/lib/grade";
 
 export type RefPart = "LEISTUNG" | "VERHALTEN" | "SCHLUSS";
 export type RefFinding = { part: RefPart; grade: number; meaning: string; quote: string; start?: number; end?: number; line?: number; page?: number; pageLine?: number };
@@ -30,26 +33,9 @@ export type ReferenceGrade = {
 
 export const PART_LABEL: Record<RefPart, string> = { LEISTUNG: "Leistung", VERHALTEN: "Verhalten", SCHLUSS: "Schluss" };
 
-/** Swiss wording of a grade: 6 sehr gut, 5 gut, 4 genügend, 3 ungenügend … */
-export function gradeLabel(g: number | null | undefined): string {
-  if (g == null) return "keine Note";
-  if (g >= 6) return "sehr gut";
-  if (g >= 5.5) return "gut bis sehr gut";
-  if (g >= 5) return "gut";
-  if (g >= 4.5) return "befriedigend";
-  if (g >= 4) return "genügend";
-  if (g >= 3) return "ungenügend";
-  return "schwach";
-}
-
 /** 5.25 → 5.5; grades are given in half steps like Swiss school grades. */
 export function roundGrade(g: number): number {
   return Math.min(6, Math.max(1, Math.round(g * 2) / 2));
-}
-
-/** «5.5» – with a dot, as Swiss grades are usually written. */
-export function fmtGrade(g: number | null | undefined): string {
-  return g == null ? "–" : Number.isInteger(g) ? String(g) : g.toFixed(1);
 }
 
 // ── text helpers ────────────────────────────────────────────────────────────────────────────────
@@ -413,11 +399,6 @@ export function keyFindings(g: ReferenceGrade, max = 5): RefFinding[] {
   return [...g.findings].filter((f) => f.quote).sort((a, b) => score(b) - score(a)).slice(0, max).sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
 }
 
-/** Traffic-light tone for a grade, shared by the profile, the document viewer and the dossier. */
-export function gradeTone(g: number | null | undefined): "CONFIRMED" | "PARTIAL" | "NOT_MET" | "UNKNOWN" {
-  if (g == null) return "UNKNOWN";
-  return g >= 5.5 ? "CONFIRMED" : g >= 4 ? "PARTIAL" : "NOT_MET";
-}
 
 export type GradedReference = { docId: string; filename: string; grade: ReferenceGrade | null };
 

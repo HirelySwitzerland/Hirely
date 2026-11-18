@@ -8,6 +8,7 @@ import type { NextOwner } from "@/lib/next-step";
 import type { EvidenceStatus, InterviewState, ProcessStatus, Stage } from "@prisma/client";
 import { Avatar, Button, Select } from "@/components/ui";
 import { RequirementsMeter, ScreeningBadge, StageBadge, SOURCE_LABEL } from "@/components/status";
+import { fmtGrade, gradeLabel, gradeTone } from "@/lib/grade";
 import { bulkMoveStage, moveStage } from "@/app/actions/candidates";
 import { STAGES } from "@/lib/stages";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,8 @@ export type InboxRow = {
   flags: EvidenceStatus[];
   nextOwner: NextOwner;
   nextShort: string;
+  /** Grade of the work reference on the Swiss scale, null when there is none. */
+  refGrade: number | null;
 };
 
 /** The next step in one glance: highlighted when HR has to act, grey while others are at it. */
@@ -87,7 +90,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/60 text-xs font-medium text-slate-500">
               <th className="w-10 px-4 py-3"><input type="checkbox" checked={all} onChange={() => setSel(all ? [] : rows.map((r) => r.id))} className="rounded border-slate-300 text-brand-600" aria-label="Alle auswählen" /></th>
-              <th className="px-3 py-3">Kandidat/in</th><th className="px-3 py-3">Nächster Schritt</th><th className="px-3 py-3">Stufe</th><th className="px-3 py-3">Anforderungen</th><th className="px-3 py-3 text-right">Eingegangen</th>
+              <th className="px-3 py-3">Kandidat/in</th><th className="px-3 py-3">Nächster Schritt</th><th className="px-3 py-3">Stufe</th><th className="px-3 py-3">Anforderungen</th><th className="px-3 py-3" title="Note des Arbeitszeugnisses, Schweizer Skala">Zeugnis</th><th className="px-3 py-3 text-right">Eingegangen</th>
             </tr>
           </thead>
           <tbody>
@@ -106,6 +109,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                 <td className="px-3 py-3"><Link href={`/app/candidates/${r.id}`}><NextChip owner={r.nextOwner} label={r.nextShort} /></Link></td>
                 <td className="px-3 py-3"><StageBadge stage={r.stage} /></td>
                 <td className="px-3 py-3">{r.screeningStatus === "COMPLETED" || r.total > 0 ? <RequirementsMeter met={r.met} total={r.total} mustMet={r.mustMet} mustTotal={r.mustTotal} /> : <ScreeningBadge status={r.screeningStatus} meetsMinimum={r.meetsMinimum} />}</td>
+                <td className="px-3 py-3"><GradeChip g={r.refGrade} /></td>
                 <td className="px-3 py-3 text-right text-[13px] text-slate-500" title={`${r.appliedAt} · ${SOURCE_LABEL[r.source] ?? r.source}${r.sourceDetail ? ` (${r.sourceDetail})` : ""}`}>{r.appliedAgo}</td>
               </tr>
             ))}
@@ -128,6 +132,7 @@ export function InboxTable({ rows, canStage }: { rows: InboxRow[]; canStage: boo
                   <NextChip owner={r.nextOwner} label={r.nextShort} />
                   <StageBadge stage={r.stage} />
                   {r.total > 0 && <span className="text-xs tabular-nums text-slate-600">{r.met}/{r.total} Anf.</span>}
+                  {r.refGrade != null && <GradeChip g={r.refGrade} />}
                 </div>
               </div>
             </Link>
@@ -200,6 +205,7 @@ export function PipelineBoard({ rows, canStage }: { rows: InboxRow[]; canStage: 
                       <RequirementsMeter met={r.met} total={r.total} compact />
                       <NextChip owner={r.nextOwner} label={r.nextShort} />
                     </div>
+                    {r.refGrade != null && <div className="mt-2"><GradeChip g={r.refGrade} /></div>}
                   </Link>
                 ))}
               </div>
@@ -209,5 +215,22 @@ export function PipelineBoard({ rows, canStage }: { rows: InboxRow[]; canStage: 
       </div>
       <p className="flex items-center gap-1.5 text-xs text-slate-500"><Columns3 className="h-3.5 w-3.5" />{canStage ? "Karten zwischen den Spalten ziehen, um die Stufe zu ändern. Jede Änderung wird protokolliert." : "Nur Ansicht."} Abgesagte und Talent-Pool-Kandidierende finden Sie über die Filter.</p>
     </div>
+  );
+}
+
+const GRADE_CHIP = {
+  CONFIRMED: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+  PARTIAL: "bg-amber-50 text-amber-900 ring-amber-200",
+  NOT_MET: "bg-rose-50 text-rose-800 ring-rose-200",
+  UNKNOWN: "bg-slate-50 text-slate-500 ring-slate-200",
+} as const;
+
+/** «Zeugnis 5.5» – the grade of the work reference, coloured like the requirement meter. */
+function GradeChip({ g }: { g: number | null }) {
+  if (g == null) return <span className="text-[13px] text-slate-400">–</span>;
+  return (
+    <span title={`Arbeitszeugnis: ${gradeLabel(g)} (Schweizer Skala, Einschätzung)`} className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset", GRADE_CHIP[gradeTone(g)])}>
+      Zeugnis <span className="font-semibold tabular-nums">{fmtGrade(g)}</span>
+    </span>
   );
 }

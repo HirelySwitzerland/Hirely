@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { gradeLabel, gradeReference, keyFindings, mergeAiGrade } from "../src/lib/services/reference-grade";
 import { locate } from "../src/lib/services/document-kinds";
+import { CANDIDATES, REF_QUALITY } from "../src/lib/demo/seed-data";
+import { buildReference } from "../src/lib/demo/personas";
 
 // Fictional references. Line breaks mimic text pulled from a PDF, where sentences wrap mid-line.
 const INTERIM_GOOD = `ZWISCHENZEUGNIS
@@ -125,4 +127,20 @@ test("an unusable AI answer falls back to the rule-based grade", () => {
   const rules = gradeReference(INTERIM_GOOD);
   assert.equal(mergeAiGrade(INTERIM_GOOD, rules, null), null);
   assert.equal(mergeAiGrade(INTERIM_GOOD, rules, { parts: { LEISTUNG: "sehr gut" } }), null);
+});
+
+test("every demo candidate has a reference that earns the intended grade", () => {
+  for (const cs of CANDIDATES) {
+    const p = cs.persona;
+    const want = REF_QUALITY[p.last];
+    assert.ok(want, `no grade set for ${p.last}`);
+    for (const job of [0, 1]) {
+      const text = buildReference(p, want, job);
+      assert.ok(text, `${p.last}: no reference`);
+      const g = gradeReference(text!);
+      // English references use few graded formulas; they only need to land near the intended grade
+      if (p.lang === "en") assert.ok(Math.abs(g.overall! - want) <= 1, `${p.last} (${job}): ${g.overall} vs ${want}`);
+      else assert.equal(g.overall, want, `${p.last} (job ${job})`);
+    }
+  }
 });

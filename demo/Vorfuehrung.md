@@ -71,7 +71,7 @@ Fenster A, noch vor dem Anmelden: `http://localhost:3000` (oder `recruit24.ch`, 
 - Beim Datenwürfel und beim Telefon kurz anhalten: Rechts sieht man, was Recruit24 in dem Moment tut.
 - Einstiegssatz zur Startseite: „Recruiting rund um die Uhr – automatisiert. Ihr Team gewinnt Zeit für das Wichtige und entscheidet im Büro oder unterwegs auf dem Handy.“
 - Satz zur Geschichte: „Max bewirbt sich am Sonntagabend um 21:14 Uhr. Am Montagmorgen muss Sandra nur noch entscheiden.“
-- Weiter scrollen: die **drei Versprechen** (rund um die Uhr, mehr Zeit für Wichtiges, überall erreichbar), **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind), **Funktionen** und **Auf dem Handy** mit echten Bildschirmen der App. Satz: „Sandra lädt Max aus dem Zug ein – mit einem Tipp.“
+- Weiter scrollen: die **drei Versprechen** (rund um die Uhr, mehr Zeit für Wichtiges, überall erreichbar), **Für wen** (Reiter «Personalvermittler & Headhunter» anklicken, wenn Vermittler im Raum sind), **Funktionen**, **Zeugnisse** (Beispielzeugnis mit Note 5.5 und darunter, was die Formulierungen bedeuten) und **Auf dem Handy** mit echten Bildschirmen der App. Satz: „Sandra lädt Max aus dem Zug ein – mit einem Tipp.“
 - **Rechner** (oben im Menü «Ersparnis»): Zuerst die drei Studienzahlen. Satz: „58 % der Arbeitnehmenden in der Schweiz verlieren ganz das Interesse, wenn der Bewerbungsprozess zu lange dauert – und heute dauert es im Schnitt 20 Tage bis zum Vorstellungsgespräch.“
 - Darunter der Rechner: das Gegenüber nach Bewerbungen pro Monat fragen und den Regler einstellen. Bei «Kosten einer HR-Stunde» CHF 65 lassen (Medianlohn HR-Fachperson plus Sozialabgaben) oder den Wert der Firma nehmen. Satz: „Rund CHF 21’000 im Jahr an HR-Zeit – und fast zwei Wochen schneller beim Vorstellungsgespräch. Wir rechnen dabei vorsichtiger als die LinkedIn-Studie.“
 - Wenn jemand nachfragt: **«So rechnen wir – Schritt für Schritt»** aufklappen und mit **Annahmen anpassen** die Minuten gemeinsam ändern. **«Und was kostet eine offene Stelle?»** nur bei Interesse aufklappen.
@@ -172,6 +172,7 @@ Alles in Fenster A, Menü links von oben nach unten.
 - **Hinzufügen**: einzeln oder per CSV (z. B. nach einer Jobmesse).
 
 **Arbeitszeugnis mit Note**
+- In der **Liste** steht bei allen die Spalte **Zeugnis** (auch im **Board** und beim **Vergleichen**). Die Demo zeigt die ganze Spanne von 6 bis 4; abgesagt ist **Florian Bär** mit 3 («hat sich stets bemüht»), zu finden über den Reiter **Abgesagt** oben in der Liste.
 - **Kandidierende** → **Lukas Meier**: oben steht «Zeugnis 6», in der Übersicht die Karte **Arbeitszeugnisse** mit Leistung, Verhalten und Schluss.
 - Zum Vergleich **Manuela Steiner** (4.5): Recruit24 zeigt, dass «zur vollen Zufriedenheit» ohne «stets» nur befriedigend ist und dass die Kollegen vor den Vorgesetzten genannt werden.
 - Auf **Z. 16 ↗** klicken: Der Satz ist direkt im Zeugnis markiert.

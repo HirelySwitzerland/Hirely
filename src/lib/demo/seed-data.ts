@@ -1,4 +1,4 @@
-import type { Persona } from "./personas";
+import type { Persona, RefQuality } from "./personas";
 
 export type JobSeed = {
   key: string;
@@ -284,6 +284,19 @@ export type CandidateSeed = {
 };
 
 const P = (p: Omit<Persona, "lang"> & { lang?: "de" | "en" }): Persona => p;
+
+/**
+ * Demo: the grade each candidate's work reference is written to earn, so the list shows the whole range –
+ * mostly good ones (as in real life), a few average ones and one weak reference.
+ */
+export const REF_QUALITY: Record<string, RefQuality> = {
+  Meier: 6, Baumann: 6, Rossi: 6, Frei: 6, Moretti: 6, Whitfield: 6, Frick: 6, Suter: 6,
+  Raman: 5.5, Graf: 5.5, "Lüthi": 5.5, Schneider: 5.5, "Müller": 5.5, Vogel: 5.5, Bianchi: 5.5, Egli: 5.5, Hug: 5.5,
+  Schmid: 5, "Petrović": 5, Brunner: 5, Koller: 5,
+  Zimmermann: 4.5, Steiner: 4.5, Wenger: 4.5, Ammann: 4.5,
+  Yilmaz: 4, Huber: 4,
+  "Bär": 3,
+};
 
 export const CANDIDATES: CandidateSeed[] = [
   // ───────── Maschinenbauingenieur/in ─────────

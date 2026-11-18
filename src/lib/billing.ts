@@ -33,7 +33,7 @@ export const PLANS: Plan[] = [
     seats: 3,
     positions: 3,
     included: { VOICE_MINUTES: 100, VIDEO_INTERVIEWS: 20, SMS: 100, CV_ANALYSES: 300 },
-    features: ["Prüfung der ganzen Bewerbung mit Fundstellen", "KI-Vorabgespräch am Telefon und im Browser", "Kandidatendossier als PDF, auch anonymisiert", "Karriereseite", "E-Mail- & SMS-Automation", "Auch auf dem Handy"],
+    features: ["Prüfung der ganzen Bewerbung mit Fundstellen", "Arbeitszeugnisse mit Note (Schweizer Skala)", "KI-Vorabgespräch am Telefon und im Browser", "Kandidatendossier als PDF, auch anonymisiert", "Karriereseite", "E-Mail- & SMS-Automation", "Auch auf dem Handy"],
   },
   {
     id: "GROWTH",

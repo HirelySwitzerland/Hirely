@@ -56,32 +56,36 @@ const skillList = (p: Persona) => p.skills.split(",").map((x) => x.trim()).filte
 const langNames = (p: Persona) => p.languages.split(",").map((x) => x.replace(/\(.*\)/, "").trim()).filter(Boolean);
 
 /** Demo: a Swiss reference letter (Arbeitszeugnis, or interim reference while still employed) from the latest employer. */
+/** The grade a demo reference is written to earn (Swiss scale). */
+export type RefQuality = 6 | 5.5 | 5 | 4.5 | 4 | 3;
+
 /**
- * Demo: a work reference from the latest employer. `level` sets how good it reads, from 1 (sehr gut, grade 6)
- * to 4 (genügend, grade 4), using the usual reference wording – so the reference grade differs between candidates.
+ * Demo: a work reference written with the usual reference wording, so that it earns about the given grade –
+ * from 6 («stets zu unserer vollsten Zufriedenheit») to 3 («hat sich stets bemüht»). `job` picks the employer:
+ * 0 is the current one (interim reference), 1 the previous one (final reference).
  */
-export function buildReference(p: Persona, level: 1 | 2 | 3 | 4 = 2): string | null {
-  const e = p.experience[0];
+export function buildReference(p: Persona, quality: RefQuality = 5.5, job = 0): string | null {
+  const e = p.experience[job] ?? p.experience[0];
   if (!e) return null;
   const name = `${p.first} ${p.last}`;
   const skills = skillList(p).slice(0, 3);
   const langs = langNames(p);
   const current = /heute|present/i.test(e.to);
   if (p.lang === "en") {
-    const verdict = [
-      `${p.first} always performed all tasks to our fullest satisfaction. ${p.first}'s conduct towards superiors, colleagues and clients was always exemplary.`,
-      `We have always been very satisfied with ${p.first}'s performance and conduct.`,
-      `${p.first} performed the assigned tasks to our satisfaction.`,
-      `${p.first} performed the assigned tasks to our satisfaction.`,
-    ][level - 1];
+    const q = quality >= 6 ? 6 : quality >= 5 ? 5.5 : 4.5;
+    const verdict = {
+      6: `${p.first} always performed all tasks to our fullest satisfaction. ${p.first}'s conduct towards superiors, colleagues and clients was always exemplary.`,
+      5.5: `We have always been very satisfied with ${p.first}'s performance and conduct.`,
+      4.5: `${p.first} performed the assigned tasks to our satisfaction.`,
+    }[q];
     const closing = current
-      ? level <= 2 ? "This interim reference is issued at the employee's request. We thank them for their valuable work and look forward to continuing our cooperation." : "This interim reference is issued at the employee's request."
-      : level <= 2 ? `${p.first} is leaving at their own request${level === 1 ? ", which we greatly regret" : ""}. We thank them for their valuable work and wish them every success.` : level === 3 ? `We wish ${p.first} all the best.` : `The employment ended on ${e.to}.`;
+      ? q >= 5.5 ? "This interim reference is issued at the employee's request. We thank them for their valuable work and look forward to continuing our cooperation." : "This interim reference is issued at the employee's request."
+      : q >= 5.5 ? `${p.first} is leaving at their own request${q === 6 ? ", which we greatly regret" : ""}. We thank them for their valuable work and wish them every success.` : `We wish ${p.first} all the best.`;
     return [
       e.company, e.city, "", current ? "INTERIM REFERENCE" : "REFERENCE", "",
       current ? `${name} has been working for ${e.company} as ${e.title} since ${e.from}.` : `${name} worked for ${e.company} as ${e.title} from ${e.from} to ${e.to}.`,
       "", "Main responsibilities:", ...e.bullets.map((b) => `- ${b}`), "",
-      skills.length ? `${p.first} has ${level <= 2 ? "in-depth" : "good"} knowledge of ${skills.join(", ")} and applies it confidently.` : "",
+      skills.length ? `${p.first} has ${q >= 5.5 ? "in-depth" : "good"} knowledge of ${skills.join(", ")} and applies it confidently.` : "",
       langs.length > 1 ? `${p.first} communicates with clients and colleagues in ${langs.join(" and ")}.` : "",
       p.certs?.length ? `During this time, ${p.first} obtained the ${p.certs[0]}.` : "",
       "", verdict, closing,
@@ -90,40 +94,48 @@ export function buildReference(p: Persona, level: 1 | 2 | 3 | 4 = 2): string | n
   }
   const does = current ? "erledigt" : "erledigte";
   const was = current ? "ist" : "war";
-  const knowledge = ["umfassende und fundierte Fachkenntnisse", "fundierte Fachkenntnisse", "gute Fachkenntnisse", "solide Grundkenntnisse"][level - 1];
-  const satisfaction = [
-    `${p.first} ${does} die übertragenen Aufgaben stets zu unserer vollsten Zufriedenheit und zeigt jederzeit eine sehr grosse Leistungsbereitschaft.`,
-    `${p.first} ${does} die übertragenen Aufgaben stets zu unserer vollen Zufriedenheit.`,
-    `${p.first} ${does} die übertragenen Aufgaben zu unserer vollen Zufriedenheit.`,
-    `${p.first} ${does} die übertragenen Aufgaben zu unserer Zufriedenheit.`,
-  ][level - 1];
-  const conduct = [
-    `Das Verhalten gegenüber Vorgesetzten, Mitarbeitenden und Kunden ${was} stets vorbildlich.`,
-    `Das Verhalten gegenüber Vorgesetzten und Mitarbeitenden ${was} stets einwandfrei.`,
-    `Das Verhalten gegenüber Mitarbeitenden und Vorgesetzten ${was} einwandfrei.`,
-    `Das Verhalten gegenüber den Mitarbeitenden ${was} korrekt.`,
-  ][level - 1];
+  const knowledge = { 6: "umfassende und fundierte Fachkenntnisse", 5.5: "fundierte Fachkenntnisse", 5: "gute Fachkenntnisse", 4.5: "gute Fachkenntnisse", 4: "solide Grundkenntnisse", 3: "solide Grundkenntnisse" }[quality];
+  const satisfaction = {
+    6: `${p.first} ${does} die übertragenen Aufgaben stets zu unserer vollsten Zufriedenheit und zeigt jederzeit eine sehr grosse Leistungsbereitschaft.`,
+    5.5: `${p.first} ${does} die übertragenen Aufgaben stets zu unserer vollen Zufriedenheit.`,
+    5: `${p.first} ${does} die übertragenen Aufgaben stets zu unserer vollen Zufriedenheit.`,
+    4.5: `${p.first} ${does} die übertragenen Aufgaben zu unserer vollen Zufriedenheit.`,
+    4: `${p.first} ${does} die übertragenen Aufgaben zu unserer Zufriedenheit.`,
+    3: `${p.first} hat sich stets bemüht, die übertragenen Aufgaben zu unserer Zufriedenheit zu erledigen.`,
+  }[quality];
+  const conduct = {
+    6: `Das Verhalten gegenüber Vorgesetzten, Mitarbeitenden und Kunden ${was} stets vorbildlich.`,
+    5.5: `Das Verhalten gegenüber Vorgesetzten und Mitarbeitenden ${was} stets einwandfrei.`,
+    5: `Das Verhalten gegenüber Vorgesetzten und Mitarbeitenden ${was} einwandfrei.`,
+    4.5: `Das Verhalten gegenüber Mitarbeitenden und Vorgesetzten ${was} einwandfrei.`,
+    4: `Das Verhalten gegenüber den Mitarbeitenden ${was} korrekt.`,
+    3: `Das Verhalten gegenüber den Mitarbeitenden ${was} im Wesentlichen einwandfrei.`,
+  }[quality];
   const closing = current
-    ? [
-        `Dieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken ${p.first} für die ausgezeichnete Mitarbeit und freuen uns auf die weitere Zusammenarbeit.`,
-        `Dieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken für die bisherige Mitarbeit und freuen uns auf die weitere Zusammenarbeit.`,
-        "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt.",
-        "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt.",
-      ][level - 1]
-    : [
-        `${name} verlässt uns auf eigenen Wunsch, was wir sehr bedauern. Wir danken für die wertvolle Mitarbeit und wünschen für die Zukunft alles Gute und weiterhin viel Erfolg.`,
-        `${name} verlässt uns auf eigenen Wunsch. Wir danken für die Mitarbeit und wünschen für die Zukunft alles Gute.`,
-        `${name} verlässt uns auf eigenen Wunsch. Wir wünschen für die Zukunft alles Gute.`,
-        `Das Arbeitsverhältnis endet am ${e.to}.`,
-      ][level - 1];
+    ? {
+        6: `Dieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken ${p.first} für die ausgezeichnete Mitarbeit und freuen uns auf die weitere Zusammenarbeit.`,
+        5.5: "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken für die bisherige Mitarbeit und freuen uns auf die weitere Zusammenarbeit.",
+        5: "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt. Wir danken für die bisherige Mitarbeit.",
+        4.5: "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt.",
+        4: "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt.",
+        3: "Dieses Zwischenzeugnis wird auf Wunsch ausgestellt.",
+      }[quality]
+    : {
+        6: `${name} verlässt uns auf eigenen Wunsch, was wir sehr bedauern. Wir danken für die wertvolle Mitarbeit und wünschen für die Zukunft alles Gute und weiterhin viel Erfolg.`,
+        5.5: `${name} verlässt uns auf eigenen Wunsch. Wir danken für die Mitarbeit und wünschen für die Zukunft alles Gute.`,
+        5: `${name} verlässt uns auf eigenen Wunsch. Wir danken für die Mitarbeit.`,
+        4.5: `${name} verlässt uns auf eigenen Wunsch. Wir wünschen für die Zukunft alles Gute.`,
+        4: `Das Arbeitsverhältnis endet per Ende ${e.to}.`,
+        3: `Das Arbeitsverhältnis endet per Ende ${e.to}.`,
+      }[quality];
   return [
     e.company, e.city, "", current ? "ZWISCHENZEUGNIS" : "ARBEITSZEUGNIS", "",
     current ? `${name} ist seit ${e.from} als ${e.title} bei der ${e.company} tätig.` : `${name} war von ${e.from} bis ${e.to} als ${e.title} bei der ${e.company} tätig.`,
     "",
-    "Zu den Hauptaufgaben gehören:",
+    current ? "Zu den Hauptaufgaben gehören:" : "Zu den Hauptaufgaben gehörten:",
     ...e.bullets.map((b) => `- ${b}`),
     "",
-    skills.length ? `${name} verfügt über ${knowledge} in ${skills.join(", ")} und setzt diese sicher und selbständig ein.` : "",
+    skills.length ? `${name} ${current ? "verfügt" : "verfügte"} über ${knowledge} in ${skills.join(", ")} und ${current ? "setzt" : "setzte"} diese sicher und selbständig ein.` : "",
     langs.length > 1 ? `Mit Kundinnen, Kunden und im Team kommuniziert ${p.first} sicher auf ${langs.join(" und ")}.` : "",
     p.certs?.length ? `Während der Anstellung wurde zudem folgender Abschluss erworben: ${p.certs[0]}.` : "",
     p.license ? `Für die Einsätze stand der Führerausweis ${p.license} zur Verfügung.` : "",
