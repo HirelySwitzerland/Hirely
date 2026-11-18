@@ -12,6 +12,7 @@ import { appUrl, sendMessage } from "./communication";
 import { notify } from "./notifications";
 import { reevaluate } from "./screening";
 import { simulateAnswer } from "./simulated-candidate";
+import { detectPermit } from "./swiss-check";
 import { checkLimit, recordUsage } from "./usage";
 import { fireTrigger } from "./automation";
 
@@ -56,7 +57,8 @@ async function loadContext(interviewId: string) {
     latestCompany: latest?.company,
   };
   const vars: FlowVars = { candidate: `${app.candidate.firstName} ${app.candidate.lastName}`, company: app.org.name, position: app.job.title };
-  return { iv, app, cv, profile, vars, nodes: iv.flowSnapshot as unknown as FlowNode[] };
+  const permit = cvText ? detectPermit({ cvText, answers: [] }).type : null;
+  return { iv, app, cv, permit, profile, vars, nodes: iv.flowSnapshot as unknown as FlowNode[] };
 }
 
 /** Returns the open pre-screening interview (phone/web) for an application, creating one if needed. */
@@ -241,7 +243,7 @@ async function appendSegments(iv: { id: string; orgId: string; startedAt: Date |
 
 /** Mock-voice: run the full conversation with CV-derived answers (clearly labelled as simulated). */
 export async function runSimulatedCall(interviewId: string) {
-  const { iv, app, cv, profile, vars, nodes } = await loadContext(interviewId);
+  const { iv, app, cv, permit, profile, vars, nodes } = await loadContext(interviewId);
   let turn = startFlow(nodes, vars, profile);
   let offset = 0;
   offset = (await appendSegments(iv, [{ speaker: "SYSTEM", text: "Simulierter Anruf – es wurde nicht wirklich telefoniert." }, ...turn.say.map((t) => ({ speaker: "AI" as const, text: t, nodeId: turn.currentNodeId }))], offset)) ?? 0;
@@ -251,7 +253,7 @@ export async function runSimulatedCall(interviewId: string) {
     const pending = turn.state.pendingFollowUp;
     const answer = pending
       ? app.job.language !== "en" ? "Konkret habe ich zum Beispiel die Umstellung auf ein neues Fertigungsverfahren begleitet und dabei die Durchlaufzeit um rund 15 Prozent reduziert." : "For example, I supported the switch to a new production process and reduced lead time by about 15 percent."
-      : simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidateId, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0 });
+      : simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidateId, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0, permit });
     const next = answerFlow(nodes, turn.state, answer, vars, profile, app.job.language);
     offset = (await appendSegments(iv, [{ speaker: "CANDIDATE", text: answer, nodeId: node.id }, ...next.say.map((t) => ({ speaker: "AI" as const, text: t, nodeId: next.currentNodeId }))], offset)) ?? offset;
     turn = next;

@@ -305,7 +305,7 @@ export const CANDIDATES: CandidateSeed[] = [
     comment: "Starkes Profil, SolidWorks-Erfahrung passt genau zu unserem Stack.",
     answers: { motivation: "Ich konstruiere seit sieben Jahren Baugruppen für Spinnereimaschinen und möchte mein Wissen jetzt im Verpackungsmaschinenbau einsetzen. Mich reizt, dass bei Ihnen die Konstruktion sehr nah an der Produktion arbeitet und Prototypen im Haus gebaut werden.", salary: "Ich stelle mir etwa 112'000 Franken pro Jahr vor.", notice: "Ich habe drei Monate Kündigungsfrist.", availability: "Ab dem 1. Januar." },
     persona: P({
-      first: "Lukas", last: "Meier", headline: "Maschinenbauingenieur FH", street: "Bahnhofstrasse 12", zip: "8400", city: "Winterthur", phone: "+41 79 412 33 18",
+      first: "Lukas", last: "Meier", headline: "Maschinenbauingenieur FH", street: "Bahnhofstrasse 12", zip: "8400", city: "Winterthur", phone: "+41 79 412 33 18", permit: "Nationalität: Schweiz",
       profile: "Konstrukteur mit 7 Jahren Erfahrung im Sondermaschinenbau, Schwerpunkt Baugruppen-Konstruktion und Serienüberführung.",
       experience: [
         { from: "2019", to: "heute", title: "Konstrukteur Maschinenbau", company: "Rieter AG", city: "Winterthur", bullets: ["Konstruktion von Baugruppen für Spinnereimaschinen in SolidWorks", "FEM-Auslegung kritischer Bauteile mit ANSYS", "Begleitung von Prototypen bis zur Serienreife"] },
@@ -319,7 +319,7 @@ export const CANDIDATES: CandidateSeed[] = [
     job: "mech", daysAgo: 21, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "PERSONAL_INTERVIEW", interview: true, video: true,
     answers: { motivation: "Nach meinem Master an der ETH habe ich vier Jahre in der Medizintechnik entwickelt. Ich suche jetzt eine Stelle, in der ich grössere mechanische Systeme verantworte und näher an der Fertigung bin. Ihre Maschinen kenne ich von der Swissmem-Messe.", salary: "Zwischen 105'000 und 115'000 Franken.", notice: "Zwei Monate auf Ende Monat.", availability: "Ab dem 1. Dezember." },
     persona: P({
-      first: "Sarah", last: "Baumann", headline: "Entwicklungsingenieurin MSc ETH", street: "Rosenbergstrasse 45", zip: "8304", city: "Wallisellen", phone: "+41 78 204 91 55",
+      first: "Sarah", last: "Baumann", headline: "Entwicklungsingenieurin MSc ETH", street: "Rosenbergstrasse 45", zip: "8304", city: "Wallisellen", phone: "+41 78 204 91 55", permit: "Nationalität: Schweiz",
       experience: [
         { from: "2021", to: "heute", title: "Entwicklungsingenieurin", company: "Ypsomed AG", city: "Burgdorf", bullets: ["Entwicklung mechanischer Injektionssysteme mit Siemens NX", "Toleranzketten und DFMEA", "Koordination mit Spritzguss-Lieferanten"] },
         { from: "2020", to: "2021", title: "Trainee Engineering", company: "Hilti AG", city: "Schaan", bullets: ["Prüfstandsaufbau und Versuchsauswertung"] },
@@ -341,7 +341,7 @@ export const CANDIDATES: CandidateSeed[] = [
     job: "mech", daysAgo: 8, source: "EMAIL", sourceDetail: "Email · jobs@helvetic-engineering.ch", target: "SCREENED",
     comment: "Fachlich sehr gut, aber Deutsch A2 — für Kundenkontakt kritisch. Evtl. für englischsprachiges Projektteam prüfen.",
     persona: P({
-      first: "Priya", last: "Raman", headline: "Mechanical Design Engineer", street: "Hardturmstrasse 130", zip: "8005", city: "Zürich", phone: "+41 77 815 40 22", lang: "en",
+      first: "Priya", last: "Raman", headline: "Mechanical Design Engineer", street: "Hardturmstrasse 130", zip: "8005", city: "Zürich", phone: "+41 77 815 40 22", permit: "Work permit: B", lang: "en",
       experience: [
         { from: "2018", to: "present", title: "Mechanical Design Engineer", company: "Bosch Packaging Technology", city: "Bangalore", bullets: ["Designed sub-assemblies for form-fill-seal machines in Creo", "FEM analysis with ANSYS"] },
         { from: "2016", to: "2018", title: "Graduate Engineer Trainee", company: "Larsen & Toubro", city: "Chennai", bullets: ["Design of fixtures"] },
@@ -394,7 +394,7 @@ export const CANDIDATES: CandidateSeed[] = [
     job: "cnc", daysAgo: 14, source: "CAREER_SITE", sourceDetail: "Karriereseite", target: "REVIEW", interview: true,
     answers: { motivation: "Ich habe sechs Jahre an Fanuc-Maschinen gearbeitet und suche eine feste Stelle mit Perspektive. Mein Deutsch verbessere ich gerade mit einem Abendkurs.", salary: "78'000 Franken.", notice: "Zwei Monate.", availability: "Ab dem 1. Dezember." },
     persona: P({
-      first: "Dragan", last: "Petrović", headline: "CNC Operator", street: "Tösstalstrasse 60", zip: "8400", city: "Winterthur", phone: "+41 76 480 13 72",
+      first: "Dragan", last: "Petrović", headline: "CNC Operator", street: "Tösstalstrasse 60", zip: "8400", city: "Winterthur", phone: "+41 76 480 13 72", permit: "Ausweis C",
       experience: [
         { from: "2019", to: "heute", title: "CNC-Operator", company: "Adecco (Einsatz bei Sulzer AG)", city: "Winterthur", bullets: ["Bedienung und Einrichten von Fanuc-Bearbeitungszentren", "Korrekturprogrammierung"] },
         { from: "2017", to: "2019", title: "CNC Operator", company: "Metalac", city: "Gornji Milanovac", bullets: ["CNC-Drehen und -Fräsen"] },
@@ -424,7 +424,7 @@ export const CANDIDATES: CandidateSeed[] = [
   {
     job: "cnc", daysAgo: 4, source: "CAREER_SITE", sourceDetail: "jobs.ch", target: "NO_ANSWER",
     persona: P({
-      first: "Elif", last: "Yilmaz", headline: "CNC-Fräserin", street: "Frauenfelderstrasse 15", zip: "8404", city: "Winterthur", phone: "+41 79 555 01 00",
+      first: "Elif", last: "Yilmaz", headline: "CNC-Fräserin", street: "Frauenfelderstrasse 15", zip: "8404", city: "Winterthur", phone: "+41 79 555 01 00", permit: "Niederlassungsbewilligung C",
       experience: [{ from: "2021", to: "heute", title: "CNC-Fräserin", company: "Bystronic AG", city: "Niederönz", bullets: ["Einrichten und Bedienen von 3- und 5-Achs-Maschinen (Sinumerik)"] }, { from: "2017", to: "2021", title: "Lernende Polymechanikerin", company: "Bystronic AG", city: "Niederönz", bullets: ["Grundausbildung"] }],
       education: [{ from: "2017", to: "2021", degree: "Polymechanikerin EFZ", school: "Bystronic AG" }],
       languages: "Deutsch (Muttersprache), Türkisch (Muttersprache), Englisch (B1)", skills: "Siemens Sinumerik, Mastercam", license: "Kat. B",
@@ -445,7 +445,7 @@ export const CANDIDATES: CandidateSeed[] = [
     job: "pm", daysAgo: 30, source: "ATS", sourceDetail: "Personio · LinkedIn", target: "OFFER", interview: true,
     answers: { motivation: "I have led plant engineering projects for ten years, most recently packaging lines for pharma customers. Helvetic's customer base and the size of your projects match exactly what I want to do next.", salary: "Around 130'000 francs.", notice: "Three months.", availability: "From February first." },
     persona: P({
-      first: "Claudia", last: "Moretti", headline: "Senior Project Manager", street: "Via San Gottardo 10", zip: "6500", city: "Bellinzona", phone: "+41 79 677 12 84", lang: "en",
+      first: "Claudia", last: "Moretti", headline: "Senior Project Manager", street: "Via San Gottardo 10", zip: "6500", city: "Bellinzona", phone: "+41 79 677 12 84", permit: "Work permit: B", lang: "en",
       experience: [
         { from: "2016", to: "present", title: "Senior Project Manager", company: "Uhlmann Pac-Systeme", city: "Laupheim", bullets: ["Led turnkey packaging line projects up to EUR 8m", "Managed teams of 12 engineers across 3 countries", "Customer acceptance tests (FAT/SAT)"] },
         { from: "2012", to: "2016", title: "Project Engineer", company: "Bühler AG", city: "Uzwil", bullets: ["Project planning with SAP PS"] },
@@ -459,7 +459,7 @@ export const CANDIDATES: CandidateSeed[] = [
     comment: "Excellent PM track record. German only B1 — check whether an English-speaking customer portfolio is an option.",
     answers: { motivation: "I moved to Zurich last year with my family and want to continue in industrial project management. I've managed automation projects for the food industry for eight years.", salary: "125'000 to 135'000 francs.", notice: "One month.", availability: "From the first of December." },
     persona: P({
-      first: "James", last: "Whitfield", headline: "Project Manager, PMP", street: "Seefeldstrasse 201", zip: "8008", city: "Zürich", phone: "+41 77 430 55 19", lang: "en",
+      first: "James", last: "Whitfield", headline: "Project Manager, PMP", street: "Seefeldstrasse 201", zip: "8008", city: "Zürich", phone: "+41 77 430 55 19", permit: "Work permit: L (valid until June 2027)", lang: "en",
       experience: [
         { from: "2017", to: "present", title: "Project Manager", company: "Tetra Pak", city: "Wrexham", bullets: ["Delivered 14 automation projects for food processing customers", "Budget responsibility up to GBP 5m"] },
         { from: "2014", to: "2017", title: "Project Engineer", company: "Siemens UK", city: "Manchester", bullets: ["Commissioning of production lines"] },
@@ -561,9 +561,9 @@ export const CANDIDATES: CandidateSeed[] = [
   {
     job: "service", daysAgo: 3, source: "EMAIL", sourceDetail: "Email", target: "SCREENED",
     persona: P({
-      first: "Nicole", last: "Wenger", headline: "Mechatronikerin", street: "Bahnhofplatz 2", zip: "8570", city: "Weinfelden", phone: "+41 78 403 19 57",
+      first: "Nicole", last: "Wenger", headline: "Mechatronikerin", street: "Seestrasse 8", zip: "D-78462", city: "Konstanz", phone: "+49 7531 912 240", permit: "Grenzgängerin (Ausweis G)",
       experience: [{ from: "2021", to: "heute", title: "Instandhalterin", company: "Sigvaris AG", city: "St. Gallen", bullets: ["Wartung von Strickmaschinen", "Störungsbehebung"] }],
-      education: [{ from: "2017", to: "2021", degree: "Automatikerin EFZ", school: "Bühler AG" }],
+      education: [{ from: "2017", to: "2021", degree: "Mechatronikerin (Gesellenbrief)", school: "IHK Hochrhein-Bodensee" }],
       languages: "Deutsch (Muttersprache), Englisch (B2)", skills: "Instandhaltung, Pneumatik, Hydraulik", license: "Kat. B",
     }),
   },

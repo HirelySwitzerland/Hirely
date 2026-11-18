@@ -26,7 +26,7 @@ const AUDIENCES = [
     title: "Mehr Mandate mit demselben Team.",
     lead: "Für Personalvermittler, Temporärbüros und Headhunter: Recruit24 übernimmt die Erstqualifikation – Ihre Beraterinnen und Berater die Beziehungen.",
     points: [
-      ["Erstqualifikation auf Autopilot", "Unterlagen prüfen, Vorabgespräch führen, Verfügbarkeit, Kündigungsfrist und Lohn erfassen – rund um die Uhr."],
+      ["Erstqualifikation auf Autopilot", "Unterlagen prüfen, Vorabgespräch führen, Bewilligung, frühesten Eintritt und Lohn erfassen – rund um die Uhr."],
       ["Belegt statt behauptet", "Jede Aussage über eine Person verweist auf die Stelle in Lebenslauf, Zeugnis oder Gespräch, jedes Arbeitszeugnis bekommt eine Note – stark im Gespräch mit Ihrem Kunden."],
       ["Ihre Datenbank wird lebendig", "Den Talent-Pool in normaler Sprache durchsuchen – «Elektroingenieure in der Ostschweiz» – und Treffer mit einem Klick einer Stelle zuordnen."],
       ["Pro Kunde ein eigener Bereich", "Getrennte Daten, eigene Stellen und Interviewfragen pro Mandat – ein Login, schneller Wechsel."],
@@ -133,7 +133,7 @@ export function BenefitGrid() {
           })}
         </div>
       </Tile>
-      <Tile i={4} title="Die ganze Schweiz" text="Gespräche auf Deutsch, Französisch, Italienisch und Englisch – pro Stelle einstellbar.">
+      <Tile i={4} title="Die ganze Schweiz" text="Gespräche auf Deutsch, Französisch, Italienisch und Englisch. Dazu der Schweiz-Check: Bewilligung, ausländische Abschlüsse und frühester Eintritt.">
         <div className="grid grid-cols-2 gap-2">
           {[["DE", "Grüezi, ich bin der KI-Assistent …"], ["FR", "Bonjour, je suis l'assistant IA …"], ["IT", "Buongiorno, sono l'assistente IA …"], ["EN", "Hello, I'm the AI assistant …"]].map(([l, s]) => (
             <div key={l} className="rounded-xl border border-white/[0.07] bg-white/[0.04] p-3"><span className="font-mono text-[12px] font-semibold text-[#FDB48C]">{l}</span><p className="mt-1 text-[12px] leading-snug text-white/70">{s}</p></div>

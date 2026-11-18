@@ -12,6 +12,7 @@ import { storeCandidateDocument } from "@/lib/services/documents";
 import { analyzeApplication, reevaluate } from "@/lib/services/screening";
 import { defaultFlow, startFlow, answerFlow, type FlowNode } from "@/lib/services/interview-flow";
 import { parseCvHeuristic } from "@/lib/services/cv-heuristics";
+import { detectPermit } from "@/lib/services/swiss-check";
 import { simulateAnswer } from "@/lib/services/simulated-candidate";
 import { completeInterview, inviteToAiInterview, placeCall, ensurePrescreen } from "@/lib/services/interviews";
 import { changeStage } from "@/lib/services/pipeline";
@@ -98,7 +99,7 @@ async function seedInterview(appId: string, answers: Record<string, string> = {}
     const answer = pending
       ? app.job.language === "en" ? "For example, I restructured the commissioning plan together with the customer, which saved us three weeks." : "Zum Beispiel habe ich die Umrüstung einer Linie begleitet und die Rüstzeit dabei um rund 20 Prozent gesenkt."
       : (node.type === "question" && (answers[answerKey(node)] ?? answers[cat] ?? (node.id === "q_leadership" ? answers.experience : undefined))) ||
-        simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidate.email, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0 });
+        simulateAnswer(node, { cv, jobTitle: app.job.title, salaryMin: app.job.salaryMin, salaryMax: app.job.salaryMax, seed: app.candidate.email, language: app.job.language, hasLicense: (profile.licenses?.length ?? 0) > 0, permit: app.candidate.documents[0]?.extractedText ? detectPermit({ cvText: app.candidate.documents[0].extractedText, answers: [] }).type : null });
     push("CANDIDATE", answer, node.id);
     turn = answerFlow(nodes, turn.state, answer, vars, profile, app.job.language);
     for (const t of turn.say) push("AI", t, turn.currentNodeId);

@@ -15,6 +15,8 @@ export type Persona = {
   certs?: string[];
   license?: string;
   profile?: string;
+  /** a line on the work permit, as it stands on Swiss CVs («Ausweis C», «Nationalität: Schweiz») */
+  permit?: string;
   lang?: "de" | "en";
 };
 
@@ -33,6 +35,7 @@ export function buildCv(p: Persona, email = emailFor(p)): string {
     p.headline,
     `${p.street}, ${p.zip} ${p.city}`,
     `${email} · ${p.phone}`,
+    ...(p.permit ? [p.permit] : []),
     "",
     p.profile ? `${h.prof}\n${p.profile}\n` : "",
     h.exp,

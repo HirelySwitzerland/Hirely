@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { fmtGrade, gradeLabel, gradeTone } from "@/lib/grade";
 import { gradedReferences } from "@/lib/services/reference-grade";
 import { storedReferenceGrades } from "@/lib/services/reference-store";
+import { buildSwissCheck, topEducation } from "@/lib/services/swiss-check";
+import type { ParsedCv } from "@/lib/services/cv-heuristics";
 
 export const metadata = { title: "Vergleich" };
 
@@ -18,7 +20,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const ids = ((await searchParams).ids ?? "").split(",").filter(Boolean).slice(0, 5);
   const apps = await db.application.findMany({
     where: { ...applicationScope(ctx), id: { in: ids } },
-    include: { candidate: { include: { documents: { where: { kind: "REFERENCE" }, select: { id: true, kind: true, filename: true, extractedText: true } } } }, job: true, evaluations: { include: { requirement: true } }, interviews: { where: { status: "COMPLETED" }, include: { segments: true } } },
+    include: { candidate: { include: { documents: { where: { kind: { in: ["REFERENCE", "CV"] } }, select: { id: true, kind: true, filename: true, extractedText: true } } } }, job: true, evaluations: { include: { requirement: true } }, interviews: { where: { status: "COMPLETED" }, include: { segments: true } }, screeningAnswers: true },
   });
   const storedGrades = await storedReferenceGrades(apps.map((a) => a.id));
   if (apps.length < 2) {
@@ -35,6 +37,16 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
     const st = a.interviews[0]?.state as { answers?: Record<string, { category: string; answer: string }> } | undefined;
     return Object.values(st?.answers ?? {}).find((x) => x.category === cat)?.answer;
   };
+  const swiss = new Map(apps.map((a) => [a.id, buildSwissCheck({
+    cvText: a.candidate.documents.find((d) => d.kind === "CV")?.extractedText ?? "",
+    location: a.candidate.location,
+    education: ((a.candidate.profile ?? {}) as Partial<ParsedCv>).education ?? [],
+    screeningAnswers: a.screeningAnswers,
+    interviewStates: a.interviews.filter((i) => i.type !== "VIDEO").map((i) => i.state),
+    noticePeriod: a.noticePeriod,
+    availability: a.availability,
+  })]));
+  const PERMIT_CLS = { ok: "text-emerald-700", check: "text-amber-700", action: "text-rose-700", unknown: "text-slate-400" } as const;
   const rows: { label: string; render: (a: (typeof apps)[number]) => React.ReactNode }[] = [
     { label: "Stufe", render: (a) => <StageBadge stage={a.stage} /> },
     { label: "Erfahrung", render: (a) => <span>{a.candidate.yearsExperience != null ? `≈ ${a.candidate.yearsExperience} Jahre` : "—"}<span className="block text-[11px] text-slate-400">{a.candidate.currentTitle}</span></span> },
@@ -54,8 +66,28 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
         );
       },
     },
-    { label: "Verfügbar ab", render: (a) => a.availability ?? <span className="text-slate-400">Unbekannt</span> },
-    { label: "Kündigungsfrist", render: (a) => a.noticePeriod ?? <span className="text-slate-400">Unbekannt</span> },
+    {
+      label: "Frühester Eintritt",
+      render: (a) => {
+        const s = swiss.get(a.id)!.start;
+        return <span><span className={s.date ? "font-medium text-ink" : "text-slate-400"}>{s.label}</span>{s.warning && <span className="ml-1.5 text-[12px] text-amber-700" title={s.warning}>⚠ genannt: {a.availability}</span>}<span className="block text-[11px] text-slate-400">{a.noticePeriod ? `Kündigungsfrist: ${a.noticePeriod}` : "Kündigungsfrist unbekannt"}</span></span>;
+      },
+    },
+    {
+      label: "Bewilligung",
+      render: (a) => {
+        const p = swiss.get(a.id)!.permit;
+        return <span className={cn("text-[13px] font-medium", PERMIT_CLS[p.status])}>{p.label}</span>;
+      },
+    },
+    {
+      label: "Höchster Abschluss",
+      render: (a) => {
+        const e = topEducation(swiss.get(a.id)!.education);
+        if (!e) return <span className="text-slate-400">—</span>;
+        return <span className="text-[13px]"><span className="font-medium text-ink">{e.degree}</span><span className="block text-[11px] text-slate-500">{e.origin === "ABROAD" ? `${e.country ? `aus ${e.country}, ` : "Ausland, "}${e.levelLabel ?? "Stufe offen"}` : e.levelLabel ?? ""}</span></span>;
+      },
+    },
     { label: "Lohnvorstellung", render: (a) => a.salaryExpectation ?? <span className="text-slate-400">Unbekannt</span> },
     { label: "Motivation (eigene Worte)", render: (a) => <span className="text-[13px] text-slate-600">{keyAnswer(a, "motivation") ? `„${keyAnswer(a, "motivation")!.slice(0, 180)}“` : "—"}</span> },
   ];

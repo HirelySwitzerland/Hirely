@@ -1,5 +1,6 @@
 import type { FlowNode } from "./interview-flow";
 import type { ParsedCv } from "./cv-heuristics";
+import type { PermitType } from "./swiss-check";
 
 /**
  * Used ONLY by the mock voice provider to simulate a phone conversation when
@@ -13,7 +14,7 @@ function hash(s: string) {
   return Math.abs(h);
 }
 
-export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTitle: string; salaryMin?: number | null; salaryMax?: number | null; seed: string; language: string; hasLicense: boolean }): string {
+export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTitle: string; salaryMin?: number | null; salaryMax?: number | null; seed: string; language: string; hasLicense: boolean; permit?: PermitType | null }): string {
   const de = ctx.language !== "en";
   const h = hash(ctx.seed + (node.type === "question" ? node.text : node.id));
   const latest = ctx.cv?.experience[0];
@@ -24,7 +25,18 @@ export function simulateAnswer(node: FlowNode, ctx: { cv: ParsedCv | null; jobTi
   if (node.category === "knockout") {
     if (/führer|licen|permis|ausweis kat/i.test(t)) return ctx.hasLicense ? (de ? "Ja, ich habe den Führerausweis Kategorie B." : "Yes, I have a category B licence.") : de ? "Nein, leider nicht." : "No, unfortunately not.";
     if (/pikett|on-call|standby/i.test(t)) return de ? "Ja, Pikettdienst ist für mich kein Problem, das kenne ich aus meiner aktuellen Stelle." : "Yes, on-call duty is fine for me.";
-    if (/berechtigt|allowed|permit|bewilligung|arbeiten/i.test(t)) return de ? "Ja, ich habe eine gültige Arbeitsbewilligung (C)." : "Yes, I have a valid Swiss work permit.";
+    if (/berechtigt|allowed|permit|bewilligung|arbeiten/i.test(t)) {
+      // the permit the CV states, so the simulated call matches the documents
+      const answers: Partial<Record<PermitType, [string, string]>> = {
+        CH: ["Ja, ich habe das Schweizer Bürgerrecht.", "Yes, I'm a Swiss citizen."],
+        B: ["Ja, ich habe die Aufenthaltsbewilligung B.", "Yes, I have a B residence permit."],
+        G: ["Ja, ich habe eine Grenzgängerbewilligung, also den Ausweis G.", "Yes, I have a cross-border commuter permit (G)."],
+        L: ["Ja, ich habe eine Kurzaufenthaltsbewilligung L, sie läuft im Sommer aus.", "Yes, I have a short-term L permit; it runs out next summer."],
+      };
+      const a = ctx.permit ? answers[ctx.permit] : undefined;
+      if (a) return de ? a[0] : a[1];
+      return de ? "Ja, ich habe eine gültige Arbeitsbewilligung (C)." : "Yes, I have a valid Swiss work permit.";
+    }
     return de ? "Ja." : "Yes.";
   }
   if (/erläutern|situation|explain/.test(t)) return de ? "Ich bin daran, den Führerausweis zu machen, die Prüfung ist im nächsten Monat geplant." : "I'm currently taking lessons; my test is scheduled next month.";

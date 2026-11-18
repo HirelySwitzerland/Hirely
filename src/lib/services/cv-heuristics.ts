@@ -140,7 +140,9 @@ export function parseCvHeuristic(text: string): ParsedCv {
   if (email) out.email = { value: email[0], status: "confirmed" };
   const phone = text.match(/(\+41|0041|0)\s?\(?\d{2}\)?[\s/.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}/) ?? text.match(/\+\d{2}[\d\s]{8,14}\d/);
   if (phone) out.phone = { value: phone[0].trim(), status: "confirmed" };
-  const zip = text.match(/\b(?:CH-)?([1-9]\d{3})\s+([A-ZÄÖÜ][\wäöüéèà.-]+(?:\s(?:am|an|bei|im|sur|[A-ZÄÖÜ][\wäöüéèà.-]+))?)/);
+  // the address stands at the top; further down, «2017 – 2021  Mechatronikerin» would be read as a postal code
+  const head = lines.filter((l) => l.trim()).slice(0, 8).join("\n");
+  const zip = head.match(/\b(?:CH-)?([1-9]\d{3})\s+([A-ZÄÖÜ][\wäöüéèà.-]+(?:[ \t](?:am|an|bei|im|sur|[A-ZÄÖÜ][\wäöüéèà.-]+))?)/);
   if (zip) {
     out.location = { value: `${zip[1]} ${zip[2]}`, status: "confirmed" };
     out.region = { value: regionForPostalCode(Number(zip[1])), status: "inferred", source: "postal code" };

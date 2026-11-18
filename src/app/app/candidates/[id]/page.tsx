@@ -22,6 +22,8 @@ import { ProfileActions } from "@/components/candidates/profile-actions";
 import { NextStepCard } from "@/components/candidates/next-step";
 import { DocumentViewer, type ViewerDoc, type ViewerMark } from "@/components/candidates/document-viewer";
 import { ReferenceGrades } from "@/components/candidates/reference-grades";
+import { SwissCheckCard } from "@/components/candidates/swiss-check";
+import { buildSwissCheck } from "@/lib/services/swiss-check";
 import { PART_LABEL, fmtGrade, gradeTone, gradedReferences, type ReferenceGrade } from "@/lib/services/reference-grade";
 import { DOC_KIND_SHORT, FORM_LETTER_ID, placeLabel } from "@/lib/services/document-kinds";
 import { nextStepFor } from "@/lib/next-step";
@@ -89,6 +91,17 @@ export default async function CandidateProfile({ params, searchParams }: { param
     ),
   ];
   const headlineRef = references.find((r) => r.grade?.overall != null)?.grade;
+  // permit, Swiss level of each degree and earliest start
+  const swiss = buildSwissCheck({
+    cvText: c.documents.find((d) => d.kind === "CV")?.extractedText ?? "",
+    location: c.location,
+    education: profile.education ?? [],
+    screeningAnswers: app.screeningAnswers,
+    interviewStates: app.interviews.filter((i) => i.type !== "VIDEO" && i.status === "COMPLETED").map((i) => i.state),
+    docs: c.documents.filter((d) => d.kind !== "CV" && d.extractedText).map((d) => ({ label: DOC_KIND_SHORT[d.kind] ?? "Dokument", text: d.extractedText! })),
+    noticePeriod: app.noticePeriod,
+    availability: app.availability,
+  });
   const docHref = (docId: string) => `${base}?tab=cv&doc=${encodeURIComponent(docId)}`;
   const SOURCE_CHIP: Record<string, string> = { SCREENING: "Formular", INTERVIEW: "Interview", VIDEO: "Video", ...DOC_KIND_SHORT };
 
@@ -162,7 +175,7 @@ export default async function CandidateProfile({ params, searchParams }: { param
               <div className="p-5">
                 <p className="text-[15px] leading-relaxed text-ink">{app.summary ?? "Die CV-Auswertung läuft noch."}</p>
                 <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <Fact icon={<Hourglass className="h-4 w-4" />} label="Verfügbar ab" value={app.availability} />
+                  <Fact icon={<Hourglass className="h-4 w-4" />} label="Frühester Eintritt" value={swiss.start.date ? swiss.start.label : app.availability} note={swiss.start.warning ? `genannt: ${app.availability ?? ""}` : swiss.start.date ? "nach Kündigungsfrist" : undefined} />
                   <Fact icon={<Clock className="h-4 w-4" />} label="Kündigungsfrist" value={app.noticePeriod} />
                   <Fact icon={<Wallet className="h-4 w-4" />} label="Lohnvorstellung" value={app.salaryExpectation} />
                   <Fact icon={<Briefcase className="h-4 w-4" />} label="Berufserfahrung" value={c.yearsExperience != null ? `≈ ${c.yearsExperience} Jahre` : null} note="aus CV-Daten abgeleitet" />
@@ -247,6 +260,8 @@ export default async function CandidateProfile({ params, searchParams }: { param
             </Card>
 
             {references.length > 0 && <div id="zeugnisse" className="scroll-mt-20"><ReferenceGrades refs={references} docHref={docHref} /></div>}
+
+            <div id="schweiz-check" className="scroll-mt-20"><SwissCheckCard check={swiss} noticePeriod={app.noticePeriod} availability={app.availability} /></div>
 
             {prescreen?.status === "COMPLETED" && (
               <Card>

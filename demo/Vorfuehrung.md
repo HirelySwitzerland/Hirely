@@ -178,6 +178,13 @@ Alles in Fenster A, Menü links von oben nach unten.
 - Auf **Z. 16 ↗** klicken: Der Satz ist direkt im Zeugnis markiert.
 - Satz: „Recruit24 liest die Zeugnissprache und gibt eine Note von 1 bis 6 – mit jedem Satz, auf dem sie beruht. Entscheiden tun Sie.“
 
+**Schweiz-Check: Bewilligung, Abschlüsse, frühester Eintritt**
+- **Nicole Wenger** (Servicetechniker/in): wohnt in Konstanz. Recruit24 erkennt die Grenzgängerbewilligung G mit den Hinweisen (Quellensteuer, Meldung beim Kanton) und ordnet den deutschen Gesellenbrief als «vergleichbar mit EFZ» ein – die Anforderung «Grundausbildung (EFZ)» ist damit erfüllt.
+- **Lukas Meier**: frühester Eintritt **1. März 2027** bei drei Monaten Kündigungsfrist – genannt hat er den 1. Januar. Recruit24 merkt den Widerspruch und schlägt vor nachzufragen.
+- **James Whitfield**: Kurzaufenthaltsbewilligung L – «Bitte klären», weil sie befristet ist.
+- Beim **Vergleichen** stehen frühester Eintritt, Bewilligung und höchster Abschluss nebeneinander.
+- Satz: „Was Sie heute von Hand nachschauen – Bewilligung, ausländische Abschlüsse, Kündigungsfrist –, steht bei jeder Bewerbung schon da.“
+
 **Hörprobe: so klingt ein Telefoninterview**
 - **Kandidierende** → **Roman Egli** → Reiter **KI-Interview** → oben **Aufnahme des Gesprächs** abspielen (2:44 Minuten).
 - Rechts läuft das Transkript mit, die Zeitangaben passen zur Aufnahme. Links stehen die wichtigsten Antworten, die Recruit24 daraus gezogen hat.

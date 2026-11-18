@@ -12,6 +12,7 @@ import type { ParsedCv } from "@/lib/services/cv-heuristics";
 import type { Evidence } from "@/lib/services/evaluation";
 import { DOC_KIND_LABEL, FORM_LETTER_ID, placeLabel, type DocKind } from "@/lib/services/document-kinds";
 import { dossierRef, makeScrubber } from "@/lib/dossier";
+import { buildSwissCheck } from "@/lib/services/swiss-check";
 import { PART_LABEL, fmtGrade, gradeLabel, gradedReferences, keyFindings, type RefPart, type ReferenceGrade } from "@/lib/services/reference-grade";
 import { EVIDENCE_META } from "@/components/status";
 import { Markdown } from "@/components/markdown";
@@ -32,6 +33,7 @@ async function load(id: string) {
       job: true,
       evaluations: { include: { requirement: true }, orderBy: { requirement: { order: "asc" } } },
       interviews: { where: { type: { not: "VIDEO" }, status: "COMPLETED" }, orderBy: { endedAt: "desc" }, take: 1 },
+      screeningAnswers: true,
     },
   });
   if (!app || app.candidate.anonymizedAt) notFound();
@@ -86,12 +88,21 @@ export default async function DossierPage({ params, searchParams }: { params: Pr
   const name = anon ? `Kandidat/in ${ref}` : `${c.firstName} ${c.lastName}`;
   const languages = (profile.languages ?? []).map((l) => `${langLabel(l.language)}${l.cefr ? ` ${l.cefr}` : l.level ? ` (${l.level})` : ""}`);
   const region = profile.region?.value ?? c.region;
+  const swiss = buildSwissCheck({
+    cvText: c.documents.find((d) => d.kind === "CV")?.extractedText ?? "",
+    location: c.location,
+    education: profile.education ?? [],
+    screeningAnswers: app.screeningAnswers,
+    interviewStates: app.interviews.map((i) => i.state),
+    noticePeriod: app.noticePeriod,
+    availability: app.availability,
+  });
   const facts: [string, string | null | undefined][] = [
-    ["Verfügbar ab", app.availability],
-    ["Kündigungsfrist", app.noticePeriod],
+    ["Frühester Eintritt", swiss.start.date ? swiss.start.label : app.availability],
+    ["Bewilligung", swiss.permit.type || swiss.permit.status !== "unknown" ? swiss.permit.label : null],
     ["Lohnvorstellung", app.salaryExpectation],
     ["Berufserfahrung", c.yearsExperience != null ? `≈ ${Math.round(c.yearsExperience)} Jahre` : null],
-    ["Wohnregion", anon ? region : [c.location, region].filter(Boolean).join(" · ")],
+    ["Wohnregion", swiss.permit.abroad ? (anon ? `Ausland (${swiss.permit.abroad})` : [c.location, swiss.permit.abroad].filter(Boolean).join(" · ")) : anon ? region : [c.location, region].filter(Boolean).join(" · ")],
     ["Sprachen", languages.join(", ")],
   ];
   const chips = [...(profile.licenses ?? []).map((l) => `Führerausweis ${l.value}`), ...(profile.certifications ?? []).map((x) => x.value), ...(profile.skills ?? []).map((x) => x.value)];
@@ -256,6 +267,11 @@ export default async function DossierPage({ params, searchParams }: { params: Pr
                     <li key={i} className="break-inside-avoid">
                       <span className="font-medium text-ink">{x.degree}</span>
                       <span className="block text-[12px] text-slate-500">{[!anon && x.institution, [x.from, x.to].filter(Boolean).join(" – ")].filter(Boolean).join(" · ")}</span>
+                      {(() => {
+                        // anonymised: no country, so the dossier does not hint at the person's origin
+                        const e = swiss.education.find((y) => y.degree === x.degree?.trim());
+                        return e?.origin === "ABROAD" && e.levelLabel ? <span className="block text-[11px] text-slate-500">{anon || !e.country ? "Ausländischer Abschluss" : `Abschluss aus ${e.country}`}, {e.levelLabel}</span> : null;
+                      })()}
                     </li>
                   ))}
                 </ul>

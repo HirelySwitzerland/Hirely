@@ -1,4 +1,5 @@
 import { quoteIsGrounded } from "@/lib/ai-safety";
+import { EDU_RANK, PERMIT_WORDS, classifyEducation, permitLines, requiredLevel } from "./swiss-check";
 import { CEFR_ORDER, type ParsedCv } from "./cv-heuristics";
 import { extractNumber, interpretYesNo } from "./interview-flow";
 import { langLabel } from "@/lib/stages";
@@ -211,6 +212,23 @@ function evalKeyword(req: RequirementInput, ctx: EvalContext): EvalResult {
     status = "PARTIAL";
     explanation = `Im Zusammenhang mit der Berufserfahrung erwähnt; Tiefe nicht angegeben.`;
   }
+  // degrees from abroad: name the comparable Swiss level, and count one of the required level as «teilweise»
+  if (req.category === "EDUCATION" && ctx.cv?.education.length) {
+    const infos = classifyEducation(ctx.cv.education);
+    const need = requiredLevel(req.label) ?? requiredLevel(req.keywords.join(" "));
+    const hitInfo = eduHit ? infos.find((i) => i.degree === eduHit.degree.trim()) : undefined;
+    if (status === "CONFIRMED" && hitInfo?.origin === "ABROAD" && hitInfo.levelLabel) {
+      explanation = `Im CV unter Ausbildung: Abschluss aus ${hitInfo.country ?? "dem Ausland"}, ${hitInfo.levelLabel}.`;
+    } else if (status !== "CONFIRMED" && need) {
+      const match = infos.find((i) => i.origin === "ABROAD" && i.level && EDU_RANK[i.level] >= EDU_RANK[need]);
+      if (match) {
+        const line = ctx.cvText.split("\n").find((l) => l.includes(match.degree)) ?? match.degree;
+        if (!evidence.some((e) => e.quote === clip(line.trim()))) evidence.unshift({ source: "CV", quote: clip(line.trim()) });
+        status = "PARTIAL";
+        explanation = `Abschluss aus ${match.country ?? "dem Ausland"}: «${match.degree}», ${match.levelLabel}. Gleichwertigkeit bitte prüfen.`;
+      }
+    }
+  }
   for (const a of answerHits(ctx.answers, req, kws)) {
     evidence.push({ source: a.source, quote: clip(a.answer), ref: a.ref, note: `Antwort auf: „${a.question.length > 70 ? a.question.slice(0, 67) + "…" : a.question}“` });
     const yn = interpretYesNo(a.answer);
@@ -237,7 +255,8 @@ export function evaluateRequirement(req: RequirementInput, ctx: EvalContext): Ev
       break;
     }
     case "AUTHORIZATION": {
-      const lines = linesContaining(ctx.cvText, ["arbeitsbewilligung", "aufenthaltsbewilligung", "work permit", "bewilligung c", "bewilligung b", "permis c", "permis b", "ausweis c", "ausweis b"]);
+      // C, B, G, L, F, S or Swiss citizenship stated in the CV (see swiss-check.ts)
+      const lines = permitLines(ctx.cvText);
       r = evalYesNoStyle(req, ctx, lines, req.label);
       break;
     }
@@ -278,7 +297,7 @@ const DOC_SOURCES = new Set<EvidenceSource>(["CV", "COVER_LETTER", "REFERENCE", 
 export const isDocSource = (s: EvidenceSource) => DOC_SOURCES.has(s);
 
 const NEGATION = /(^|[^\p{L}])(kein|keine|keinen|keiner|nicht|ohne|no|not|without|pas de|sans|nessun|senza)([^\p{L}]|$)/iu;
-const AUTH_WORDS = ["arbeitsbewilligung", "aufenthaltsbewilligung", "work permit", "bewilligung c", "bewilligung b", "permis c", "permis b", "ausweis c", "ausweis b"];
+const AUTH_WORDS = PERMIT_WORDS;
 
 /**
  * Searches the further parts of the application (cover letter, references, diplomas) for the requirement.
