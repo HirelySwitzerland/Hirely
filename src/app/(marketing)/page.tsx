@@ -4,7 +4,7 @@ import { ArrowRight, Check, ChevronDown, CircleSlash, EyeOff, Play, ScrollText, 
 import type { CSSProperties } from "react";
 import fs from "node:fs";
 import path from "node:path";
-import { HeroVideo, StackedStory } from "@/components/marketing/photo-story";
+import { StackedStory } from "@/components/marketing/photo-story";
 import { ScrollFilm } from "@/components/marketing/scroll-film";
 import { AudienceTabs, BenefitGrid } from "@/components/marketing/recruiter-sections";
 import { SavingsCalculator, StudyFacts } from "@/components/marketing/savings-calculator";
@@ -88,7 +88,6 @@ export default function LandingPage() {
           <div className="lg:motion-safe:hidden">
             <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-night">
               <div className="kenburns absolute inset-0 -z-10"><Image src="/story/intro.webp" alt="Eine Schweizer Altstadt im Morgennebel von oben" fill priority quality={85} sizes="100vw" className="object-cover" /></div>
-              <HeroVideo />
               <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,rgba(14,17,26,0.94)_0%,rgba(14,17,26,0.8)_38%,rgba(14,17,26,0.25)_70%,rgba(14,17,26,0.1)_100%)] max-lg:bg-[linear-gradient(0deg,rgba(14,17,26,0.97)_0%,rgba(14,17,26,0.8)_55%,rgba(14,17,26,0.3)_100%)]" />
               <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8">
                 <div className="max-w-xl lg:ml-auto">
