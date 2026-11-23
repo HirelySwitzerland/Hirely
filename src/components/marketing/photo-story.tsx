@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 import { StartButtons } from "./cta";
 import {
   ApplyScreen, BookingScreen, CalendarCard, CallScreen, CheckPanels, DashScreen, PhoneFrame, ProfileScreen,
@@ -12,42 +13,42 @@ import { STORY } from "./story-texts";
 /* ───────────── the chapters ───────────── */
 
 export type UI = "none" | "notes" | "apply" | "check" | "call" | "dash" | "profile" | "booking" | "finale";
-type Chapter = { id: string; image: string; alt: string; day: string; time: string; title: string; text: string; points?: string[]; ui: UI; focus?: string };
+type Chapter = { id: string; image: string; video: string; alt: string; day: string; time: string; title: string; text: string; points?: string[]; ui: UI; focus?: string };
 
 const CHAPTERS: Chapter[] = [
   {
-    id: "problem", image: "/story/problem.webp", alt: "Eine HR-Leiterin abends im Büro zwischen Stapeln von Lebensläufen",
+    id: "problem", image: "/story/problem.webp", video: "/story/problem.mp4", alt: "Eine HR-Leiterin abends im Büro zwischen Stapeln von Lebensläufen",
     ui: "notes", focus: "50% 40%",
     ...STORY.problem,
   },
   {
-    id: "apply", image: "/story/sofa.webp", alt: "Max sitzt am Sonntagabend auf dem Sofa und schaut auf sein Handy", ui: "apply", focus: "60% 45%",
+    id: "apply", image: "/story/sofa.webp", video: "/story/sofa.mp4", alt: "Max sitzt am Sonntagabend auf dem Sofa und schaut auf sein Handy", ui: "apply", focus: "60% 45%",
     ...STORY.apply,
   },
   {
-    id: "check", image: "/story/core.webp", alt: "Ein leuchtender Glaswürfel, in den orange Datenströme fliessen", ui: "check", focus: "50% 50%",
+    id: "check", image: "/story/core.webp", video: "/story/core.mp4", alt: "Ein leuchtender Glaswürfel, in den orange Datenströme fliessen", ui: "check", focus: "50% 50%",
     ...STORY.check,
   },
   {
-    id: "call", image: "/story/call.webp", alt: "Max telefoniert am Abend in seiner Küche", ui: "call", focus: "45% 45%",
+    id: "call", image: "/story/call.webp", video: "/story/call.mp4", alt: "Max telefoniert am Abend in seiner Küche", ui: "call", focus: "45% 45%",
     ...STORY.call,
   },
   {
-    id: "dash", image: "/story/morning.webp", alt: "Sandra kommt am Montagmorgen mit Kaffee ins Büro",
+    id: "dash", image: "/story/morning.webp", video: "/story/morning.mp4", alt: "Sandra kommt am Montagmorgen mit Kaffee ins Büro",
     ui: "dash", focus: "40% 45%",
     ...STORY.dash,
   },
   {
-    id: "profile", image: "/story/hero.webp", alt: "Sandra an ihrem Schreibtisch im Morgenlicht",
+    id: "profile", image: "/story/hero.webp", video: "/story/hero.mp4", alt: "Sandra an ihrem Schreibtisch im Morgenlicht",
     ui: "profile", focus: "30% 50%",
     ...STORY.profile,
   },
   {
-    id: "booking", image: "/story/lunch.webp", alt: "Max sitzt in der Mittagspause beim Servicewagen und tippt auf sein Handy", ui: "booking", focus: "55% 45%",
+    id: "booking", image: "/story/lunch.webp", video: "/story/lunch.mp4", alt: "Max sitzt in der Mittagspause beim Servicewagen und tippt auf sein Handy", ui: "booking", focus: "55% 45%",
     ...STORY.booking,
   },
   {
-    id: "meet", image: "/story/handshake.webp", alt: "Sandra und Max geben sich im Sitzungszimmer die Hand",
+    id: "meet", image: "/story/handshake.webp", video: "/story/handshake.mp4", alt: "Sandra und Max geben sich im Sitzungszimmer die Hand",
     ui: "finale", focus: "50% 40%",
     ...STORY.meet,
   },
@@ -110,7 +111,10 @@ export function StackedStory({ id = "ablauf" }: { id?: string }) {
       {CHAPTERS.map((c) => (
         <article key={c.id} className="border-b border-white/5">
           <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/9]">
-            <div className="sd-zoom absolute inset-0"><Image src={c.image} alt={c.alt} fill sizes="100vw" quality={85} className="object-cover" style={{ objectPosition: c.focus ?? "50% 50%" }} /></div>
+            <div className="sd-zoom absolute inset-0">
+              <Image src={c.image} alt={c.alt} fill sizes="100vw" quality={85} className="object-cover" style={{ objectPosition: c.focus ?? "50% 50%" }} />
+              <LoopVideo src={c.video} focus={c.focus} />
+            </div>
             <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-night via-night/30 to-transparent" />
             <p className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[13px] font-medium text-white backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-[#F97A3A]" />{c.day} · <span className="font-mono tabular-nums">{c.time}</span>
@@ -150,5 +154,36 @@ function StackedUI({ ui }: { ui: UI }) {
         </Fit>
       )}
     </div>
+  );
+}
+
+/** Muted looping clip for the stacked layout; plays only while on screen and never for reduced motion. */
+function LoopVideo({ src, focus }: { src: string; focus?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [ok, setOk] = useState(false);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // the clip may have loaded before the page became interactive, so the load event was missed
+    if (v.readyState >= 2) setOk(true);
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) void v.play().catch(() => {}); else v.pause(); }, { threshold: 0.3 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video ref={ref} src={src} muted loop playsInline preload="metadata" aria-hidden onLoadedData={() => setOk(true)}
+      className={cn("absolute inset-0 h-full w-full object-cover transition-opacity duration-700", ok ? "opacity-100" : "opacity-0")} style={{ objectPosition: focus ?? "50% 50%" }} />
+  );
+}
+
+/** The start picture's slow drone drift, looping (intro-loop.mp4). Only on phones and narrow windows – wide screens get the scroll film, reduced motion gets the still. */
+export function HeroVideo() {
+  const [ok, setOk] = useState(false);
+  const [motion, setMotion] = useState(false);
+  useEffect(() => { setMotion(window.matchMedia("(max-width: 1023px) and (prefers-reduced-motion: no-preference)").matches); }, []);
+  if (!motion) return null;
+  return (
+    <video src="/story/intro-loop.mp4" autoPlay muted loop playsInline preload="auto" aria-hidden onLoadedData={() => setOk(true)}
+      className={cn("absolute inset-0 -z-10 h-full w-full object-cover transition-opacity duration-1000", ok ? "opacity-100" : "opacity-0")} />
   );
 }
